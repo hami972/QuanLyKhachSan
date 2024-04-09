@@ -15,43 +15,48 @@ import Manager from './views/Manager'
 import ServicesPage from './views/ServicesPage';
 import ContactPage from './views/ContactPage';
 import ForgetPassword from './views/ForgetPassword';
+import { ThemeContextProvider } from "./context/ThemeContext";
+import ThemeProvider from "./hook/ThemeProvider";
 
 function App() {
 
   return (
+    <ThemeContextProvider>
+      <ThemeProvider>
+        <Router>
+          <ScrollToTop />
+          <Switch>
+            <Route path="/rooms">
+              <RoomsPage />
+            </Route>
+            <Route path="/services">
+              <ServicesPage />
+            </Route>
+            <Route path="/contacts">
+              <ContactPage />
+            </Route>
 
-    <Router>
-      <ScrollToTop />
-      <Switch>
-        <Route path="/rooms">
-          <RoomsPage />
-        </Route>
-        <Route path="/services">
-          <ServicesPage />
-        </Route>
-        <Route path="/contacts">
-          <ContactPage />
-        </Route>
-        
-        <Route path="/sign_in">
-          <SignInPage />
-        </Route>
-        <Route path="/sign_up">
-          <SignUpPage />
-        </Route>
-        <Route path="/forgetpassword">
-          <ForgetPassword />
-        </Route>
-        <Route path="/manager">
-          <Manager/>
-        </Route>
+            <Route path="/sign_in">
+              <SignInPage />
+            </Route>
+            <Route path="/sign_up">
+              <SignUpPage />
+            </Route>
+            <Route path="/forgetpassword">
+              <ForgetPassword />
+            </Route>
+            <Route path="/manager">
+              <Manager />
+            </Route>
 
-        <Route path="/" exact>
-          <IntroductionPage />
-        </Route>
-        
-      </Switch>
-    </Router >
+            <Route path="/" exact>
+              <IntroductionPage />
+            </Route>
+
+          </Switch>
+        </Router >
+      </ThemeProvider>
+    </ThemeContextProvider>
   );
 }
 

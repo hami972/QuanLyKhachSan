@@ -9,9 +9,251 @@
 }
 
 #topNav .nav-item>.nav-link:hover {
-    color: #905700 !important;
+    color: #ab6600 !important;
 }
- 
+
+#topNav .show>div>ul>.nav-item:has(.nav-link:hover) {
+    background: rgba(144, 87, 0, 0.1) !important;
+}
+
+#topNav .show>div>ul>.nav-item>.nav-link:hover {
+    color: black !important;
+}
+
+#topNav .show>div>ul>.nav-item:has(.active) {
+    background: rgba(144, 87, 0, 0.3) !important;
+}
+
+#topNav .show>div>ul>.nav-item>.active {
+    color: black !important;
+}
+
+.dropdown-item {
+    font-weight: bold !important;
+    color: white !important
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dropdown-item .active {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.4) !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none !important;
+}
+
+.navbar-toggler {
+    border: none !important;
+}
+
+.btn-close {
+    border: none !important;
+}
+
+.btn-close:focus {
+    box-shadow: none !important;
+}
+
+.dropdown-toggle[aria-expanded="true"]:after {
+    transform: rotate(180deg) !important;
+    transition: all ease-out 0.3s !important;
+}
+
+.dropdown-toggle:after {
+    transition: 0.6s !important;
+}
+
+/*Custom for switch dark mode*/
+
+.switch {
+    font-size: 17px;
+    position: relative;
+    display: inline-block;
+    width: 4em;
+    height: 2em;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e6aa4e;
+    transition: 0.4s;
+    border-radius: 30px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 1.6em;
+    width: 1.6em;
+    left: 0.16em;
+    bottom: 0.23em;
+    background-image: url("/public/images/sun.png");
+    transition: 0.4s;
+}
+
+.switch input:checked+.slider {
+    background-color: #5c51a6;
+}
+
+.switch input:checked+.slider:before {
+    background-image: url("/public/images/moon.png");
+    transform: translate(2.1em) rotate(90deg);
+    box-shadow: none;
+}
+
+/*Custom for social media icons*/
+.wrapper .icon_color {
+    color: #fff;
+}
+
+.hover-fx,
+.hover-fx-1,
+.hover-fx-2,
+.hover-fx-3 {
+    font-size: 1.83rem;
+    display: inline-block;
+    cursor: pointer;
+    margin-right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    text-align: center;
+    position: relative;
+    color: #fff;
+    background-color: #333;
+    transition: 300ms;
+}
+
+.hover-fx {
+    background-color: #C42D66;
+}
+
+.hover-fx-1 {
+    background-color: #0866FF;
+    /* Change the background color for YouTube */
+
+}
+
+.hover-fx-2 {
+    background-color: #00acee;
+    /* Change the background color for YouTube */
+}
+
+.hover-fx-3 {
+    background-color: #ff0000;
+    /* Change the background color for YouTube */
+}
+
+.hover-fx:after {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    content: '';
+    box-sizing: content-box;
+    box-shadow: 0 0 0 3px #fff;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: 300ms;
+}
+
+.hover-fx-1:after {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    content: '';
+    box-sizing: content-box;
+    box-shadow: 0 0 0 3px #fff;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: 300ms;
+}
+
+.hover-fx-2:after {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    content: '';
+    box-sizing: content-box;
+    box-shadow: 0 0 0 3px #fff;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: 300ms;
+}
+
+.hover-fx-3:after {
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    content: '';
+    box-sizing: content-box;
+    box-shadow: 0 0 0 3px #fff;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: 300ms;
+}
+
+.hover-fx:hover:after {
+    opacity: 1;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px #C42D66,
+        0px 0px 50px #C42D66,
+        0px 0px 100px #C42D66;
+}
+
+.hover-fx-1:hover:after {
+    opacity: 1;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px #0866FF,
+        0px 0px 50px #0866FF,
+        0px 0px 100px #0866FF;
+}
+
+.hover-fx-2:hover:after {
+    opacity: 1;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px #00acee,
+        0px 0px 50px #00acee,
+        0px 0px 100px #00acee;
+}
+
+.hover-fx-3:hover:after {
+    opacity: 1;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px #ff0000,
+        0px 0px 50px #ff0000,
+        0px 0px 100px #ff0000;
+}
+
 .send-area {
     position: relative;
     border: 1px solid white;
