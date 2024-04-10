@@ -3,7 +3,6 @@ import './style.css'
 import { NavLink, useHistory } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useSpring, animated } from 'react-spring';
 import Slider from "react-slick";
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
@@ -14,7 +13,7 @@ const IntroductionPage = (props) => {
     const moveToBookingPage = () => {
         history.push("/booking")
     }
-    
+
     //fake review list
     const reviewList = [
         {
@@ -48,7 +47,7 @@ const IntroductionPage = (props) => {
             review: "Khách sạn này có các tiện ích tốt như bể bơi, phòng tập gym và spa, là nơi lý tưởng để thư giãn và giải trí.",
         }
     ]
-    
+
     const serviceList = [
         {
             name: "Nhà Hàng",
@@ -62,7 +61,7 @@ const IntroductionPage = (props) => {
             name: "Hồ bơi",
             image: "images/hoboi.png",
         },
-        
+
     ]
     //custom setting for slider
     var settings = {
@@ -129,7 +128,7 @@ const IntroductionPage = (props) => {
             <TopNav />
             <section className="row g-0">
                 <div>
-                    <img  style={{height: "800", width: '100%'}} alt='' src='images/sanh.png'>
+                    <img style={{ height: "800", width: '100%' }} alt='' src='images/sanh.png'>
                     </img>
                 </div>
             </section >
@@ -138,16 +137,16 @@ const IntroductionPage = (props) => {
                 <div className="row">
                     <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
                         <p >
-                            <img className='pb-4' src='images/dontieuchuan.png' alt='' style={{width: '100%', height: '100%'}}></img>
+                            <img className='pb-4' src='images/dontieuchuan.png' alt='' style={{ width: '100%', height: '100%' }}></img>
                             <h5 className="pb-2">Phòng Đơn Tiêu Chuẩn</h5>
                             <span className="truncation-text">
-                            Với không gian thoải mái và tiện nghi, phòng đơn tiêu chuẩn của chúng tôi là lựa chọn lý tưởng cho du khách cá nhân mong muốn tận hưởng không gian riêng tư và thuận tiện. </span>
+                                Với không gian thoải mái và tiện nghi, phòng đơn tiêu chuẩn của chúng tôi là lựa chọn lý tưởng cho du khách cá nhân mong muốn tận hưởng không gian riêng tư và thuận tiện. </span>
                         </p>
                         <NavLink to="/services" className="xemthemtext text-decoration-none ">Xem thêm &rarr;</NavLink>
                     </div>
                     <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
                         <p>
-                        <img className='pb-4' src='images/doncaocap1.png' alt='' style={{width: '100%', height: '100%'}}></img>
+                            <img className='pb-4' src='images/doncaocap1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
                             <h5 className="pb-2">Phòng Đơn Cao Cấp</h5>
                             <span className="truncation-text">Sự sang trọng và tiện nghi được kết hợp hoàn hảo trong phòng đơn cao cấp của chúng tôi. Tận hưởng không gian rộng rãi và các tiện ích đẳng cấp, đảm bảo mang đến trải nghiệm đắm chìm trong sự xa hoa.</span>
                         </p>
@@ -155,7 +154,7 @@ const IntroductionPage = (props) => {
                     </div>
                     <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
                         <p>
-                        <img className='pb-4' src='images/doitieuchuan1.png' alt='' style={{width: '100%', height: '100%'}}></img>
+                            <img className='pb-4' src='images/doitieuchuan1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
                             <h5 className="pb-2">Phòng Đôi Tiêu Chuẩn</h5>
                             <span className="truncation-text">Dành cho các cặp đôi hoặc nhóm nhỏ, phòng đôi tiêu chuẩn của chúng tôi là nơi lý tưởng để thư giãn và tận hưởng kỳ nghỉ bên nhau. Không gian thoải mái và tiện ích đầy đủ sẽ làm hài lòng mọi du khách. </span>
 
@@ -165,7 +164,7 @@ const IntroductionPage = (props) => {
                     </div>
                     <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
                         <p>
-                        <img className='pb-4' src='images/doicaocap2.png' alt='' style={{width: '100%', height: '100%'}}></img>
+                            <img className='pb-4' src='images/doicaocap2.png' alt='' style={{ width: '100%', height: '100%' }}></img>
                             <h5 className="pb-2">Phòng Đôi Cao Cấp</h5>
                             <span className="truncation-text">Với không gian rộng rãi và trang thiết bị hiện đại, phòng đôi cao cấp là biểu tượng của sự sang trọng và tiện nghi. Hòa mình vào không gian lịch lãm và đẳng cấp, quý vị sẽ tận hưởng một kỳ nghỉ đáng nhớ.</span>
                         </p>
@@ -173,7 +172,7 @@ const IntroductionPage = (props) => {
                     </div>
                     <div class="col-md-4 pe-5 px-5 pt-2 pb-4">
                         <p>
-                        <img className='pb-4' src='images/gdtieuchuan1.png' alt='' style={{width: '100%', height: '100%'}}></img>
+                            <img className='pb-4' src='images/gdtieuchuan1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
                             <h5 className="pb-2">Phòng Gia Đình Tiêu Chuẩn</h5>
                             <span className="truncation-text">Đối với các gia đình, phòng gia đình tiêu chuẩn là lựa chọn hoàn hảo. Với không gian rộng rãi và các tiện ích thuận tiện, phòng này sẽ tạo điều kiện lý tưởng cho mọi thành viên trong gia đình tận hưởng kỳ nghỉ.</span>
                         </p>
@@ -181,7 +180,7 @@ const IntroductionPage = (props) => {
                     </div>
                     <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
                         <p>
-                        <img className='pb-4' src='images/gdcaocap1.png' alt='' style={{width: '100%', height: '100%'}}></img>
+                            <img className='pb-4' src='images/gdcaocap1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
                             <h5 >Phòng Gia Đình Cao Cấp</h5>
                             <span className="truncation-text">Sự thoải mái và sang trọng được đặt lên hàng đầu trong phòng gia đình cao cấp. Với không gian rộng lớn và các tiện ích đẳng cấp, quý vị sẽ có trải nghiệm lưu trú tuyệt vời bên người thân yêu của mình.</span>
                         </p>
@@ -191,24 +190,24 @@ const IntroductionPage = (props) => {
                 <h5 className="mt-2" align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h5>
             </section>
             <section className='pt-10 pb-5'>
-            <h3 align="center">Dịch vụ trong khách sạn</h3>
-            <div class="container-fluid mt-4 col-10" align="center"> 
-            <Slider {...settingsService}>
+                <h3 align="center">Dịch vụ trong khách sạn</h3>
+                <div class="container-fluid mt-4 col-10" align="center">
+                    <Slider {...settingsService}>
                         {serviceList.map((item, index) => {
                             return (
                                 <div className="container mb-2" >
                                     <div className="p-2">
-                                        <p className="center" style={{fontSize: '30px'}}>{item.name}</p>
+                                        <p className="center" style={{ fontSize: '30px' }}>{item.name}</p>
                                         <img className="center" alt="" src={item.image} style={{ width: "70%" }} />
                                     </div>
                                 </div>
                             )
                         })}
-            
-            </Slider>
-            </div>
+
+                    </Slider>
+                </div>
             </section>
-            
+
             <section className='container pt-10 pb-5'>
                 <h3 align="center">Phản hồi của khách hàng</h3>
                 <p className='text-center'>Cảm ơn bạn đã tin tưởng chúng tôi</p>
@@ -236,6 +235,6 @@ const IntroductionPage = (props) => {
             <Footer style={{ marginTop: "80px" }} />
         </div >
     );
-    
+
 }
 export default IntroductionPage;

@@ -132,6 +132,7 @@
     display: inline-block;
     cursor: pointer;
     margin-right: 20px;
+    margin-bottom: 10px;
     width: 45px;
     height: 45px;
     border-radius: 50%;
@@ -143,7 +144,7 @@
 }
 
 .hover-fx {
-    background-color: #C42D66;
+    background-color: #e1306c;
 }
 
 .hover-fx-1 {
@@ -225,9 +226,9 @@
 .hover-fx:hover:after {
     opacity: 1;
     transform: scale(1.15);
-    box-shadow: 0 0 0 3px #C42D66,
-        0px 0px 50px #C42D66,
-        0px 0px 100px #C42D66;
+    box-shadow: 0 0 0 3px #e1306c,
+        0px 0px 50px #e1306c,
+        0px 0px 100px #e1306c;
 }
 
 .hover-fx-1:hover:after {
@@ -252,6 +253,68 @@
     box-shadow: 0 0 0 3px #ff0000,
         0px 0px 50px #ff0000,
         0px 0px 100px #ff0000;
+}
+
+/* Custom for button scroll to top*/
+.icon-scroll-to-top {
+    position: fixed;
+    border-radius: 50%;
+    z-index: 100;
+    transform: scale(0);
+    transition: all 0.2s ease;
+
+}
+
+.icon-scroll-to-top.active {
+    transform: scale(1);
+}
+
+.icon-scroll-to-top:hover {
+    cursor: pointer;
+}
+
+#progress {
+    bottom: 20px;
+    right: 10px;
+    height: 60px;
+    width: 60px;
+    display: none;
+    place-items: center;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+#progress-value {
+    display: block;
+    height: calc(100% - 15px);
+    width: calc(100% - 15px);
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 35px;
+    color: #001a2e;
+}
+
+/* Custom scrollbar*/
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #d1bfa4c9;
+    border-radius: 20px;
+    border: 6px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a46d1b
 }
 
 .send-area {
@@ -319,7 +382,6 @@
 }
 
 .slick-prev::before {
-
     font-size: 30px !important;
     color: #905700 !important;
     margin-left: -15px !important;

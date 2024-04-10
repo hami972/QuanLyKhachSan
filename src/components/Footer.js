@@ -12,7 +12,7 @@ const Footer = (props) => {
                         <p>Chào mừng quý khách đến với khách sạn của chúng tôi - nơi tinh tế hòa quyện giữa sự sang trọng và ấm cúng, tạo nên không gian lưu trú lý tưởng cho mọi hành trình.</p>
                         <div class="wrapper">
                             <NavLink class="hover-fx icon_color" to="/"><i class="fab fa-instagram"></i></NavLink>
-                            <NavLink class="hover-fx-1 icon_color" to="/"><i class="fab fa-facebook"></i></NavLink>
+                            <NavLink class="hover-fx-1 icon_color" to="/"><i class="fab fa-facebook-f"></i></NavLink>
                             <NavLink class="hover-fx-2 icon_color" to="/"><i class="fab fa-twitter"></i></NavLink>
                             <NavLink class="hover-fx-3 icon_color" to="/"><i class="fab fa-youtube"></i></NavLink>
                         </div>

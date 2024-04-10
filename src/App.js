@@ -17,13 +17,16 @@ import ContactPage from './views/ContactPage';
 import ForgetPassword from './views/ForgetPassword';
 import { ThemeContextProvider } from "./context/ThemeContext";
 import ThemeProvider from "./hook/ThemeProvider";
+import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 
 function App() {
 
   return (
+
     <ThemeContextProvider>
       <ThemeProvider>
         <Router>
+          <ButtonScrollToTop />
           <ScrollToTop />
           <Switch>
             <Route path="/rooms">
@@ -56,6 +59,7 @@ function App() {
           </Switch>
         </Router >
       </ThemeProvider>
+
     </ThemeContextProvider>
   );
 }
