@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
 const ServicesPage = (props) => {
-    //fake list doctor
+    //fake list services
     const pageToRef = useRef(null);
 
     const serviceList = [
