@@ -507,6 +507,135 @@
     }
 }
 
+/* Custom for auto images transitions */
+/*.transitionImage {
+    width: 100%;
+    height: 100vh;
+    background-image: url("/public/images/sanh.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    animation: change 10s infinite ease-in-out;
+}
+
+@keyframes change {
+
+    0%,
+    100% {
+        background-image: url("/public/images/sanh.png");
+    }
+
+    25% {
+        background-image: url("/public/images/nhahang.png");
+    }
+
+    50% {
+        background-image: url("/public/images/bar.png");
+    }
+
+    75% {
+        background-image: url("/public/images/benngoaiks.jpg");
+    }
+}*/
+
+.transitionImage {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.transitionImage img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes zoom {
+    0% {
+        transform: scale(0.3);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes flipEffect {
+    0% {
+        transform: perspective(400px) rotateY(-180deg);
+    }
+
+    100% {
+        transform: perspective(400px) rotateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+.transitionImage .image1 {
+    animation: fadeIn 2s ease-in-out 0s forwards;
+}
+
+
+.image2 {
+    animation: slide 2s ease-in-out 0s forwards;
+}
+
+.transitionImage .image3 {
+    animation: zoom 2s ease-in-out 0s forwards;
+}
+
+.transitionImage .image4 {
+    animation: flipEffect 2s ease-in-out 0s forwards;
+}
+
+/*Custom for next, previous Image button*/
+
+.carousel-wrapperImage .slick-prev {
+    z-index: 10 !important;
+    left: 15px !important;
+}
+
+.carousel-wrapperImage .slick-next {
+    right: 18px !important;
+    background-color: transparent !important;
+}
+
+.carousel-wrapperImage .slick-prev::before,
+.carousel-wrapperImage .slick-next::before {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.carousel-wrapperImage .slick-prev:hover::before,
+.carousel-wrapperImage .slick-next:hover::before {
+    color: rgba(255, 255, 255, 0.5) !important;
+    color: rgba(195, 153, 0, 0.67) !important;
+}
 
 .send-area button {
     position: absolute;
