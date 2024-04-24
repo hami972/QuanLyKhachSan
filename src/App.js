@@ -19,6 +19,8 @@ import { ThemeContextProvider } from "./context/ThemeContext";
 import ThemeProvider from "./hook/ThemeProvider";
 import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 
+import BaoCao from './views/BaoCao.js'
+
 function App() {
 
   return (
@@ -49,6 +51,9 @@ function App() {
               <ForgetPassword />
             </Route>
             <Route path="/manager">
+              <Manager />
+            </Route>
+            <Route path="/manager/baocao">
               <Manager />
             </Route>
 

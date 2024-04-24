@@ -5,8 +5,6 @@ import XemBaoCaoTheoThang from './BaoCao-ThoiGian-Detail1';
 import XemBaoCaoTheoThoiGian from './BaoCao-ThoiGian';
 import { NavLink } from 'react-router-dom';
 import XemBaoCaoTheoPhong from './BaoCao-Phong';
-import XemBaoCaoTheoCPPK from './BaoCao-ChiPhiPK';
-import XemBaoCaoTheoChiNhanh from './BaoCao-ChiNhanh';
 const BaoCao = (props) => {
   return (
     <div>
@@ -36,10 +34,8 @@ const BaoCao = (props) => {
             <XemBaoCaoTheoPhong />
           </Route>
           <Route path="/manager/baocao/baocaotheochinhanh">
-            <XemBaoCaoTheoChiNhanh />
           </Route>
           <Route path="/manager/baocao/baocaotheochiphiphongkham">
-            <XemBaoCaoTheoCPPK />
           </Route>
         </Switch>
       </div>
