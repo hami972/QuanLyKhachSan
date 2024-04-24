@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import QuanLyNhanVien from '../views/QuanLyNhanVien'
 import QuanLyChiNhanh from './QuanLyChiNhanh';
 import QuanLyMaGiamGia from './QuanLyMaGiamGia';
+import QuanLyDanhGia from './QuanLyDanhGia';
 const Manager = (props) => {
     const { pathname } = useLocation(); 
     return (
@@ -94,7 +95,7 @@ const Manager = (props) => {
                                 <QuanLyMaGiamGia/>
                             </Route>
                             <Route path="/manager/quanlydanhgia">
-                                
+                                <QuanLyDanhGia/>
                             </Route>
                             </Switch>
                         </Route>
