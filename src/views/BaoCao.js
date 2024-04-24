@@ -1,11 +1,11 @@
 import React from 'react'
 import './mistyles.css'
 import { Route, Router, Switch } from 'react-router-dom/cjs/react-router-dom.min';
-import XemBaoCaoTheoThang from './BaoCao-ThoiGian-Detail1';
 import XemBaoCaoTheoThoiGian from './BaoCao-ThoiGian';
 import { NavLink } from 'react-router-dom';
 import XemBaoCaoTheoPhong from './BaoCao-Phong';
 import XemBaoCaoTheoCPKS from './BaoCao-ChiPhiKS';
+import XemBaoCaoTheoChiNhanh from './BaoCao-ChiNhanh';
 const BaoCao = (props) => {
   return (
     <div>
@@ -22,7 +22,7 @@ const BaoCao = (props) => {
             <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochinhanh">Chi nhánh</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochiphiphongkham">Chi phí phòng khám</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochiphiphongkham">Chi phí khách sạn</NavLink>
           </li>
         </ul>
       </div>
@@ -35,8 +35,11 @@ const BaoCao = (props) => {
             <XemBaoCaoTheoPhong />
           </Route>
           <Route path="/manager/baocao/baocaotheochinhanh">
+
+            <XemBaoCaoTheoChiNhanh />
+
           </Route>
-          <Route path="/manager/baocao/baocaotheochiphiphongkham">
+          <Route path="/manager/baocao/baocaotheochiphikhachsan">
             <XemBaoCaoTheoCPKS />
           </Route>
         </Switch>
