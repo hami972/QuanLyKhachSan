@@ -54,13 +54,19 @@ const ContactPage = (props) => {
                                 style={{ animationDelay: index + "s" }}>
                                 <span className='circle'></span>
                                 <div className="text-box">
-                                    <div>{item.TenCN}</div>
-                                    <div>Địa chỉ</div>
-                                    <div>{item.DiaChi}</div>
-                                    <div>Email</div>
-                                    <div>{item.Email}</div>
-                                    <div>Số liên hệ</div>
-                                    <div>{item.SDT}</div>
+                                    <div style={{ fontFamily: "Manrope" }}><h3>{item.TenCN}</h3></div>
+                                    <div className='spaceText'>
+                                        <span className='me-2'><i className="fa-solid fa-location-dot" style={{ fontSize: "23px" }}></i></span>
+                                        <span className='spaceText text-start'>{item.DiaChi}</span>
+                                    </div>
+                                    <div className='spaceText'>
+                                        <span className='me-2'><i className="fa-solid fa-phone" style={{ fontSize: "23px" }}></i></span>
+                                        <span className='spaceText text-start'>{item.Email}</span>
+                                    </div>
+                                    <div className='spaceText'>
+                                        <span className='me-2'><i style={{ fontSize: "23px" }} className="fa-solid fa-inbox"></i></span>
+                                        <span className='spaceText text-start'>{item.SDT}</span>
+                                    </div>
                                 </div>
                             </div>
                         )

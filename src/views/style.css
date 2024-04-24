@@ -508,36 +508,6 @@
 }
 
 /* Custom for auto images transitions */
-/*.transitionImage {
-    width: 100%;
-    height: 100vh;
-    background-image: url("/public/images/sanh.png");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    animation: change 10s infinite ease-in-out;
-}
-
-@keyframes change {
-
-    0%,
-    100% {
-        background-image: url("/public/images/sanh.png");
-    }
-
-    25% {
-        background-image: url("/public/images/nhahang.png");
-    }
-
-    50% {
-        background-image: url("/public/images/bar.png");
-    }
-
-    75% {
-        background-image: url("/public/images/benngoaiks.jpg");
-    }
-}*/
-
 .transitionImage {
     width: 100%;
     height: 100vh;
@@ -551,8 +521,71 @@
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
 }
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes zoomOut {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+}
+
+@keyframes flipOut {
+    0% {
+        opacity: 1;
+        transform: perspective(400px) rotateY(0);
+    }
+
+    100% {
+        transform: perspective(400px) rotateY(-180deg);
+        opacity: 0;
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+.transitionImage .image1Out {
+    animation: fadeOut 2s ease-in-out 0s forwards;
+}
+
+.transitionImage .image2Out {
+    animation: slideOut 2s ease-in-out 0s forwards;
+}
+
+.transitionImage .image3Out {
+    animation: zoomOut 2s ease-in-out 0s forwards;
+}
+
+.transitionImage .image4Out {
+    animation: flipOut 2s ease-in-out 0s forwards;
+}
+
+
 
 @keyframes fadeIn {
     0% {
@@ -564,7 +597,7 @@
     }
 }
 
-@keyframes zoom {
+@keyframes zoomIn {
     0% {
         transform: scale(0.3);
     }
@@ -575,7 +608,7 @@
     }
 }
 
-@keyframes flipEffect {
+@keyframes flipIn {
     0% {
         transform: perspective(400px) rotateY(-180deg);
     }
@@ -586,7 +619,7 @@
     }
 }
 
-@keyframes slide {
+@keyframes slideIn {
     0% {
         transform: translateX(-100%);
     }
@@ -597,25 +630,24 @@
     }
 }
 
-.transitionImage .image1 {
-    animation: fadeIn 2s ease-in-out 0s forwards;
+.transitionImage .image1In {
+    animation: fadeIn 2s ease-in 0s forwards;
 }
 
 
-.image2 {
-    animation: slide 2s ease-in-out 0s forwards;
+.transitionImage .image2In {
+    animation: slideIn 2s ease-in 0s forwards;
 }
 
-.transitionImage .image3 {
-    animation: zoom 2s ease-in-out 0s forwards;
+.transitionImage .image3In {
+    animation: zoomIn 2s ease-in 0s forwards;
 }
 
-.transitionImage .image4 {
-    animation: flipEffect 2s ease-in-out 0s forwards;
+.transitionImage .image4In {
+    animation: flipIn 2s ease-in 0s forwards;
 }
 
 /*Custom for next, previous Image button*/
-
 .carousel-wrapperImage .slick-prev {
     z-index: 10 !important;
     left: 15px !important;
@@ -623,7 +655,6 @@
 
 .carousel-wrapperImage .slick-next {
     right: 18px !important;
-    background-color: transparent !important;
 }
 
 .carousel-wrapperImage .slick-prev::before,
@@ -637,11 +668,74 @@
     color: rgba(195, 153, 0, 0.67) !important;
 }
 
-.send-area button {
-    position: absolute;
-    bottom: 0;
-    right: 0;
+/* Move to contact */
+.contact-us-container {
+    transition: color 0.3s ease;
+}
 
+.contact-us-container:hover {
+    color: #ff69b4;
+    /* Pink color */
+    cursor: pointer;
+}
+
+.contact-us-container:hover .bounce {
+    animation: bounce 2s infinite;
+}
+
+.contact-us-container:hover path {
+    fill: #ab6600;
+}
+
+.contact-us-container:hover .contact-with-us {
+    color: #ab6600;
+}
+
+.contact-us-container .contact-with-us {
+    width: 100%;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 60px;
+    color: #100a53;
+}
+
+.contact-us-container .contact-with-us__container {
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+}
+
+.contact-us-container .next-ic {
+    margin: auto;
+}
+
+.contact-us-container .next-ic:hover {
+    cursor: pointer;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateX(0);
+    }
+
+    40% {
+        transform: translateX(-30px);
+    }
+
+    60% {
+        transform: translateX(-15px);
+    }
+}
+
+.spaceText {
+    display: flex;
+    justify-content: stretch;
 }
 
 .truncation-text {

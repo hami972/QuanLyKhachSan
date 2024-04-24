@@ -122,8 +122,8 @@ const IntroductionPage = (props) => {
         ]
     };
 
-    //search more images replace sanh
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [nextImage, setNextImage] = useState(true);
 
 
     useEffect(() => {
@@ -142,10 +142,16 @@ const IntroductionPage = (props) => {
     }, [currentIndex]);
 
     const clickNextImage = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
+        if (nextImage === true) setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
+
+        setNextImage(true);
+
     }
     const clickPreviousImage = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? 3 : prevIndex - 1));
+
+        if (nextImage === false) setCurrentIndex((prevIndex) => (prevIndex === 0 ? 3 : prevIndex - 1));
+        setNextImage(false);
+
     }
 
     return (
@@ -154,11 +160,24 @@ const IntroductionPage = (props) => {
             <div className="carousel-wrapperImage">
                 <button className="slick-prev" onClick={clickPreviousImage}></button>
                 <div className="transitionImage">
-                    <img src="/images/sanh.png" alt="" className={currentIndex === 0 ? 'image1' : ''} />
-                    <img src="/images/spa.png" alt="" className={currentIndex === 1 ? 'image2' : ''} />
-                    <img src="/images/nhahang.png" alt="" className={currentIndex === 2 ? 'image3' : ''} />
-                    <img src="/images/letan.png" alt="" className={currentIndex === 3 ? 'image4' : ''} />
+                    <img src="/images/sanh.png" alt="" className={currentIndex === 0 ? nextImage ? 'image1In' : 'image1Out' : ''}
+                        style={{
+                            opacity: currentIndex === 1 ? 1 : 0,
+                        }} />
+                    <img src="/images/sanh1.jpg" alt="" className={currentIndex === 1 ? nextImage ? 'image2In' : 'image2Out' : ''}
+                        style={{
+                            opacity: currentIndex === 2 ? 1 : 0,
+                        }} />
+                    <img src="/images/sanh2.jpg" alt="" className={currentIndex === 2 ? nextImage ? 'image3In' : 'image3Out' : ''}
+                        style={{
+                            opacity: currentIndex === 3 ? 1 : 0,
+                        }} />
+                    <img src="/images/sanh3.jpg" alt="" className={currentIndex === 3 ? nextImage ? 'image4In' : 'image4Out' : ''}
+                        style={{
+                            opacity: !nextImage && currentIndex === 0 ? 1 : 0,
+                        }} />
                 </div>
+
                 <button className="slick-next" onClick={clickNextImage}></button>
             </div>
             <section className="mt-5 container">
@@ -237,31 +256,33 @@ const IntroductionPage = (props) => {
                 </div>
             </section>
 
-            <section className='container pt-10 pb-5'>
-                <h3 align="center">Phản hồi của khách hàng</h3>
-                <p className='text-center'>Cảm ơn bạn đã tin tưởng chúng tôi</p>
-                <div class="container-fluid mt-4" align="center">
-                    <Slider {...settings}>
-                        {reviewList.map((item, index) => {
-                            return (
-                                <div className="container mb-2" >
-                                    <div className="p-4">
-                                        <div className="custom-slider-item pt-5 pb-5 pe-3 px-3 mb-4" >
-                                            <p className="truncation-text">{item.review}</p>
-                                        </div>
-                                        <img alt="" className="img-thumbnail" src={item.image} style={{ borderRadius: "50%", width: "40%" }} />
-                                        <h5 className='mt-2'>{item.fullname}</h5>
-                                        <p>{item.brach}</p>
-                                    </div>
-                                </div>
-                            )
-                        })}
+            <section className='bg-light ps-5 pe-5 pb-3 pt-3 row g-0' style={{ color: "#a36300" }}>
+                <NavLink to="/contacts" className="text-decoration-none">
+                    <div className="row contact-us-container">
+                        <div className='contact-with-us__container'>
+                            <div className="contact-with-us">Contact with us</div>
+                            <div className="next-ic bounce">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="45"
+                                    height="40"
+                                    fill="none"
+                                    color='#100a53'
+                                    viewBox="0 0 45 40"
+                                >
+                                    <path
+                                        fill="currentColor"
+                                        d="M30.087 0h-7.9l12.4 16.7H.387v7h33.9L22.187 40h7.9l14.3-20-14.3-20z"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+            </section>
 
-                    </Slider>
-                </div>
 
-            </section >
-            <Footer style={{ marginTop: "80px" }} />
+            <Footer style={{ marginTop: 0 }} />
         </div >
     );
 
