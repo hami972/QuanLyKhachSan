@@ -1,12 +1,11 @@
-import React from 'react'
 import './style.css'
+import React, { useEffect, useState } from 'react';
 import { NavLink, useHistory } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
-import { useState } from 'react';
 const IntroductionPage = (props) => {
     //move to SignUp page
     const history = useHistory();
@@ -123,15 +122,45 @@ const IntroductionPage = (props) => {
         ]
     };
 
+    //search more images replace sanh
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+
+    useEffect(() => {
+
+        const showNextImage = () => {
+            setTimeout(() => {
+                setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
+
+            }, 0); // Thời gian delay trước khi chuyển sang ảnh tiếp theo (ms)
+        };
+
+        const interval = setInterval(showNextImage, 10000); // Thời gian hiển thị của mỗi hình ảnh (ms)
+
+        return () => clearInterval(interval); // Clear interval khi component unmount
+
+    }, [currentIndex]);
+
+    const clickNextImage = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
+    }
+    const clickPreviousImage = () => {
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? 3 : prevIndex - 1));
+    }
+
     return (
         <div>
             <TopNav />
-            <section className="row g-0">
-                <div>
-                    <img style={{ height: "800", width: '100%' }} alt='' src='images/sanh.png'>
-                    </img>
+            <div className="carousel-wrapperImage">
+                <button className="slick-prev" onClick={clickPreviousImage}></button>
+                <div className="transitionImage">
+                    <img src="/images/sanh.png" alt="" className={currentIndex === 0 ? 'image1' : ''} />
+                    <img src="/images/spa.png" alt="" className={currentIndex === 1 ? 'image2' : ''} />
+                    <img src="/images/nhahang.png" alt="" className={currentIndex === 2 ? 'image3' : ''} />
+                    <img src="/images/letan.png" alt="" className={currentIndex === 3 ? 'image4' : ''} />
                 </div>
-            </section >
+                <button className="slick-next" onClick={clickNextImage}></button>
+            </div>
             <section className="mt-5 container">
                 <h3 align="center" className='pb-4'>Các loại phòng </h3>
                 <div className="row">
