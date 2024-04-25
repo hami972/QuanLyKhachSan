@@ -507,6 +507,12 @@
     }
 }
 
+@media screen and (max-width: 576px) {
+    .wrapperRoom {
+        width: 100% !important;
+    }
+}
+
 /* Custom for auto images transitions */
 .transitionImage {
     width: 100%;
@@ -735,14 +741,17 @@
 
 /*Custom for intro_services*/
 .containerServices {
-    display: flex;
     flex-wrap: nowrap;
     justify-content: center;
 }
 
+.spaceText {
+    display: flex;
+    justify-content: stretch;
+}
+
 .cardServices {
-    width: 80px;
-    border-radius: 0.75rem;
+    width: 7%;
     background-size: cover;
     cursor: pointer;
     border-radius: 2rem;
@@ -750,7 +759,7 @@
     display: flex;
     align-items: flex-end;
     transition: .6s cubic-bezier(.28, -0.03, 0, .99);
-    box-shadow: 0px 10px 30px -5px rgba(0, 0, 0, 0.8);
+    box-shadow: 1px 3px 9px 1px rgba(0, 0, 0, 0.8);
 }
 
 .cardServices>.rowServices {
@@ -776,7 +785,7 @@
 }
 
 .containerServices input:checked+label {
-    width: 600px;
+    width: 79%;
 }
 
 .containerServices input:checked+label .descriptionServices {
@@ -787,7 +796,6 @@
 .frosted {
     border-radius: 10px;
     display: flex;
-    justify-content: center;
     align-items: center;
     text-shadow: 2px 2px 2px rgba(0, 27, 77, 0.521);
     text-align: center;
@@ -795,6 +803,61 @@
     filter: drop-shadow(2px 4px 6px black);
     background-color: 0px 10px 15px 10px rgba(152, 151, 151, 0.2);
     box-shadow: inset 0 0 0 200px rgb(228, 228, 228, 0.10);
+    justify-content: space-between;
+}
+
+.textOnImage {
+    position: absolute;
+    color: white;
+    left: 50%;
+    bottom: -15px;
+    transform: translate(-50%, -50%);
+}
+
+/*Custom float in and float out components*/
+.fadeEffect {
+    transition: opacity 0.7s ease-in;
+}
+
+.fadeOutEffect {
+    opacity: 0;
+}
+
+.fadeInEffect {
+    opacity: 1;
+}
+
+.wrapperRoom {
+    box-shadow: 1px 3px 9px 1px rgba(0, 0, 0, 0.8);
+    width: 45%;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden
+}
+
+.fade-in-effect {
+    opacity: 0;
+    transform: translateY(20vh);
+    visibility: hidden;
+    transition: opacity 1200ms ease-out, transform 600ms ease-out,
+        visibility 1200ms ease-out;
+    will-change: opacity, transform, visibility;
+}
+
+.fade-in-effect.is-visible {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+}
+
+/*Custom zoom images*/
+.zoom-img {
+    width: 100%;
+    transition: all .3s ease-in-out;
+}
+
+.zoom-img:hover {
+    transform: scale(1.2, 1.2);
+    transform-origin: 0%;
 }
 
 .truncation-text {

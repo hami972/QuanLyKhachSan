@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
+import FadeInEffect from '../components/FadeInEffect';
 const IntroductionPage = (props) => {
     //move to SignUp page
     const history = useHistory();
@@ -47,6 +48,7 @@ const IntroductionPage = (props) => {
         }
     ]
 
+    //fake serviceList
     const [serviceList, setServiceList] = useState([
         {
             name: "Nhà Hàng",
@@ -70,6 +72,7 @@ const IntroductionPage = (props) => {
         }
     ])
 
+    // Update checked service
     const updateServiceList = (index) => {
         const newServiceList = [...serviceList];
         if (!newServiceList[index].isChecked) {
@@ -79,97 +82,89 @@ const IntroductionPage = (props) => {
             setServiceList(newServiceList);
         }
     }
-    //custom setting for slider
-    var settings = {
-        dots: true,
-        infinite: true,
-        swipeToSlide: true,
-        speed: 500,
 
-        slidesToShow: 3,//number show each slide
-        slidesToScroll: 3,//number item next 
-        responsive: [
-            {
-                breakpoint: 800,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 1,
-                    arrows: false,
-                }
-            },
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    arrows: false,
-                    dots: false
-                }
-            }
-
-        ]
-    };
+    // Custom for services on middle screen 
     var settingsService = {
         dots: true,
         infinite: true,
         swipeToSlide: true,
         speed: 500,
-        arrows: true,
-        slidesToShow: 1,//number show each slide
+        dots: false,
+        arrows: false,
+        slidesToShow: 1.15,//number show each slide
         slidesToScroll: 1,//number item next 
-        responsive: [
-            {
-                breakpoint: 800,
-                settingsService: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    arrows: false,
-                }
-            },
-            {
-                breakpoint: 480,
-                settingsService: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    arrows: false,
-                    dots: false
-                }
-            }
 
-        ]
     };
 
+    // Custom for backgroud images
     const [currentIndex, setCurrentIndex] = useState(0);
     const [nextImage, setNextImage] = useState(true);
-
-
     useEffect(() => {
-
         const showNextImage = () => {
             setTimeout(() => {
                 setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
 
             }, 0); // Thời gian delay trước khi chuyển sang ảnh tiếp theo (ms)
         };
-
         const interval = setInterval(showNextImage, 10000); // Thời gian hiển thị của mỗi hình ảnh (ms)
-
         return () => clearInterval(interval); // Clear interval khi component unmount
-
     }, [currentIndex]);
 
     const clickNextImage = () => {
         if (nextImage === true) setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
-
         setNextImage(true);
-
     }
     const clickPreviousImage = () => {
-
         if (nextImage === false) setCurrentIndex((prevIndex) => (prevIndex === 0 ? 3 : prevIndex - 1));
         setNextImage(false);
-
     }
+
+    // Custom for float in and float out components
+    const observerOptions = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.7
+    };
+
+    const observerCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // fade in observed elements that are in view
+                entry.target.classList.replace('fadeOutEffect', 'fadeInEffect');
+            } else {
+                // fade out observed elements that are not in view
+                entry.target.classList.replace('fadeInEffect', 'fadeOutEffect');
+            }
+        });
+    }
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const fadeElms = document.querySelectorAll('.fadeEffect');
+    fadeElms.forEach(el => observer.observe(el));
+
+    // fake room list
+    const rooms = [
+        {
+            name: "Phòng Đơn Tiêu Chuẩn",
+            description: "Với không gian thoải mái và tiện nghi, phòng đơn tiêu chuẩn của chúng tôi là lựa chọn lý tưởng cho du khách cá nhân mong muốn tận hưởng không gian riêng tư và thuận tiện.",
+            image: "images/dontieuchuan.png"
+        },
+        {
+            name: "Phòng Đơn Cao Cấp",
+            description: "Sự sang trọng và tiện nghi được kết hợp hoàn hảo trong phòng đơn cao cấp của chúng tôi. Tận hưởng không gian rộng rãi và các tiện ích đẳng cấp, đảm bảo mang đến trải nghiệm đắm chìm trong sự xa hoa.",
+            image: "images/doncaocap1.png"
+        },
+        {
+            name: "Phòng Đôi Tiêu Chuẩn",
+            description: "Dành cho các cặp đôi hoặc nhóm nhỏ, phòng đôi tiêu chuẩn của chúng tôi là nơi lý tưởng để thư giãn và tận hưởng kỳ nghỉ bên nhau. Không gian thoải mái và tiện ích đầy đủ sẽ làm hài lòng mọi du khách.",
+            image: "images/doitieuchuan1.png"
+        },
+        {
+            name: "Phòng Đôi Cao Cấp",
+            description: "Với không gian rộng rãi và trang thiết bị hiện đại, phòng đôi cao cấp là biểu tượng của sự sang trọng và tiện nghi. Hòa mình vào không gian lịch lãm và đẳng cấp, quý vị sẽ tận hưởng một kỳ nghỉ đáng nhớ.",
+            image: "images/doicaocap2.png"
+        }
+    ];
+
 
     return (
         <div>
@@ -197,75 +192,45 @@ const IntroductionPage = (props) => {
 
                 <button className="slick-next" onClick={clickNextImage}></button>
             </div>
-            <section className="mt-5 container">
-                <h3 align="center" className='pb-4'>Các loại phòng </h3>
-                <div className="row">
-                    <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
-                        <p >
-                            <img className='pb-4' src='images/dontieuchuan.png' alt='' style={{ width: '100%', height: '100%' }}></img>
-                            <h5 className="pb-2">Phòng Đơn Tiêu Chuẩn</h5>
-                            <span className="truncation-text">
-                                Với không gian thoải mái và tiện nghi, phòng đơn tiêu chuẩn của chúng tôi là lựa chọn lý tưởng cho du khách cá nhân mong muốn tận hưởng không gian riêng tư và thuận tiện. </span>
-                        </p>
-                        <NavLink to="/services" className="xemthemtext text-decoration-none ">Xem thêm &rarr;</NavLink>
-                    </div>
-                    <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
-                        <p>
-                            <img className='pb-4' src='images/doncaocap1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
-                            <h5 className="pb-2">Phòng Đơn Cao Cấp</h5>
-                            <span className="truncation-text">Sự sang trọng và tiện nghi được kết hợp hoàn hảo trong phòng đơn cao cấp của chúng tôi. Tận hưởng không gian rộng rãi và các tiện ích đẳng cấp, đảm bảo mang đến trải nghiệm đắm chìm trong sự xa hoa.</span>
-                        </p>
-                        <NavLink to="/services" className="xemthemtext text-decoration-none">Xem thêm &rarr;</NavLink>
-                    </div>
-                    <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
-                        <p>
-                            <img className='pb-4' src='images/doitieuchuan1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
-                            <h5 className="pb-2">Phòng Đôi Tiêu Chuẩn</h5>
-                            <span className="truncation-text">Dành cho các cặp đôi hoặc nhóm nhỏ, phòng đôi tiêu chuẩn của chúng tôi là nơi lý tưởng để thư giãn và tận hưởng kỳ nghỉ bên nhau. Không gian thoải mái và tiện ích đầy đủ sẽ làm hài lòng mọi du khách. </span>
+            <section className='container mt-4'>
+                <h3 align="center">Một số loại phòng trong khách sạn</h3>
+                <div className='mt-4'>
+                    {rooms.map((item, index) => {
+                        return (
+                            <FadeInEffect key={item.id}>
+                                <div className={`wrapperRoom mb-4 ${index % 2 === 0 ? '' : 'ms-auto'}`}>
+                                    <img alt="" src={item.image} style={{ width: "100%" }} />
+                                    <div className='p-3'>
+                                        <div>
+                                            <h5>{item.name}</h5>
+                                        </div>
+                                        <div className='row g-2 pb-3'>
+                                            <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>4.3</div>
+                                            <div className='col-auto' >Cực tốt</div>
+                                            <div className='col-auto spaceText' style={{ color: "gray" }}>220 đánh giá</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </FadeInEffect>
+                        )
 
-                        </p>
-                        <NavLink to="/services" className="xemthemtext text-decoration-none">Xem thêm &rarr;</NavLink>
+                    })}
 
-                    </div>
-                    <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
-                        <p>
-                            <img className='pb-4' src='images/doicaocap2.png' alt='' style={{ width: '100%', height: '100%' }}></img>
-                            <h5 className="pb-2">Phòng Đôi Cao Cấp</h5>
-                            <span className="truncation-text">Với không gian rộng rãi và trang thiết bị hiện đại, phòng đôi cao cấp là biểu tượng của sự sang trọng và tiện nghi. Hòa mình vào không gian lịch lãm và đẳng cấp, quý vị sẽ tận hưởng một kỳ nghỉ đáng nhớ.</span>
-                        </p>
-                        <NavLink to="/services" className="xemthemtext text-decoration-none">Xem thêm &rarr;</NavLink>
-                    </div>
-                    <div class="col-md-4 pe-5 px-5 pt-2 pb-4">
-                        <p>
-                            <img className='pb-4' src='images/gdtieuchuan1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
-                            <h5 className="pb-2">Phòng Gia Đình Tiêu Chuẩn</h5>
-                            <span className="truncation-text">Đối với các gia đình, phòng gia đình tiêu chuẩn là lựa chọn hoàn hảo. Với không gian rộng rãi và các tiện ích thuận tiện, phòng này sẽ tạo điều kiện lý tưởng cho mọi thành viên trong gia đình tận hưởng kỳ nghỉ.</span>
-                        </p>
-                        <NavLink to="/services" className="xemthemtext text-decoration-none">Xem thêm &rarr;</NavLink>
-                    </div>
-                    <div className="col-md-4 pe-5 px-5 pt-2 pb-4">
-                        <p>
-                            <img className='pb-4' src='images/gdcaocap1.png' alt='' style={{ width: '100%', height: '100%' }}></img>
-                            <h5 >Phòng Gia Đình Cao Cấp</h5>
-                            <span className="truncation-text">Sự thoải mái và sang trọng được đặt lên hàng đầu trong phòng gia đình cao cấp. Với không gian rộng lớn và các tiện ích đẳng cấp, quý vị sẽ có trải nghiệm lưu trú tuyệt vời bên người thân yêu của mình.</span>
-                        </p>
-                        <NavLink to="/services" className="xemthemtext text-decoration-none">Xem thêm &rarr;</NavLink>
-                    </div>
                 </div>
-                <h5 className="mt-2" align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h5>
+                <h4 align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
             </section>
 
-            <section className='pt-10 pb-5'>
-                <h3 align="center">Dịch vụ trong khách sạn</h3>
-                <div className='containerServices container mt-4'>
+            <section className='pt-10 mb-4 mt-4'>
+                <h3 align="center">Một số dịch vụ trong khách sạn</h3>
+                <div className='containerServices container mt-4 mb-4 d-none d-md-flex'>
                     {serviceList.map((item, index) => {
                         return (
                             <React.Fragment key={item.id}>
                                 <input key={index} type="checkbox" id={"c" + index} name="slideServices" checked={item.isChecked} onChange={() => updateServiceList(index, !item.isChecked)} />
-                                <label for={"c" + index} className='cardServices' style={{ backgroundImage: `url(${item.image})`, height: "50vh", justifyContent: 'center' }}>
+                                <label for={"c" + index} className='cardServices' style={{ backgroundImage: `url(${item.image})`, height: "60vh", justifyContent: 'center' }}>
                                     <div className='rowServices'>
                                         <div className='descriptionServices'>
-                                            <div class="frosted">
+                                            <div className="frosted">
                                                 <h3>{item.name}</h3>
                                             </div>
                                         </div>
@@ -274,10 +239,29 @@ const IntroductionPage = (props) => {
                             </React.Fragment>
                         )
                     })}
-
                 </div>
-                <h4 className="mt-4" align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
+                <div className='container d-block d-md-none'>
+                    <Slider {...settingsService} >
+                        {serviceList.map((item, index) => {
+                            return (
+                                <div className="container p-4" >
+                                    <div style={{ position: "relative", borderRadius: "2rem", overflow: "hidden", boxShadow: "1px 3px 9px 1px rgba(0, 0, 0, 0.8)" }}>
+                                        <img alt="" src={item.image} style={{ width: "100%" }} />
+                                        <div>
+                                            <div className="frosted textOnImage">
+                                                <h3>{item.name}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+
+                    </Slider>
+                </div>
+                <h4 align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
             </section >
+
 
             <section className='bg-light ps-5 pe-5 pb-3 pt-3 row g-0' style={{ color: "#a36300" }}>
                 <NavLink to="/contacts" className="text-decoration-none">
