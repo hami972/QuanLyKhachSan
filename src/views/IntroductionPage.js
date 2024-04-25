@@ -47,21 +47,38 @@ const IntroductionPage = (props) => {
         }
     ]
 
-    const serviceList = [
+    const [serviceList, setServiceList] = useState([
         {
             name: "Nhà Hàng",
-            image: "images/nhahang.png",
+            image: "/images/nhahang.png",
+            isChecked: true
         },
         {
             name: "Gym",
-            image: "images/gym.png",
+            image: "/images/gym.png",
+            isChecked: false
         },
         {
             name: "Hồ bơi",
-            image: "images/hoboi.png",
+            image: "/images/hoboi.png",
+            isChecked: false
         },
+        {
+            name: "Gym",
+            image: "/images/gym.png",
+            isChecked: false
+        }
+    ])
 
-    ]
+    const updateServiceList = (index) => {
+        const newServiceList = [...serviceList];
+        if (!newServiceList[index].isChecked) {
+            newServiceList.forEach((item, i) => {
+                item.isChecked = (i === index);
+            });
+            setServiceList(newServiceList);
+        }
+    }
     //custom setting for slider
     var settings = {
         dots: true,
@@ -237,24 +254,30 @@ const IntroductionPage = (props) => {
                 </div>
                 <h5 className="mt-2" align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h5>
             </section>
+
             <section className='pt-10 pb-5'>
                 <h3 align="center">Dịch vụ trong khách sạn</h3>
-                <div class="container-fluid mt-4 col-10" align="center">
-                    <Slider {...settingsService}>
-                        {serviceList.map((item, index) => {
-                            return (
-                                <div className="container mb-2" >
-                                    <div className="p-2">
-                                        <p className="center" style={{ fontSize: '30px' }}>{item.name}</p>
-                                        <img className="center" alt="" src={item.image} style={{ width: "70%" }} />
+                <div className='containerServices container mt-4'>
+                    {serviceList.map((item, index) => {
+                        return (
+                            <React.Fragment key={item.id}>
+                                <input key={index} type="checkbox" id={"c" + index} name="slideServices" checked={item.isChecked} onChange={() => updateServiceList(index, !item.isChecked)} />
+                                <label for={"c" + index} className='cardServices' style={{ backgroundImage: `url(${item.image})`, height: "50vh", justifyContent: 'center' }}>
+                                    <div className='rowServices'>
+                                        <div className='descriptionServices'>
+                                            <div class="frosted">
+                                                <h3>{item.name}</h3>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            )
-                        })}
+                                </label>
+                            </React.Fragment>
+                        )
+                    })}
 
-                    </Slider>
                 </div>
-            </section>
+                <h4 className="mt-4" align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
+            </section >
 
             <section className='bg-light ps-5 pe-5 pb-3 pt-3 row g-0' style={{ color: "#a36300" }}>
                 <NavLink to="/contacts" className="text-decoration-none">
