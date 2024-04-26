@@ -3,6 +3,7 @@ import './style.css'
 import ReactPaginate from 'react-paginate';
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
+import SlideInEffect from '../components/SlideInEffect';
 const ServicesPage = (props) => {
     //fake list services
     const pageToRef = useRef(null);
@@ -50,9 +51,9 @@ const ServicesPage = (props) => {
             price: "Có các gói theo yêu cầu, từ 1.000.000 đồng",
             description: "Cho thuê các phòng hội nghị, phòng hội thảo và cung cấp dịch vụ tổ chức tiệc cưới và sự kiện khác."
         },
-        
+
     ]
-    const doctorPerPage = 3;
+    const doctorPerPage = 4;
     const [startOffset, setStartOffset] = useState(0);
     const endOffset = startOffset + doctorPerPage;
     const currentDoctorList = serviceList.slice(startOffset, endOffset);
@@ -67,22 +68,24 @@ const ServicesPage = (props) => {
     return (
         <div>
             <TopNav />
-            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}><h3 align="center">Dịch vụ</h3></header>
+            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}><h3 align="center">Các dịch vụ</h3></header>
 
-            <section class="container mt-5 mb-5">
+            <section class="container mt-5" style={{ overflowX: "hidden" }}>
                 <div class="row" ref={pageToRef}>
                     {currentDoctorList.map((item, index) => {
                         return (
-                            <div class="row">
-                                <div className="col-md-4 mt-2">
-                                    <img alt="" src={item.image} style={{ width: "100%" }} />
+                            <SlideInEffect>
+                                <div class="row mb-lg-4 mb-md-3">
+                                    <div className="col-lg-5 col-md-6 left">
+                                        <img alt="" src={item.image} style={{ width: "100%" }} />
+                                    </div>
+                                    <div className="col-lg-7 col-md-6 align-self-center ps-3 right">
+                                        <div style={{ fontSize: "26px", fontWeight: "600" }}>{item.name}</div>
+                                        <p><h6 className='mt-1'>{item.price}</h6></p>
+                                        <p style={{ color: "#666" }}>{item.description}</p>
+                                    </div>
                                 </div>
-                                <div className="col-md-8 align-self-center px-3">
-                                    <p style={{ fontSize: "26px" }}>{item.name}</p>
-                                    <p><h6>{item.price}</h6></p>
-                                    <p style={{ color: "#666" }} className='mb-5'>{item.description}</p>
-                                </div>
-                            </div>
+                            </SlideInEffect>
                         )
                     })}
                     <ReactPaginate
@@ -109,7 +112,7 @@ const ServicesPage = (props) => {
                 </div>
 
             </section >
-            <Footer style={{ marginTop: 0 }} />
+            <Footer style={{ marginTop: "30px" }} />
         </div >
     );
 }

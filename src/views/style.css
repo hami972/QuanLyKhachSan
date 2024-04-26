@@ -834,30 +834,52 @@
     overflow: hidden
 }
 
-.fade-in-effect {
+.float-in-effect {
     opacity: 0;
     transform: translateY(20vh);
+    ;
     visibility: hidden;
-    transition: opacity 1200ms ease-out, transform 600ms ease-out,
+    transition: opacity 1200ms ease-out, transform 600ms ease-in,
         visibility 1200ms ease-out;
     will-change: opacity, transform, visibility;
 }
 
-.fade-in-effect.is-visible {
+.float-in-effect.is-visible {
     opacity: 1;
     transform: none;
     visibility: visible;
 }
 
-/*Custom zoom images*/
-.zoom-img {
-    width: 100%;
-    transition: all .3s ease-in-out;
+.slide-in-effect {}
+
+.slide-in-effect.is-visible>div>.left {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
 }
 
-.zoom-img:hover {
-    transform: scale(1.2, 1.2);
-    transform-origin: 0%;
+.slide-in-effect.is-visible>div>.right {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+}
+
+.slide-in-effect>div>.left {
+    opacity: 0;
+    transform: translateX(-30%);
+    visibility: hidden;
+    transition: opacity 1000ms ease-out, transform 500ms ease-in,
+        visibility 1000ms ease-out;
+    will-change: opacity, transform, visibility;
+}
+
+.slide-in-effect>div>.right {
+    opacity: 0;
+    transform: translateX(30%);
+    visibility: hidden;
+    transition: opacity 1000ms ease-out, transform 500ms ease-in,
+        visibility 1000ms ease-out;
+    will-change: opacity, transform, visibility;
 }
 
 .truncation-text {

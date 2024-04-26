@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
-import FadeInEffect from '../components/FadeInEffect';
+import FloatInEffect from '../components/FloatInEffect';
 const IntroductionPage = (props) => {
     //move to SignUp page
     const history = useHistory();
@@ -119,28 +119,6 @@ const IntroductionPage = (props) => {
         setNextImage(false);
     }
 
-    // Custom for float in and float out components
-    const observerOptions = {
-        root: null,
-        rootMargin: "0px",
-        threshold: 0.7
-    };
-
-    const observerCallback = (entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // fade in observed elements that are in view
-                entry.target.classList.replace('fadeOutEffect', 'fadeInEffect');
-            } else {
-                // fade out observed elements that are not in view
-                entry.target.classList.replace('fadeInEffect', 'fadeOutEffect');
-            }
-        });
-    }
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    const fadeElms = document.querySelectorAll('.fadeEffect');
-    fadeElms.forEach(el => observer.observe(el));
-
     // fake room list
     const rooms = [
         {
@@ -197,7 +175,7 @@ const IntroductionPage = (props) => {
                 <div className='mt-4'>
                     {rooms.map((item, index) => {
                         return (
-                            <FadeInEffect key={item.id}>
+                            <FloatInEffect key={item.id}>
                                 <div className={`wrapperRoom mb-4 ${index % 2 === 0 ? '' : 'ms-auto'}`}>
                                     <img alt="" src={item.image} style={{ width: "100%" }} />
                                     <div className='p-3'>
@@ -211,7 +189,7 @@ const IntroductionPage = (props) => {
                                         </div>
                                     </div>
                                 </div>
-                            </FadeInEffect>
+                            </FloatInEffect>
                         )
 
                     })}

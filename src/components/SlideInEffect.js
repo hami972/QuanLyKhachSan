@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-const FadeInEffect = (props) => {
+const SlideInEffect = (props) => {
     const [isVisible, setVisible] = useState(false);
     const domRef = useRef();
     useEffect(() => {
@@ -10,7 +10,7 @@ const FadeInEffect = (props) => {
     }, []);
     return (
         <div
-            className={`fade-in-effect ${isVisible ? 'is-visible' : ''}`}
+            className={`slide-in-effect ${isVisible ? 'is-visible' : ''}`}
             ref={domRef}
         >
             {props.children}
@@ -18,4 +18,4 @@ const FadeInEffect = (props) => {
     );
 }
 
-export default FadeInEffect
+export default SlideInEffect

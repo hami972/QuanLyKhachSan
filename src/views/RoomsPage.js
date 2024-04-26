@@ -30,7 +30,7 @@ const RoomsPage = (props) => {
     return (
         <div>
             <TopNav />
-            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}><h3 align="center">Các loại phòng tại khách sạn</h3></header>
+            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}><h3 align="center">Các loại phòng</h3></header>
             <section className="container mt-5 mb-5">
                 <div className="row">
                     <div className="col-md-5 text-center">
