@@ -170,6 +170,32 @@ const IntroductionPage = (props) => {
 
                 <button className="slick-next" onClick={clickNextImage}></button>
             </div>
+            <section className="">
+            <div style={{ backgroundColor: "#905700", padding: '50px', color: '#fff'}}>
+                    <div style={{ backgroundColor: "#905700", padding: '20px'}}>
+                        <h1> Đặt phòng ngay </h1>
+                    </div>
+                    <div className='form'>
+                        <form className='row'>
+                        <div className="col-2 mb-3">
+                    <       input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check in'/>
+                        </div>
+                        <div className="col-2 mb-3">
+                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check out'/>
+                        </div>
+                        <div className="col-2 mb-3">
+                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng người lớn'/>
+                        </div>
+                        <div className="col-2 mb-3">
+                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng trẻ em'/>
+                        </div>
+                        <div className="col-3 mb-3">
+                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold'}} type='submit' value='Xem phòng'/>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
             <section className='container mt-4'>
                 <h3 align="center">Một số loại phòng trong khách sạn</h3>
                 <div className='mt-4'>

@@ -11,7 +11,8 @@ import SignInPage from './views/SignInPage';
 import SignUpPage from './views/SignUpPage';
 import IntroductionPage from './views/IntroductionPage'
 import Manager from './views/Manager'
-
+import RoomDetail from './views/RoomDetail.js';
+import ThanhToan from './views/ThanhToan.js';
 import ServicesPage from './views/ServicesPage';
 import ContactPage from './views/ContactPage';
 import ForgetPassword from './views/ForgetPassword';
@@ -22,7 +23,11 @@ import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 import BaoCao from './views/BaoCao.js'
 
 function App() {
-
+  const rooms = [
+    { id: 'room1', name: 'Phòng 1', image: '/images/doncaocap1.png', description: 'Mô tả phòng 1', cost: '300000' },
+    { id: 'room2', name: 'Phòng 2', image: '/images/gdcaocap1.png', description: 'Mô tả phòng 2', cost: '300000' },
+    // Thêm các phòng khác nếu cần
+  ];
   return (
 
     <ThemeContextProvider>
@@ -31,8 +36,16 @@ function App() {
           <ButtonScrollToTop />
           <ScrollToTop />
           <Switch>
-            <Route path="/rooms">
-              <RoomsPage />
+            <Route path="/rooms" exact>
+              <RoomsPage rooms={rooms} />
+            </Route>
+
+            <Route path="/rooms/:roomId">
+              <RoomDetail rooms={rooms} />
+            </Route>
+
+            <Route path="/thanhtoan">
+              <ThanhToan/>
             </Route>
             <Route path="/services">
               <ServicesPage />
