@@ -15,20 +15,20 @@ const QuanLyNhanVien = (props) => {
       <div className="container mt-3">
         <ul className="nav nav-tabs">
           <li className="nav-item" >
-            <NavLink className="nav-link fontBrown" to="/manager/staff/xemthongtinnhanvien">Xem thông tin nhân viên</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlynhanvien/xemthongtinnhanvien">Xem thông tin nhân viên</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/staff/xembangluong">Xem bảng lương</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlynhanvien/xembangluong">Xem bảng lương</NavLink>
           </li>
 
         </ul> 
       </div>
       <div className="container mt-3" >
         <Switch>
-          <Route path="/manager/staff/xembangluong">
+          <Route path="/manager/quanlynhanvien/xembangluong">
             <XemBangLuong />
           </Route>
-          <Route path="/manager/staff/xemthongtinnhanvien">
+          <Route path="/manager/quanlynhanvien/xemthongtinnhanvien">
             <XemThongTinNhanVien />
           </Route>
         </Switch>

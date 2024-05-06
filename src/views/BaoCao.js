@@ -13,33 +13,31 @@ const BaoCao = (props) => {
         <p><b>Xem báo cáo theo:</b></p>
         <ul className="nav nav-tabs">
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheothoigian">Thời gian</NavLink>
+            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheothoigian">Thời gian</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheophong">Phòng</NavLink>
+            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheophong">Phòng</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochinhanh">Chi nhánh</NavLink>
+            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheochinhanh">Chi nhánh</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochiphiphongkham">Chi phí khách sạn</NavLink>
+            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheochiphiphongkham">Chi phí khách sạn</NavLink>
           </li>
         </ul>
       </div>
       <div className="container mt-3">
         <Switch>
-          <Route path="/manager/baocao/baocaotheothoigian">
+          <Route path="/baocao/baocaotheothoigian">
             <XemBaoCaoTheoThoiGian />
           </Route>
-          <Route path="/manager/baocao/baocaotheophong">
+          <Route path="/baocao/baocaotheophong">
             <XemBaoCaoTheoPhong />
           </Route>
-          <Route path="/manager/baocao/baocaotheochinhanh">
-
-            <XemBaoCaoTheoChiNhanh />
-
+          <Route path="/baocao/baocaotheochinhanh">
+            <XemBaoCaoTheoChiNhanh /> 
           </Route>
-          <Route path="/manager/baocao/baocaotheochiphikhachsan">
+          <Route path="/baocao/baocaotheochiphikhachsan">
             <XemBaoCaoTheoCPKS />
           </Route>
         </Switch>

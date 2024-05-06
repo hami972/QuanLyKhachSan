@@ -2,7 +2,6 @@ import React from 'react'
 import './mistyles.css'
 import QuanLyKhoChuaSuDung from './QuanLyKhoChuaSuDung';
 import QuanLyKhoDaSuDung from './QuanLyKhoDaSuDung';
-
 import { useLocation, Redirect, Route, Switch } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import QuanLyKhoDangSuDung from './QuanLyKhoDangSuDung';
@@ -35,7 +34,7 @@ const QuanLyKho = (props) => {
             <QuanLyKhoDangSuDung/>
           </Route>
           {pathname === "/manager/quanlykho" ? (
-            <Redirect to="/manager/quanlykho/trangthietbi" />
+            <Redirect to="/manager/quanlykho/chuasudung" />
           ) : null}
         </Switch>
       </div>

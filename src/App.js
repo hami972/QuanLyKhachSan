@@ -19,8 +19,8 @@ import ForgetPassword from './views/ForgetPassword';
 import { ThemeContextProvider } from "./context/ThemeContext";
 import ThemeProvider from "./hook/ThemeProvider";
 import ButtonScrollToTop from './components/ButtonScrollToTop.js';
-
-import BaoCao from './views/BaoCao.js'
+import { AuthProvider } from './hook/AuthProvider.js';
+import RoomManage from './views/RoomManage.js';
 
 function App() {
   const rooms = [
@@ -29,7 +29,7 @@ function App() {
     // Thêm các phòng khác nếu cần
   ];
   return (
-
+    <AuthProvider>
     <ThemeContextProvider>
       <ThemeProvider>
         <Router>
@@ -39,11 +39,9 @@ function App() {
             <Route path="/rooms" exact>
               <RoomsPage rooms={rooms} />
             </Route>
-
             <Route path="/rooms/:roomId">
               <RoomDetail rooms={rooms} />
             </Route>
-
             <Route path="/thanhtoan">
               <ThanhToan/>
             </Route>
@@ -53,32 +51,32 @@ function App() {
             <Route path="/contacts">
               <ContactPage />
             </Route>
-
             <Route path="/sign_in">
               <SignInPage />
             </Route>
             <Route path="/sign_up">
               <SignUpPage />
             </Route>
-            <Route path="/forgetpassword">
-              <ForgetPassword />
-            </Route>
             <Route path="/manager">
               <Manager />
             </Route>
-            <Route path="/manager/baocao">
-              <Manager />
+            <Route path="/forgetpassword">
+              <ForgetPassword />
             </Route>
-
+            
+            {/* <Route path='/datphong'>
+              <RoomManage/>
+            </Route> */}
             <Route path="/" exact>
               <IntroductionPage />
             </Route>
-
+            
           </Switch>
         </Router >
       </ThemeProvider>
 
     </ThemeContextProvider>
+    </AuthProvider>
   );
 }
 

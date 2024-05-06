@@ -8,6 +8,9 @@ import QuanLyNhanVien from '../views/QuanLyNhanVien'
 import QuanLyChiNhanh from './QuanLyChiNhanh';
 import QuanLyMaGiamGia from './QuanLyMaGiamGia';
 import QuanLyDanhGia from './QuanLyDanhGia';
+import QuanLyKho from './QuanLyKho';
+import RoomManage from './RoomManage';
+import BaoCao from './BaoCao';
 const Manager = (props) => {
     const { pathname } = useLocation();
     return (
@@ -18,19 +21,19 @@ const Manager = (props) => {
                     <div className="col py-3" style={{ overflowX: "auto", minHeight: "400px" }}>
                         <Route >
                             <Switch>
-                                <Route path="/manager/schedule">
-
+                                <Route path="/manager/datphong">
+                                    <RoomManage/>
                                 </Route>
-                                <Route path="/manager/staff">
+                                <Route path="/manager/quanlynhanvien">
                                     <QuanLyNhanVien />
                                 </Route>
                                 <Route path="/manager/baocao">
-
+                                    <BaoCao/>
                                 </Route>
                                 <Route path="/manager/quanlyhoadon">
-                                </Route>
+                                </Route> 
                                 <Route path="/manager/quanlykho">
-
+                                    <QuanLyKho/>
                                 </Route>
                                 <Route path="/manager/quanlydichvu">
 
