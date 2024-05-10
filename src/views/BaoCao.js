@@ -13,31 +13,31 @@ const BaoCao = (props) => {
         <p><b>Xem báo cáo theo:</b></p>
         <ul className="nav nav-tabs">
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheothoigian">Thời gian</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheothoigian">Thời gian</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheophong">Phòng</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheophong">Phòng</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheochinhanh">Chi nhánh</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochinhanh">Chi nhánh</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/baocao/baocaotheochiphiphongkham">Chi phí khách sạn</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochiphiphongkham">Chi phí khách sạn</NavLink>
           </li>
         </ul>
       </div>
       <div className="container mt-3">
         <Switch>
-          <Route path="/baocao/baocaotheothoigian">
+          <Route path="/manager/baocao/baocaotheothoigian">
             <XemBaoCaoTheoThoiGian />
           </Route>
-          <Route path="/baocao/baocaotheophong">
+          <Route path="/manager/baocao/baocaotheophong">
             <XemBaoCaoTheoPhong />
           </Route>
-          <Route path="/baocao/baocaotheochinhanh">
+          <Route path="/manager/baocao/baocaotheochinhanh">
             <XemBaoCaoTheoChiNhanh /> 
           </Route>
-          <Route path="/baocao/baocaotheochiphikhachsan">
+          <Route path="/manager/baocao/baocaotheochiphikhachsan">
             <XemBaoCaoTheoCPKS />
           </Route>
         </Switch>

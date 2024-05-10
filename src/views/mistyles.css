@@ -480,3 +480,28 @@ img {
 .bgLineMenu {
   background-color: #D3A55E !important;
 }
+
+.empty {
+  background-color: #4c683f; /* green */
+}
+
+.occupied {
+  background-color: #2596be; /* blue */
+}
+
+.deposit {
+  background-color: #878500; /* yellow */
+}
+
+.check-out-due {
+  background-color: #af2c4e; /* red */
+}
+
+.check-in-soon {
+  background-color: #e28743; /* orange */
+}
+
+.room-container {
+  padding: 10px;
+  margin: 5px;
+}

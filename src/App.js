@@ -21,6 +21,7 @@ import ThemeProvider from "./hook/ThemeProvider";
 import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 import { AuthProvider } from './hook/AuthProvider.js';
 import RoomManage from './views/RoomManage.js';
+import HoSoCaNhan from './views/HoSoCaNhan.js';
 
 function App() {
   const rooms = [
@@ -63,10 +64,10 @@ function App() {
             <Route path="/forgetpassword">
               <ForgetPassword />
             </Route>
+            <Route path="/hosocanhan">
+              <HoSoCaNhan />
+            </Route>
             
-            {/* <Route path='/datphong'>
-              <RoomManage/>
-            </Route> */}
             <Route path="/" exact>
               <IntroductionPage />
             </Route>

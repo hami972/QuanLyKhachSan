@@ -53,7 +53,6 @@ const nav2_1 = [
 const nav2_2 = [
     { path: '/baocao', srcImg: '/images/xembaocao_48px.png', name: 'Báo cáo, thống kê' },
     { path: '/quanlykho', srcImg: '/images/qlykho_48px.png', name: 'Quản lý kho' },
-    { path: '/quanlynhanvien', srcImg: '/images/qlynhanvien_48px.png', name: 'Quản lý nhân viên' },
     { path: '/quanlydanhgia', srcImg: '/images/tiepnhandanhgia_48px.png', name: 'Quản lý đánh giá' },
     { path: '/quanlymagiamgia', srcImg: '/images/giamgia_48px.png', name: 'Quản lý mã giảm giá' },
     { path: '/quanlychinhanh', srcImg: '/images/qlychinhanh_48px.png', name: 'Quản lý chi nhánh' },

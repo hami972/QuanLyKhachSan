@@ -63,6 +63,7 @@ const TopNav = () => {
                             <li className="nav-item ps-2 pe-2">
                                 <NavLink className="nav-link" to="/contacts">Liên lạc</NavLink>
                             </li>
+                            
                             {user !== null && (<li className="dropdown ps-2 pe-2">
                                 <button
                                     className="d-flex align-items-center justify-content-center text-decoration-none dropdown-toggle mt-2 p-0"
@@ -113,16 +114,16 @@ const TopNav = () => {
                                     Tài khoản
                                 </button>  
                                 <ul className="dropdown-menu border-0" aria-labelledby="navbarDropdown" style={{ background: "#905700" }}>            
-                                    <li className="nav-item col-lg-auto col-md-4 m-lg-auto">
-                                        <div className="nav-item me-sm-4">
-                                        <NavLink className="nav-link" to="/sign_in">
+                                    <li >
+                                        <div >
+                                        <NavLink className="dropdown-item" to="/sign_in">
                                             Đăng nhập
                                         </NavLink>
                                         </div>
                                     </li>
                                     <li>
-                                        <div className="nav-item col-auto">
-                                        <NavLink className="nav-link" to="/sign_up">
+                                        <div >
+                                        <NavLink className="dropdown-item" to="/sign_up">
                                             Đăng ký
                                         </NavLink>
                                         </div>
@@ -150,10 +151,10 @@ const TopNav = () => {
                                 </button>
                                 <ul
                                     className="dropdown-menu dropdown-menu-dark text-small shadow"
-                                    style={{ backgroundColor: "#007cd4", width: "fit-content" }}
+                                    style={{ backgroundColor: "#905700", width: "fit-content" }}
                                     aria-labelledby="dropdownUser1">
                                     <li>
-                                    <Link className="dropdown-item" to="/profile">
+                                    <Link className="dropdown-item" to="/hosocanhan">
                                         Hồ sơ cá nhân
                                     </Link>
                                     </li>
