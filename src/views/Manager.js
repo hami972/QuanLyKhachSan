@@ -11,6 +11,8 @@ import QuanLyDanhGia from './QuanLyDanhGia';
 import QuanLyKho from './QuanLyKho';
 import RoomManage from './RoomManage';
 import BaoCao from './BaoCao';
+import QuanLyLoaiPhong from './QuanLyLoaiPhong';
+import BillManagement from './BillManagement';
 const Manager = (props) => {
     const { pathname } = useLocation();
     return (
@@ -31,9 +33,13 @@ const Manager = (props) => {
                                     <BaoCao/>
                                 </Route>
                                 <Route path="/manager/quanlyhoadon">
+                                    <BillManagement/>
                                 </Route> 
                                 <Route path="/manager/quanlykho">
                                     <QuanLyKho/>
+                                </Route>
+                                <Route path="/manager/quanlyloaiphong">
+                                    <QuanLyLoaiPhong/>
                                 </Route>
                                 <Route path="/manager/quanlydichvu">
 

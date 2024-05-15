@@ -245,7 +245,7 @@ const updateUser = async (userData) => {
       return [];
     }
   };
-  const getAllDiscounts = async () => {
+  const getAllDiscounts = async () => { 
     try {
       const response = await client.get("/DiscountManagement/getDiscounts");
       if (response.data.success) {
@@ -299,6 +299,194 @@ const updateUser = async (userData) => {
       return [];
     }
   };
+  const getAllBills = async () => {
+    try {
+      const response = await client.get("/BillManagement/getBills");
+      if (response.data.success) {
+        return response.data.bills;
+      } else {
+        console.log("not get bills");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addBill = async (data) => {
+    const endpoint = "/BillManagement/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateBill = async (data, id) => {
+    const endpoint = "/BillManagement/update/" + id;
+    try {
+      await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const deleteBill = async (id) => {
+    try {
+      await client.delete("/BillManagement/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const getBillsBySearch = async (searchCriteria) => {
+    try {
+      const queryParams = new URLSearchParams(searchCriteria).toString();
+      const response = await client.get(`/BillManagement/Bills?${queryParams}`);
+  
+      if (response.data.success) {
+        return response.data.bills;
+      } else {
+        console.log("not get bills");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const getHSDT = async (id) => {
+    try {
+      const response = await client.get("/PatientManagement/getHSDT/" + id);
+      if (response.data.success) {
+        return response.data.HSDT;
+      } else {
+        console.log("not get HSDT");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return {};
+    }
+  };
+  // router.post('/PatientManagement/chitietHSDT/add', addchitietHSDT);
+  // router.put('/PatientManagement/chitietHSDT/update/:Id', updateCTHSDT);
+  const addCTHSDT = async (data) => {
+    const endpoint = "/PatientManagement/chitietHSDT/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return { id: response.data.docId, image: response.data.image };
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateCTHSDT = async (data, id) => {
+    const endpoint = "/PatientManagement/chitietHSDT/update/" + id;
+    try {
+      const response = await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  // router.get('/PatientManagement/getCTHSDT/:HSId', getCTHSDT);
+  const getListCTHSDT = async (id) => {
+    try {
+      const response = await client.get("/PatientManagement/getCTHSDT/" + id);
+      if (response.data.success) {
+        return response.data.cthsdt;
+      } else {
+        console.log("not get list CTHSDT");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const getTreatmentRecordDetailById = async (id) => {
+    try {
+      const response = await client.get(
+        "/TreatmentRecordDetailManagement/getTreatmentRecordDetailById/" + id
+      );
+      if (response.data.success) {
+        console.log(response.data.cthsdtById);
+        return response.data.cthsdtById;
+      } else {
+        console.log("not get treatment record detail");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const getAllKindOfRoom = async () => {
+    try {
+      const response = await client.get("/KindOfRoom/getKindOfRoom");
+      if (response.data.success) {
+        return response.data.kindOfRoom;
+      } else {
+        console.log("not get king of room");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addKindOfRoom = async (data) => {
+    const endpoint = "/KindOfRoom/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateKindOfRoom = async (data, id) => {
+    const endpoint = "/KindOfRoom/update/" + id;
+    try {
+      await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const deleteKindOfRoom = async (id) => {
+    try {
+      await client.delete("/KindOfRoom/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const getAllFloors = async () => {
+    try {
+      const response = await client.get("/Floor/getFloors");
+      if (response.data.success) {
+        return response.data.tang;
+      } else {
+        console.log("not get floor");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addFloor = async (data) => {
+    const endpoint = "/Floor/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateFloor = async (data, id) => {
+    const endpoint = "/Floor/update/" + id;
+    try {
+      await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const deleteFloor = async (id) => {
+    try {
+      await client.delete("/Floor/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
   export default {
     getAllDiscounts,
     addDiscount,
@@ -326,4 +514,22 @@ const updateUser = async (userData) => {
     getDoc,
     getDocByField,
     getDocsBySeacrh,
-    findAccountofStaff,    };
+    findAccountofStaff,
+    getAllBills,
+    addBill,
+    updateBill,
+    getBillsBySearch,
+    getTreatmentRecordDetailById,
+    getHSDT,
+    addCTHSDT,
+    updateCTHSDT,
+    getListCTHSDT,
+    getAllKindOfRoom,
+    addKindOfRoom,
+    updateKindOfRoom,
+    deleteKindOfRoom,
+    getAllFloors,
+    addFloor,
+    updateFloor,
+    deleteFloor,
+  };

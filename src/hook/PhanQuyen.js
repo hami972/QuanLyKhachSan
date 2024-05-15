@@ -57,6 +57,7 @@ const nav2_2 = [
     { path: '/quanlymagiamgia', srcImg: '/images/giamgia_48px.png', name: 'Quản lý mã giảm giá' },
     { path: '/quanlychinhanh', srcImg: '/images/qlychinhanh_48px.png', name: 'Quản lý chi nhánh' },
     { path: '/quanlydichvu', srcImg: '/images/qlydichvu_48px.png', name: 'Quản lý dịch vụ' },
+    { path: '/quanlyloaiphong', srcImg: '/images/qlydichvu_48px.png', name: 'Quản lý loại phòng' },
 ]
 
 //Tiếp tân 4 tab đầu
