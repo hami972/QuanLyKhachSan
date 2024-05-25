@@ -31,7 +31,6 @@ const Room = ({ room, onCheckIn, onCheckOut, onDeposit }) => {
       break;
     case RoomStatus.CHECK_IN_SOON:
       button = <button className='btn pb-2 pt-2 mt-3 mb-3 me-3' style={{backgroundColor: '#fff'}} onClick={() => onCheckIn(room)}>Check In</button>;
-      
       break;
     default:
       button = null;
@@ -43,7 +42,10 @@ const Room = ({ room, onCheckIn, onCheckOut, onDeposit }) => {
     borderTopLeftRadius: '25px',
     borderBottomWidth: 'thin', }}>
       <p style={{color: '#fff', fontSize: '30px'}}>Phòng {room.id}</p> 
-      <p style={{color: '#fff', fontSize: '24px'}}>Trạng thái phòng: <b>{room.status.label} </b>  </p>
+      <p style={{color: '#fff', fontSize: '24px'}}>Trạng thái phòng: <b>{room.status.label} </b>
+      Họ tên khách hàng: {room.tenKhachHang}
+      
+      </p>
       {button}
     </div>
   );
@@ -65,60 +67,69 @@ const Floor = ({ floor, rooms, onCheckIn, onCheckOut, onDeposit }) => {
 const RoomManage = (props) => {
   const [selectedFloor, setSelectedFloor] = useState("");
   const [rooms, setRooms] = useState(roomsData);
-
+  const [bookedRoom, setBookedRoom]= useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [tang, setTang] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [searchCriteria, setSearchCriteria] = useState({
-    maLoaiPhong: '',
-    ten: '',
-    donGia: '',
-    soLuongNguoiToiDa: '',
-    viewPhong: '',
-    coSoVatChat: [],
-})
+    startDate: moment().format('YYYY-MM-DD'),
+    endDate: moment().add(1, 'days').format('YYYY-MM-DD'),
+});
   useEffect(() => {
     getAllFloors();
+    getAllBookedRoom();
   }, []);
 
-  useEffect(() => {
-    // Tạo các roomsData từ tang
-    const roomsDataFromTang = tang.flatMap((row, index) => {
-      const ids = row.tenPhong.split('-'); // Tách chuỗi thành các id
-      return ids.map((id, roomId) => ({
-        id: `${index + 1}-${roomId + 1}`,  // Mã phòng có thể được định dạng như "tầng-số phòng"
-        status: RoomStatus.EMPTY,
-        thoigianbatdau: moment().format('DD/MM/YYYY'),
-        thoigianketthuc: moment().add(1, 'days').format('DD/MM/YYYY')
-      }));
-    });
-    setRooms(roomsDataFromTang);
-  }, [tang]);
-
-  const createRoomsData = (input) => {
+  const createRoomsData = (input, bookedRoom) => {
     const ids = input.split('-');  // Tách chuỗi đầu vào thành mảng các id
-    const today = moment().format('DD/MM/YYYY');  // Ngày hôm nay theo định dạng 'DD/MM/YYYY'
-    const tomorrow = moment().add(1, 'days').format('DD/MM/YYYY');  // Ngày mai theo định dạng 'DD/MM/YYYY'
+    const today = searchCriteria.startDate;  // Ngày hôm nay theo định dạng 'DD-MM-YYYY'
+    const tomorrow = searchCriteria.endDate;  // Ngày mai theo định dạng 'DD-MM-YYYY'
   
     const roomsData = ids.map(id => ({
-      id: parseInt(id, 10),  // Chuyển đổi id từ chuỗi sang số nguyên
+      id: id, 
       status: RoomStatus.EMPTY,  // Trạng thái mặc định là EMPTY
-      thoigianbatdau: today,  // Ngày bắt đầu là hôm nay
-      thoigianketthuc: tomorrow  // Ngày kết thúc là ngày mai
+      ngayBatDau: today,  // Ngày bắt đầu là hôm nay mặc định or ngày đươc chọn
+      ngayKetThuc: tomorrow,  // Ngày kết thúc là ngày mai 
+      tenKhachHang: "",
+      mail: "",
+      CCCD: "",
+      soDienThoai: "",
     }));
-    return roomsData;
+    
+    const updatedRooms = roomsData.map(room => {
+      const booking = bookedRoom.find(booked => booked.tenPhong === room.id);
+      if (booking) {
+        const now = moment();
+        const checkInTime = moment(booking.ngayBatDau).set({ hour: 12, minute: 0, second: 0 });
+        const checkOutTime = moment(booking.ngayKetThuc);
+
+        if (now.isAfter(checkInTime) && now.isBefore(checkOutTime)) {
+          return { ...room, status: RoomStatus.OCCUPIED, ngayBatDau: booking.ngayBatDau, ngayKetThuc: booking.ngayKetThuc, tenKhachHang: booking.tenKhachHang, CCCD: booking.CCCD, soDienThoai: booking.soDienThoai, mail: booking.mail };
+        } else if (now.isBefore(checkInTime)) {
+          return { ...room, status: RoomStatus.DEPOSIT, ngayBatDau: booking.ngayBatDau, ngayKetThuc: booking.ngayKetThuc, tenKhachHang: booking.tenKhachHang, CCCD: booking.CCCD, soDienThoai: booking.soDienThoai, mail: booking.mail };
+        } else if (now.isSame(moment(booking.ngayBatDau), 'day') && now.isBefore(checkInTime)) {
+          return { ...room, status: RoomStatus.CHECK_IN_SOON, ngayBatDau: booking.ngayBatDau, ngayKetThuc: booking.ngayKetThuc, tenKhachHang: booking.tenKhachHang, CCCD: booking.CCCD, soDienThoai: booking.soDienThoai, mail: booking.mail };
+        }
+      }
+    return { ...room, status: RoomStatus.EMPTY, ngayBatDau: today, ngayKetThuc: tomorrow };
+    });
+
+    return updatedRooms;
   };
 
   const handleFloorClick = (row) => {
     setSelectedFloor(row.tenTang);
-    setRooms(createRoomsData(row.tenPhong));
+    setRooms(createRoomsData(row.tenPhong,bookedRoom));
   };
 
   const getAllFloors = async () => {
     const tang = await api.getAllFloors();
     setTang(tang);
   }
-  
+  const getAllBookedRoom = async () => {
+    const bookedRoom = await api.getAllBookedRoom();
+    setBookedRoom(bookedRoom);
+  }
   const handleDeleteRow = (targetIndex) => {
     const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa tầng này không?');
     if (shouldDelete) {
@@ -150,13 +161,23 @@ const RoomManage = (props) => {
   };
 
   const handleChange = (e) => {
-      setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === 'startDate') {
+      setSearchCriteria({
+        ...searchCriteria,
+        startDate: value,
+        endDate: moment(value).add(1, 'days').format('YYYY-MM-DD'),
+      });
+    } else if (name === 'endDate') {
+      setSearchCriteria({
+        ...searchCriteria,
+        endDate: value,
+      });
+    }
+    
   };
 
-  const onSearch = async () => {
-      console.log(searchCriteria)
-
-  }
   const handleCheckIn = room => {
     // Logic to handle check in
     console.log(`Checked in room ${room.id}`);
@@ -177,37 +198,56 @@ const RoomManage = (props) => {
     const updatedRooms = rooms.map(r => (r.id === room.id ? { ...r, status: RoomStatus.DEPOSIT } : r));
     setRooms(updatedRooms);
   };
-  
+  // const onSearch = () => {
+  // const { startDate } = searchCriteria;
+  // const endDate = moment(startDate).add(1, 'days').format('YYYY-MM-DD');
+
+  // const filteredBookedRooms = bookedRoom.filter(room =>
+  //   moment(room.ngayBatDau).isSameOrBefore(startDate) && moment(room.ngayKetThuc).isSameOrAfter(startDate)
+  // );
+
+  // const updatedRooms = rooms.map(room => {
+  //   const booking = filteredBookedRooms.find(booked => booked.tenPhong === room.id);
+  //   if (booking) {
+  //     const now = moment();
+  //     const checkInTime = moment(booking.ngayBatDau).set({ hour: 12, minute: 0, second: 0 });
+  //     const checkOutTime = moment(booking.ngayKetThuc);
+
+  //     if (now.isAfter(checkInTime) && now.isBefore(checkOutTime)) {
+  //       return { ...room, status: RoomStatus.OCCUPIED, ngayBatDau: booking.ngayBatDau, ngayKetThuc: booking.ngayKetThuc };
+  //     } else if (now.isBefore(checkInTime)) {
+  //       return { ...room, status: RoomStatus.DEPOSIT, ngayBatDau: booking.ngayBatDau, ngayKetThuc: booking.ngayKetThuc };
+  //     } else if (now.isSame(moment(booking.ngayBatDau), 'day') && now.isBefore(checkInTime)) {
+  //       return { ...room, status: RoomStatus.CHECK_IN_SOON, ngayBatDau: booking.ngayBatDau, ngayKetThuc: booking.ngayKetThuc };
+  //     }
+  //   }
+  //   return { ...room, status: RoomStatus.EMPTY, ngayBatDau: startDate, ngayKetThuc: endDate };
+  // });
+
+  // setRooms(updatedRooms);
+  // };
   return (
     <div>
       <div className="row">
         <div className="col-lg-4 col-md-6">
-          <div className="mb-2"><b>Thời gian bắt đầu</b></div>
+          <div className="mb-2"><b>Thời gian</b></div>
           <input
             className="form-control pb-2 pt-2 mb-2"
             type="date"
-            name="TGBatDau"
-            id="TGBatDau"
-            //onChange={}
+            name="startDate"
+            value={searchCriteria.startDate}
+            onChange={handleChange}
+            min={moment().format('YYYY-MM-DD')}
           />
         </div>
-        <div className="col-lg-4 col-md-6">
-          <div className="mb-2"><b>Thời gian kết thúc</b></div>
-          <input
-            className="form-control pb-2 pt-2 mb-2"
-            type="date"
-            name="TGKetThuc"
-            id="TGKetThuc"
-            //onChange={}
-          />
-        </div>
+      
         <div className="text-end">
-          <button
-            //onClick={}
+          {/* <button
+            onClick={onSearch()}
             className="btn pb-2 pt-2 mt-3 mb-3 me-3"
             style={{ backgroundColor: "#905700", color: "#FFFFFF" }}>
             Tìm kiếm
-          </button>
+          </button> */}
           <button
             onClick={() => setModalOpen(true)}
             className="btn pb-2 pt-2 mt-3 mb-3 me-3"

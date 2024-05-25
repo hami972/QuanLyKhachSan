@@ -39,23 +39,10 @@ export const AuthProvider = ({ children }) => {
       // console.log(userData)
       setUser(userData)
       if (userData.Loai === 'KhachHang') {
-        // if (userData.CCCD !== "") {
-        //   const patients = await api.getPatientsBySeacrh({
-        //     maBenhNhan: "",
-        //     tenBenhNhan: "",
-        //     CCCD: userData.CCCD,
-        //     soDienThoai: ""
-        //   })
-        //   if (patients.length > 0) {
-        //     setScope(nav.nav1)
-        //   }
-        //   else setScope(nav.nav0)
-        // }
-        // else setScope(nav.nav0)
-
+        setScope(nav.nav2_4)
+        setScopeQL(nav.nav2_4)
       }
       else {
-        //setScope(nav.nav2)
         if (userData.Loai === 'Quản lý') {
           setScope(nav.nav2_1)
           setScopeQL(nav.nav2_1)
@@ -69,7 +56,6 @@ export const AuthProvider = ({ children }) => {
           setScope(nav.nav2_2)
           setScopeQL(nav.nav2_2)
         }
-        
       }
     }
   };
@@ -130,7 +116,78 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         Login,
-        forgotPassword,
+        forgotPassword: async (email) => {
+          //   await auth()
+          //     .sendPasswordResetEmail(email)
+          //     .then(() => {
+          //       alert("Password reset email sent, please check your email!");
+          //     })
+          //     .catch((e) => {
+          //       console.log("error: ", e);
+          //     });
+          sendPasswordResetEmail(auth, email)
+            .then(() => {
+              // Thành công, có thể thông báo cho người dùng về việc gửi email đặt lại mật khẩu
+              handleShowDialog("Đã gửi email đặt lại mật khẩu! Vui lòng kiểm tra email của bạn.")
+              console.log("Đã gửi email đặt lại mật khẩu.");
+            })
+            .catch((error) => {
+              // Xử lý lỗi nếu có
+              console.error("Lỗi khi gửi email đặt lại mật khẩu: ", error);
+            });
+        },
+
+        registerforKH: async (email, password, name, phone, identify, birthday, address) => {
+          try {
+            //   await auth().createUserWithEmailAndPassword(email, password)
+            //   .then(() => {
+            //     getFcmToken();
+
+            //     const userData = {
+            //       id: auth().currentUser.uid,
+            //       name: name,
+            //       email: auth().currentUser.email,
+            //       userImg: auth().currentUser.photoURL,
+            //     }
+            //     Api.setUserInfo(userData)
+            //     .catch(error => console.error(error));
+
+            //     auth().currentUser.updateProfile({
+            //       displayName: name,
+            //     })
+            //     .catch((error) => {
+            //       console.log('Error updating displayName:', error);
+            //     });
+            //   });
+            createUserWithEmailAndPassword(auth, email, password)
+              .then((userCredential) => {
+                // Signed up
+                const user = userCredential.user;
+                console.log(user)
+                const userData = {
+                  id: auth.currentUser.uid,
+                  ten: name,
+                  email: auth.currentUser.email,
+                  diachi: address,
+                  tuoi: birthday,
+                  CCCD: identify,
+                  SDT: phone,
+                  Loai: 'KhachHang'
+                }
+                Api.setUserInfo(userData)
+                  .catch(error => console.error(error));
+                handleShowDialog("Đăng ký tài khoản thành công!")
+                // ...
+              })
+              .catch((error) => {
+                console.log("Error sign up", error);
+                // ..
+              });
+          } catch (e) {
+            console.log(e);
+            alert(e);
+          }
+        },
         // Các hàm khác của bạn ở đây...
         Logout: async (history) => {
           try {

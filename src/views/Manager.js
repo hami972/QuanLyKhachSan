@@ -13,6 +13,7 @@ import RoomManage from './RoomManage';
 import BaoCao from './BaoCao';
 import QuanLyLoaiPhong from './QuanLyLoaiPhong';
 import BillManagement from './BillManagement';
+import BookingHistory from './BookingHistory';
 const Manager = (props) => {
     const { pathname } = useLocation();
     return (
@@ -52,6 +53,9 @@ const Manager = (props) => {
                                 </Route>
                                 <Route path="/manager/quanlydanhgia">
                                     <QuanLyDanhGia />
+                                </Route>
+                                <Route path="/manager/lichsudatphong">
+                                    <BookingHistory/>
                                 </Route>
                             </Switch>
                         </Route>

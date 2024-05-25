@@ -67,6 +67,9 @@ const nav2_3 = [
     { path: '/quanlyhoadon', name: 'Quản lý hóa đơn' },
     { path: '/quanlydichvu', name: 'Quản lý dịch vụ' },
 ]
+const nav2_4 = [
+    { path: '/lichsudatphong', name: 'Lịch sử đặt phòng' },
+]
 
 
-export default { nav0, nav1, nav2, nav2_1, nav2_2, nav2_3 }
+export default { nav0, nav1, nav2, nav2_1, nav2_2, nav2_3, nav2_4 }

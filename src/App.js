@@ -22,13 +22,25 @@ import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 import { AuthProvider } from './hook/AuthProvider.js';
 import RoomManage from './views/RoomManage.js';
 import HoSoCaNhan from './views/HoSoCaNhan.js';
-
+import { useState, useEffect } from 'react';
+import api from '../src/api/Api.js';
+import BookingHistory from './views/BookingHistory.js';
 function App() {
-  const rooms = [
-    { id: 'room1', name: 'Phòng 1', image: '/images/doncaocap1.png', description: 'Mô tả phòng 1', cost: '300000' },
-    { id: 'room2', name: 'Phòng 2', image: '/images/gdcaocap1.png', description: 'Mô tả phòng 2', cost: '300000' },
-    // Thêm các phòng khác nếu cần
-  ];
+  const [kindOfRoom, setKindOfRoom] = useState([]);
+
+  useEffect(() => {
+    getAllKindOfRoom();
+  }, []);
+
+  const getAllKindOfRoom = async () => {
+      const kindOfRoom = await api.getAllKindOfRoom();
+      setKindOfRoom(kindOfRoom);
+  }
+  // const rooms = [
+  //   { id: 'room1', name: 'Phòng 1', image: '/images/doncaocap1.png', description: 'Mô tả phòng 1', cost: '300000' },
+  //   { id: 'room2', name: 'Phòng 2', image: '/images/gdcaocap1.png', description: 'Mô tả phòng 2', cost: '300000' },
+  //   // Thêm các phòng khác nếu cần
+  // ];
   return (
     <AuthProvider>
     <ThemeContextProvider>
@@ -38,10 +50,10 @@ function App() {
           <ScrollToTop />
           <Switch>
             <Route path="/rooms" exact>
-              <RoomsPage rooms={rooms} />
+              <RoomsPage rooms={kindOfRoom} />
             </Route>
             <Route path="/rooms/:roomId">
-              <RoomDetail rooms={rooms} />
+              <RoomDetail rooms={kindOfRoom} />
             </Route>
             <Route path="/thanhtoan">
               <ThanhToan/>

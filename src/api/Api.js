@@ -487,6 +487,44 @@ const updateUser = async (userData) => {
       console.log("error: ", error.message);
     }
   };
+
+  const getAllBookedRoom = async () => {
+    try {
+      const response = await client.get("/BookedRoom/getBookedRoom");
+      if (response.data.success) {
+        return response.data.bookedRoom;
+      } else {
+        console.log("not get booked room");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addBookedRoom = async (data) => {
+    const endpoint = "/BookedRoom/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateBookedRoom = async (data, id) => {
+    const endpoint = "/BookedRoom/update/" + id;
+    try {
+      await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const deleteBookedRoom = async (id) => {
+    try {
+      await client.delete("/BookedRoom/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
   export default {
     getAllDiscounts,
     addDiscount,
@@ -532,4 +570,8 @@ const updateUser = async (userData) => {
     addFloor,
     updateFloor,
     deleteFloor,
+    getAllBookedRoom,
+    addBookedRoom,
+    updateBookedRoom,
+    deleteBookedRoom,
   };

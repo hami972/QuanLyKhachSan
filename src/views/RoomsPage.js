@@ -3,7 +3,12 @@ import './style.css'
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 const RoomsPage = ({ rooms }) => {
+    const history = useHistory();
+    const handleButtonClick = (room) => {
+        history.push(`/rooms/${room.id}`);
+    };
     return (
         <div>
             <TopNav />
@@ -50,14 +55,14 @@ const RoomsPage = ({ rooms }) => {
                         <div className="row " style={{ backgroundColor: '#fff', alignItems: 'center', display: 'flex', borderRadius: '5px', borderStyle: 'groove', marginTop: '50px' }}>
                             <div className="col-5 outset">
                                 <NavLink to={`/rooms/${room.id}`}>
-                                    <img src={room.image} alt={room.name} style={{ padding: '10px', width: "100%" }} />
+                                    <img src={room.image} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
                                 </NavLink>
                             </div>
                             <div className="col-5 column">
-                                <h2 className='row' style={{ color: '#905700' }}>{room.name}</h2>
+                                <h2 className='row' style={{ color: '#905700' }}>{room.tenLoaiPhong}</h2>
                                 <p className='row'>
 
-                                    <h3 className='row' >Giá ưu đãi cho 1 đêm: {room.cost}</h3>
+                                    <h3 className='row' >Giá ưu đãi cho 1 đêm: {room.donGia}</h3>
                                 </p>
                                 <div className='row g-2 pb-3'>
                                     <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>4.3</div>
@@ -66,7 +71,7 @@ const RoomsPage = ({ rooms }) => {
                                 </div>
                             </div>
                             <div className="col-2 ">
-                                <button type="button" style={{ color: '#fff', fontWeight: 'bold', backgroundColor: '#905700', }} className='bluecolor block m-2 py-2 px-4 rounded'> Đặt phòng </button>
+                                {/* <button type="button" onClick={handleButtonClick(room)} style={{ color: '#fff', fontWeight: 'bold', backgroundColor: '#905700', }} className='bluecolor block m-2 py-2 px-4 rounded'> Đặt phòng </button> */}
                             </div>
                         </div>
                     )
