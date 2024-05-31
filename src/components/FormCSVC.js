@@ -20,7 +20,9 @@ export const FormCSVC = ({
       maCSVC: "",
       tenCSVC: "",
       icon: "",
-      chiNhanh: "",
+      chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : "",
+      slNhap: "0",
+      slTon: "0",
     }
   );
   const [errors, setErrors] = useState("");
@@ -47,7 +49,8 @@ export const FormCSVC = ({
     if (
       formState.maCSVC != "" &&
       formState.tenCSVC != "" &&
-      formState.icon != ""
+      formState.icon != "" &&
+      formState.chiNhanh != ""
     ) {
       setErrors("");
       return true;

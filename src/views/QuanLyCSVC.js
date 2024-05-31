@@ -27,17 +27,19 @@ const QuanLyCSVC = (props) => {
   }, []);
   const getBranches = async () => {
     const branches = await api.getAllBranchs();
-    setBranches([{ tenChiNhanh: "Tất cả" }, ...branches]);
+    setBranches(branches);
   };
 
   const getMaterials = async () => {
+    const branches = await api.getAllBranchs();
     const materials = await api.getAllMaterials()
     if (user?.Loai !== 'ChuHeThong') {
       const fil = materials.filter((item, idx) => item.chiNhanh === user?.chinhanh)
       setMaterials(fil);
     }
     else {
-      setMaterials(materials)
+      const fil = materials.filter((item) => item.chiNhanh === branches[0].tenChiNhanh);
+      setMaterials(fil);
     }
   }
 
@@ -104,9 +106,9 @@ const QuanLyCSVC = (props) => {
             <input
               className="form-control pb-2 pt-2 mb-2"
               type="text"
-              id="maVatTu"
+              id="maCSVC"
               placeholder="Mã CSVC"
-              name="maVatTu"
+              name="maCSVC"
               onChange={handleChange}
             />
           </div>
@@ -114,9 +116,9 @@ const QuanLyCSVC = (props) => {
             <input
               className="form-control pb-2 pt-2 mb-2"
               type="text"
-              id="tenVatTu"
+              id="tenCSVC"
               placeholder="Tên CSVC"
-              name="tenVatTu"
+              name="tenCSVC"
               onChange={handleChange}
             />
           </div>
@@ -240,10 +242,10 @@ const QuanLyCSVC = (props) => {
         {materials.map((row, idx) => {
           return (
             <tr key={row.Id}>
-              <td>{row.maVatTu}</td>
-              <td>{row.tenVatTu}</td>
-              <td>{row.soLuongNhap}</td>
-              <td>{row.soLuongTonKho}</td>
+              <td>{row.maCSVC}</td>
+              <td>{row.tenCSVC}</td>
+              <td>{row.slNhap}</td>
+              <td>{row.slTon}</td>
               <td className="fit">
                 <span className="actions">
                   <BsFillTrashFill

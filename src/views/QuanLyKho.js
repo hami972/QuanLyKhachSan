@@ -15,7 +15,7 @@ const QuanLyKho = (props) => {
             <NavLink className="nav-link fontBrown" to="/manager/quanlykho/facilites">Cơ sở vật chất</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/recevingStore">Lịch sử nhập kho</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/recevingStock">Lịch sử nhập kho</NavLink>
           </li>
           <li className="nav-item">
             <NavLink className="nav-link fontBrown" to="/manager/quanlykho/damaged">CSVC bị hỏng</NavLink>
@@ -27,14 +27,14 @@ const QuanLyKho = (props) => {
           <Route path="/manager/quanlykho/facilites">
             <QuanLyCSVC />
           </Route>
-          <Route path="/manager/quanlykho/recevingStore">
+          <Route path="/manager/quanlykho/recevingStock">
             <QuanLyNhapKho />
           </Route>
           <Route path="/manager/quanlykho/damaged">
             <QuanLyCSVCHu />
           </Route>
           {pathname === "/manager/quanlykho" ? (
-            <Redirect to="/manager/quanlykho/chuasudung" />
+            <Redirect to="/manager/quanlykho/facilites" />
           ) : null}
         </Switch>
       </div>

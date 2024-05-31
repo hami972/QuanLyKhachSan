@@ -617,7 +617,7 @@ const getMaterialUsedBySearch = async (searchCriteria) => {
 const getAllMaterials = async () => {
   try {
     const response = await client.get(
-      "/Material/getMaterials"
+      "/Material/get"
     );
     if (response.data.success) {
       return response.data.materials;
