@@ -5,11 +5,38 @@ import Footer from "../components/Footer"
 import { AuthContext } from '../hook/AuthProvider'
 import Api from "../api/Api";
 import CustomModal from '../components/MessageBox.js';
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../hook/FirebaseConfig.js";
 const HoSoCaNhan = () => {
   const { user } = useContext(AuthContext);
   const [showDialog, setShowDialog] = useState(false);
   const [branches, setBranches] = useState([]);
   const [ndshow, setNdshow] = useState('');
+
+  // change image
+
+  const storage = getStorage(app);
+  const [file, setFile] = useState(null);
+  const [isUploaded, setUploaded] = useState(true);
+  const [percentUploaded, setPercentUploaded] = useState("");
+  const addImage = (e) => {
+    const reader = new FileReader();
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+      //setFile(e.target.files[0])
+    }
+
+    reader.onload = (readerEvent) => {
+      setFile(e.target.files[0])
+      setFormState({ ...formState, img: readerEvent.target.result })
+    }
+  };
+
   const handleShowDialog = (body) => {
     setNdshow(body)
     setShowDialog(true);
@@ -31,7 +58,8 @@ const HoSoCaNhan = () => {
     tuoi: '',
     gioiTinh: '',
     SDT: '',
-    CCCD: ''
+    CCCD: '',
+    img: '',
   }
   );
   const onchange = (e) => {
@@ -45,6 +73,46 @@ const HoSoCaNhan = () => {
     handleShowDialog("Lưu thông tin thành công!")
 
   };
+
+  useEffect(() => {
+
+    const upload = () => {
+      setUploaded(false)
+      const name = new Date().getTime() + file.name;
+      const storageRef = ref(storage, name);
+
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          //console.log("Upload is " + progress + "% done");
+          setPercentUploaded("Upload " + Math.round(progress) + "%")
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => { },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setFormState({ ...formState, img: downloadURL })
+            setUploaded(true)
+          });
+        }
+      );
+    };
+
+    file && upload();
+  }, [file]);
+
+
   return (
     <div>
       <TopNav />
@@ -70,13 +138,15 @@ const HoSoCaNhan = () => {
             style={{ backgroundColor: "#F0F6FB", height: "fit-content" }}
           >
             <div className="upload">
-              <img
-                src="/images/ava.png"
-                style={{ width: "120px", height: "120px" }}
-                alt=""
-              />
+              <label htmlFor="imageIcon">
+                <img
+                  src={formState?.img || "/images/ava.png"}
+                  style={{ width: "120px", height: "120px" }}
+                  alt=""
+                />
+              </label>
               <div className="round">
-                <input type="file" accept="image/*" />
+                <input id="imageIcon" type="file" accept="image/*" onChange={(e) => addImage(e)} />
                 <i className="fa fa-camera" style={{ color: "#fff" }}></i>
               </div>
             </div>

@@ -172,7 +172,8 @@ export const AuthProvider = ({ children }) => {
                   tuoi: birthday,
                   CCCD: identify,
                   SDT: phone,
-                  Loai: 'KhachHang'
+                  Loai: 'KhachHang',
+                  img: null
                 }
                 Api.setUserInfo(userData)
                   .catch(error => console.error(error));
