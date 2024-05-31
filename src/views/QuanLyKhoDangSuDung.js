@@ -1,131 +1,119 @@
-import React, { useState, useEffect, useContext } from 'react'
-import './mistyles.css'
-import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-
-import moment from 'moment';
-
-
+import React, { useState, useEffect, useContext } from 'react';
+import './mistyles.css';
+import api from "../api/Api";
+import { AuthContext } from '../hook/AuthProvider'
 const QuanLyKhoDangSuDung = (props) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [chuaSuDungThietBi, setchuaSuDungThietBi] = useState([
-    {
-      maThietBi: '001',
-      tenThietBi: 'Giường 1m6',
-      slNhapThietBi: '3',
-      giaThietBi: '700000',
-  },
-  {
-      maThietBi: '002',
-      tenThietBi: 'Giường 1m4',
-      slNhapThietBi: '3',
-      giaThietBi: '500000',
-  },
-  {
-      maThietBi: '002',
-      tenThietBi: 'Giường 1m8',
-      slNhapThietBi: '3',
-      giaThietBi: '800000',
-  },
-  ]);
-  
-  const [rowToEdit, setRowToEdit] = useState(null);
+  const { user } = useContext(AuthContext);
+  const [kindOfRoom, setKindOfRoom] = useState([]);
+  const [tang, setFloors] = useState([]);
   const [branches, setBranches] = useState([]);
-  const [searchCriteria, setSearchCriteria] = useState({
-    maThietBi: '',
-    tenThietBi: '',
-    slNhapThietBi: '',
-    giaThietBi: '',
-  })
+  const [selectedBranch, setSelectedBranch] = useState(user?.chinhanh || "Tất cả");
+  const [dangSuDungThietBi, setDangSuDungThietBi] = useState([]);
 
-  // useEffect(() => {
-  //   getchuaSuDungThietBi();
-  //   getBranches();
-  // }, []);
-  const getBranches = async () => {
+  useEffect(() => {
+    getAllKindOfRoom();
+    getAllFloors();
+    getBranches();
+  }, []);
 
-    setBranches([{ tenChiNhanh: "Tất cả" }, ...branches]);
-  };
-  const getchuaSuDungThietBi = async () => {
-    
-  }
-
-  const handleDeleteRow = (targetIndex) => {
-    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa thiết bị này không?');
-    if (shouldDelete) {
-      setchuaSuDungThietBi(chuaSuDungThietBi.filter((_, idx) => idx !== targetIndex));
-
+  useEffect(() => {
+    if (tang.length > 0 && kindOfRoom.length > 0) {
+      updateThietBiList();
     }
+  }, [tang, kindOfRoom, selectedBranch]);
+
+  const getAllFloors = async () => {
+    const floors = await api.getAllFloors();
+    setFloors(floors);
   };
 
-  const handleEditRow = (idx) => {
-    setRowToEdit(idx);
-    setModalOpen(true);
+  const getAllKindOfRoom = async () => {
+    const rooms = await api.getAllKindOfRoom();
+    setKindOfRoom(rooms);
   };
 
-  const handleSubmit = async (newRow) => {
-    
-
-    
+  const getBranches = async () => {
+    const branches = await api.getAllBranchs();
+    setBranches([{ tenChiNhanh: "Tất cả" }, ...branches]);
   };
 
   const handleChange = (e) => {
-    setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
+    setSelectedBranch(e.target.value);
   };
 
-  // const onSearch = async () => {
-  //   console.log(searchCriteria)
+  const updateThietBiList = () => {
+    let thietBiList = [];
 
-  //   console.log();
-  //   if (user?.Loai !== 'ChuHeThong') {
-      
-  //   }
-  //   else {
-  //     setchuaSuDungThietBi()
-  //   }
-  // }
+    tang.forEach((floor) => {
+      if (selectedBranch === "Tất cả" || floor.chiNhanh === selectedBranch) {
+        const rooms = floor.tenPhong.split('-').map(room => room.trim());
+        const roomType = kindOfRoom.find(room => room.maLoaiPhong === floor.maLoaiPhong);
+
+        if (roomType) {
+          roomType.coSoVatChat.forEach(item => {
+            const existingItem = thietBiList.find(thietBi => thietBi.name === item.name);
+            if (existingItem) {
+              existingItem.quantity += item.quantity * rooms.length;
+            } else {
+              thietBiList.push({
+                name: item.name,
+                quantity: item.quantity * rooms.length,
+              });
+            }
+          });
+        }
+      }
+    });
+
+    setDangSuDungThietBi(thietBiList);
+  };
+
   return (
     <div>
-      
-
       <div className='text-end'>
-        <h1 className="noteVND">**Tính theo đơn vị VNĐ</h1>
+        
+        <div className='col-lg-5 col-md-8'>
+        <b style={{align: "left"}}>Chi nhánh: </b>
+          <select
+            className="form-select pb-2 pt-2 mt-2"
+            id="type"
+            name="chiNhanh"
+            onChange={handleChange}
+            value={selectedBranch}
+          >
+            {user?.Loai === 'ChuHeThong' ? branches.map((item, index) => (
+              <option key={index} value={item.tenChiNhanh}>
+                {item.tenChiNhanh}
+              </option>
+            )) :
+              <option value={user?.chinhanh}>
+                {user?.chinhanh}
+              </option>
+            }
+          </select>
+        </div>
+        
       </div>
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
           <tr className="table-secondary">
-            <th>Mã thiết bị</th>
+            <th>STT</th>
             <th>Tên thiết bị</th>
-            <th>Số lượng nhập</th>
-            <th>Giá thiết bị</th>
-            <th></th>
+            <th>Số lượng sử dụng</th>
           </tr>
         </thead>
-        {chuaSuDungThietBi.map((row, idx) => {
-          return (
-            <tr key={row.Id}>
-              <td>{row.maThietBi}</td>
-              <td>{row.tenThietBi}</td>
-              <td>{row.slNhapThietBi}</td>
-              <td>{row.giaThietBi}</td>
-              <td className="fit">
-                <span className="actions">
-                  <BsFillTrashFill
-                    className="delete-btn"
-                    onClick={() => handleDeleteRow(idx)}
-                  />
-                  <BsFillPencilFill
-                    className="edit-btn"
-                    onClick={() => handleEditRow(idx)}
-                  />
-                </span>
-              </td>
+        <tbody>
+          {dangSuDungThietBi.map((row, idx) => (
+            <tr key={idx}>
+              <td>{idx+1}</td>
+              <td>{row.name}</td>
+              <td>{row.quantity}</td>
             </tr>
-          );
-        })}
-        <tbody></tbody>
+          ))}
+        </tbody>
       </table>
-      
     </div>
   );
-}
+};
+
 export default QuanLyKhoDangSuDung;

@@ -1,59 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react'
-import './mistyles.css'
+import React from "react";
+import "./mistyles.css";
+import { useEffect, useState } from "react";
+import { FormMaGiamGia } from "../components/FormMaGiamGia";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-
-import moment from 'moment';
-
-
+import api from "../api/Api";
+import moment from "moment";
 const QuanLyKhoDaSuDung = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [chuaSuDungThietBi, setchuaSuDungThietBi] = useState([
-    {
-      maThietBi: '001',
-      tenThietBi: 'Giường 1m6',
-      slNhapThietBi: '3',
-      giaThietBi: '700000',
-  },
-  {
-      maThietBi: '002',
-      tenThietBi: 'Giường 1m4',
-      slNhapThietBi: '3',
-      giaThietBi: '500000',
-  },
-  {
-      maThietBi: '002',
-      tenThietBi: 'Giường 1m8',
-      slNhapThietBi: '3',
-      giaThietBi: '800000',
-  },
-  ]);
-  
+  const [magiamgia, setRows] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
-  const [branches, setBranches] = useState([]);
-  const [searchCriteria, setSearchCriteria] = useState({
-    maThietBi: '',
-    tenThietBi: '',
-    slNhapThietBi: '',
-    giaThietBi: '',
-  })
-
-  // useEffect(() => {
-  //   getchuaSuDungThietBi();
-  //   getBranches();
-  // }, []);
-  const getBranches = async () => {
-
-    setBranches([{ tenChiNhanh: "Tất cả" }, ...branches]);
-  };
-  const getchuaSuDungThietBi = async () => {
-    
-  }
 
   const handleDeleteRow = (targetIndex) => {
-    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa thiết bị này không?');
+    const shouldDelete = window.confirm(
+      'Bạn có chắc chắn muốn xóa không?'
+    );
     if (shouldDelete) {
-      setchuaSuDungThietBi(chuaSuDungThietBi.filter((_, idx) => idx !== targetIndex));
-
+      setRows(magiamgia.filter((_, idx) => idx !== targetIndex));
+      api.deleteDiscount(magiamgia[targetIndex].Id);
     }
   };
 
@@ -63,84 +26,140 @@ const QuanLyKhoDaSuDung = (props) => {
   };
 
   const handleSubmit = async (newRow) => {
-    
+    if (rowToEdit == null) {
+      const id = await api.addDiscount(newRow);
+      newRow.Id = id;
+      setRows([...magiamgia, newRow]);
+    } else {
+      api.updateDiscount(newRow, newRow.Id);
+      let updatedDiscounts = magiamgia.map((currRow, idx) => {
+        if (idx !== rowToEdit) return currRow;
+        return newRow;
+      });
+      setRows(updatedDiscounts);
+    }
+  };
 
-    
+  const getMaterialsUsed = async () => {
+    const discounts = await api.getMaterialsUsed();
+    setRows(discounts);
+  };
+
+  const onSearch = async () => {
+    const searchResults = await api.getDiscountsBySearch(searchCriteria);
+    setRows(searchResults);
   };
 
   const handleChange = (e) => {
     setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
   };
 
-  // const onSearch = async () => {
-  //   console.log(searchCriteria)
+  useEffect(() => {
+    getDiscounts();
+  }, []);
 
-  //   console.log();
-  //   if (user?.Loai !== 'ChuHeThong') {
-      
-  //   }
-  //   else {
-  //     setchuaSuDungThietBi()
-  //   }
-  // }
   return (
     <div>
-      
-      <button
-        type="submit"
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-        //onClick={onSearch}
-      >
-        Tìm kiếm
-      </button>
-      <button
-        onClick={() => setModalOpen(true)}
-        className="btn pb-2 pt-2 mb-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-      >
-        Thêm
-      </button>
-
-      <div className='text-end'>
-        <h1 className="noteVND">**Tính theo đơn vị VNĐ</h1>
+      <div className="row">
+        <div className="col-lg-4 col-md-6">
+          <div className="mb-2"><b>ID mã giảm giá</b></div>
+          <input
+            className="form-control pb-2 pt-2 mb-2"
+            type="text"
+            id="maGiamGia"
+            placeholder="Nhập id mã giảm giá"
+            name="maGiamGia"
+            onChange={handleChange}
+          />
+        </div>
+        <div className="col-lg-4 col-md-6">
+          <div className="mb-2"><b>Thời gian bắt đầu</b></div>
+          <input
+            className="form-control pb-2 pt-2 mb-2"
+            type="date"
+            name="TGBatDau"
+            id="TGBatDau"
+            onChange={handleChange}
+          />
+        </div>
+        <div className="col-lg-4 col-md-6">
+          <div className="mb-2"><b>Thời gian kết thúc</b></div>
+          <input
+            className="form-control pb-2 pt-2 mb-2"
+            type="date"
+            name="TGKetThuc"
+            id="TGKetThuc"
+            onChange={handleChange}
+          />
+        </div>
+        <div className="text-end">
+          <button
+            onClick={onSearch}
+            className="btn pb-2 pt-2 mt-3 mb-3 me-3"
+            style={{ backgroundColor: "#905700", color: "#FFFFFF" }}>
+            Tìm kiếm
+          </button>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="btn pb-2 pt-2 mt-3 mb-3"
+            style={{ backgroundColor: "#905700", color: "#FFFFFF" }}>
+            Thêm
+          </button>
+        </div>
+      </div>
+      <div className="text-end">
+        <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
       </div>
       <table className="table">
-        <thead style={{ verticalAlign: "middle" }}>
+        <thead>
           <tr className="table-secondary">
-            <th>Mã thiết bị</th>
-            <th>Tên thiết bị</th>
-            <th>Số lượng nhập</th>
-            <th>Giá thiết bị</th>
+            <th>STT</th>
+            <th>ID mã giảm giá</th>
+            <th>Phần trăm giảm</th>
+            <th>Thời gian bắt đầu</th>
+            <th>Thời gian kết thúc</th>
             <th></th>
           </tr>
         </thead>
-        {chuaSuDungThietBi.map((row, idx) => {
-          return (
-            <tr key={row.Id}>
-              <td>{row.maThietBi}</td>
-              <td>{row.tenThietBi}</td>
-              <td>{row.slNhapThietBi}</td>
-              <td>{row.giaThietBi}</td>
-              <td className="fit">
-                <span className="actions">
-                  <BsFillTrashFill
-                    className="delete-btn"
-                    onClick={() => handleDeleteRow(idx)}
-                  />
-                  <BsFillPencilFill
-                    className="edit-btn"
-                    onClick={() => handleEditRow(idx)}
-                  />
-                </span>
-              </td>
-            </tr>
-          );
-        })}
-        <tbody></tbody>
+        <tbody>
+          {magiamgia.map((row, idx) => {
+            return (
+              <tr key={row.Id}>
+                <td>{idx + 1}</td>
+                <td>{row.maGiamGia}</td>
+                <td>{row.phanTram}</td>
+                <td>{moment(new Date(row.TGBatDau)).format("DD/MM/YYYY")}</td>
+                <td>{moment(new Date(row.TGKetThuc)).format("DD/MM/YYYY")}</td>
+                <td className="fit">
+                  <span className="actions">
+                    <BsFillTrashFill
+                      className="delete-btn"
+                      onClick={() => handleDeleteRow(idx)}
+                    />
+                    <BsFillPencilFill
+                      className="edit-btn"
+                      onClick={() => handleEditRow(idx)}
+                    />
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
-      
+
+      {modalOpen && (
+        <FormMaGiamGia
+          closeModal={() => {
+            setModalOpen(false);
+            setRowToEdit(null);
+          }}
+          onSubmit={handleSubmit}
+          defaultValue={rowToEdit !== null && magiamgia[rowToEdit]}
+          discounts={magiamgia}
+        />
+      )}
     </div>
   );
-}
+};
 export default QuanLyKhoDaSuDung;

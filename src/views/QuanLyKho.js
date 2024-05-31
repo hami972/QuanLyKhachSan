@@ -5,6 +5,7 @@ import QuanLyKhoDaSuDung from './QuanLyKhoDaSuDung';
 import { useLocation, Redirect, Route, Switch } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import QuanLyKhoDangSuDung from './QuanLyKhoDangSuDung';
+import MaterialUsed from './MaterialUsed';
 const QuanLyKho = (props) => {
   const { pathname } = useLocation();
   return (
@@ -12,7 +13,7 @@ const QuanLyKho = (props) => {
       <div className="container mt-3">
         <ul className="nav nav-tabs maintab">
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/chuasudung">Quản lý thiết bị chưa sử dụng</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/chuasudung">Quản lý thiết bị đã nhập và chưa sử dụng</NavLink>
           </li>
           <li className="nav-item">
             <NavLink className="nav-link fontBrown" to="/manager/quanlykho/dasudung">Quản lý thiết bị đã sử dụng</NavLink>
@@ -28,7 +29,7 @@ const QuanLyKho = (props) => {
             <QuanLyKhoChuaSuDung />
           </Route>
           <Route path="/manager/quanlykho/dasudung">
-            <QuanLyKhoDaSuDung />
+            <MaterialUsed />
           </Route>
           <Route path="/manager/quanlykho/dangsudung">
             <QuanLyKhoDangSuDung/>

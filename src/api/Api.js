@@ -525,6 +525,152 @@ const updateUser = async (userData) => {
       console.log("error: ", error.message);
     }
   };
+  const getAllReview = async () => {
+    try {
+      const response = await client.get("/Review/getReview");
+      if (response.data.success) {
+        return response.data.review;
+      } else {
+        console.log("not get review");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addReview = async (data) => {
+    const endpoint = "/Review/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateReview = async (data, id) => {
+    const endpoint = "/Review/update/" + id;
+    try {
+      await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const deleteReview = async (id) => {
+    try {
+      await client.delete("/Review/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const getMaterialsUsed = async () => {
+    try {
+      const response = await client.get("/MaterialUsed/get");
+      if (response.data.success) {
+        return response.data.MU;
+      } else {
+        console.log("not get material use");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addMaterialUsed = async (data) => {
+    const endpoint = "/MaterialUsed/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const deleteMaterialUsed = async (id) => {
+    try {
+      await client.delete("/MaterialUsed/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateMaterialUsed = async (data, id) => {
+    const endpoint = "/MaterialUsed/update/" + id;
+    try {
+      const response = await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const getMaterialUsedBySearch = async (searchCriteria) => {
+    try {
+      const queryParams = new URLSearchParams(searchCriteria).toString();
+      const response = await client.get(`/MaterialUsed/search?${queryParams}`);
+  
+      if (response.data.success) {
+        return response.data.VatTuDaSuDung;
+      } else {
+        console.log("not get VatTuDaSuDung");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const getAllMaterials = async () => {
+    try {
+      const response = await client.get(
+        "/IventoryManagement/Material/getMaterials"
+      );
+      if (response.data.success) {
+        return response.data.materials;
+      } else {
+        console.log("not get materials");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addMaterial = async (data) => {
+    const endpoint = "/IventoryManagement/Material/add";
+    try {
+      const response = await client.post(endpoint, data);
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const deleteMaterial = async (id) => {
+    try {
+      await client.delete("/IventoryManagement/Material/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  const updateMaterial = async (data, id) => {
+    const endpoint = "/IventoryManagement/Material/update/" + id;
+    console.log(id);
+    try {
+      const response = await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const getMaterialsBySeacrh = async (searchCriteria) => {
+    try {
+      const queryParams = new URLSearchParams(searchCriteria).toString();
+      const response = await client.get(
+        `/IventoryManagement/Material/Materials?${queryParams}`
+      );
+  
+      if (response.data.success) {
+        return response.data.materials;
+      } else {
+        console.log("not get materials");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
   export default {
     getAllDiscounts,
     addDiscount,
@@ -574,4 +720,18 @@ const updateUser = async (userData) => {
     addBookedRoom,
     updateBookedRoom,
     deleteBookedRoom,
+    getAllReview,
+    addReview,
+    updateReview,
+    deleteReview,
+    getAllMaterials,
+    addMaterial,
+    updateMaterial,
+    deleteMaterial,
+    getMaterialsBySeacrh,
+    addMaterialUsed,
+    getMaterialsUsed,
+    updateMaterialUsed,
+    deleteMaterialUsed,
+    getMaterialUsedBySearch,
   };

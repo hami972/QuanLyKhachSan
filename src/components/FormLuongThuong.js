@@ -234,7 +234,7 @@ export const FormLuongThuong = ({
             <button
               type="submit"
               className="btn pb-2 pt-2 ps-3 pe-3 mt-2"
-              style={{ backgroundColor: "#0096FF", color: "#FFFFFF" }}
+              style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
               onClick={(e) => handleSubmit(e)}
             >
               Lưu

@@ -1,59 +1,57 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React from 'react'
 import './mistyles.css'
-import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-
 import moment from 'moment';
-
+import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
+import { FormVatTuChuaSuDung } from '../components/FormVatTuChuaSuDung';
+import { useEffect, useState, useContext } from 'react';
+import api from '../api/Api';
+import { AuthContext } from '../hook/AuthProvider'
 
 const QuanLyKhoChuaSuDung = (props) => {
+  const { user } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
-  const [chuaSuDungThietBi, setchuaSuDungThietBi] = useState([
-    {
-      maThietBi: '001',
-      tenThietBi: 'Giường 1m6',
-      slNhapThietBi: '3',
-      giaThietBi: '700000',
-  },
-  {
-      maThietBi: '002',
-      tenThietBi: 'Giường 1m4',
-      slNhapThietBi: '3',
-      giaThietBi: '500000',
-  },
-  {
-      maThietBi: '002',
-      tenThietBi: 'Giường 1m8',
-      slNhapThietBi: '3',
-      giaThietBi: '800000',
-  },
-  ]);
-  
+  const [materials, setMaterials] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [branches, setBranches] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
-    maThietBi: '',
-    tenThietBi: '',
-    slNhapThietBi: '',
-    giaThietBi: '',
+    maVatTu: '',
+    tenVatTu: '',
+    slnDau: '',
+    slnCuoi: '',
+    sltkDau: '',
+    sltkCuoi: '',
+    giaDau: '',
+    giaCuoi: '',
+    ngayDau: '',
+    ngayCuoi: '',
+    chiNhanh: '',
   })
 
-  // useEffect(() => {
-  //   getchuaSuDungThietBi();
-  //   getBranches();
-  // }, []);
+  useEffect(() => {
+    getMaterials();
+    getBranches()
+  }, []);
   const getBranches = async () => {
-
+    const branches = await api.getAllBranchs();
     setBranches([{ tenChiNhanh: "Tất cả" }, ...branches]);
   };
-  const getchuaSuDungThietBi = async () => {
-    
+
+  const getMaterials = async () => {
+    const materials = await api.getAllMaterials()
+    if (user?.Loai !== 'ChuHeThong') {
+      const fil = materials.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+      setMaterials(fil);
+    }
+    else {
+      setMaterials(materials)
+    }
   }
 
   const handleDeleteRow = (targetIndex) => {
-    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa thiết bị này không?');
+    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
     if (shouldDelete) {
-      setchuaSuDungThietBi(chuaSuDungThietBi.filter((_, idx) => idx !== targetIndex));
-
+      setMaterials(materials.filter((_, idx) => idx !== targetIndex));
+      api.deleteMaterial(materials[targetIndex].Id);
     }
   };
 
@@ -63,65 +61,255 @@ const QuanLyKhoChuaSuDung = (props) => {
   };
 
   const handleSubmit = async (newRow) => {
-    
+    console.log(newRow);
+    if (rowToEdit == null) {
+      if (user?.Loai === 'ChuHeThong') {
+        const id = await api.addMaterial(newRow);
+        newRow.Id = id;
+        setMaterials([...materials, newRow]);
+      }
+      else {
+        const id = await api.addMaterial({ ...newRow, chiNhanh: user?.chinhanh });
+        newRow.Id = id;
+        setMaterials([...materials, newRow]);
+      }
 
-    
+    }
+    else {
+      api.updateMaterial(newRow, newRow.Id);
+      let updatedMaterials = materials.map((currRow, idx) => {
+        if (idx !== rowToEdit) return currRow;
+        return newRow;
+      })
+      setMaterials(updatedMaterials);
+    }
   };
 
   const handleChange = (e) => {
     setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
   };
 
-  // const onSearch = async () => {
-  //   console.log(searchCriteria)
+  const onSearch = async () => {
+    console.log(searchCriteria)
 
-  //   console.log();
-  //   if (user?.Loai !== 'ChuHeThong') {
-      
-  //   }
-  //   else {
-  //     setchuaSuDungThietBi()
-  //   }
-  // }
+    const searchResults = await api.getMaterialsBySeacrh(searchCriteria);
+    console.log(searchResults);
+    if (user?.Loai !== 'ChuHeThong') {
+      const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+      setMaterials(fil);
+    }
+    else {
+      setMaterials(searchResults)
+    }
+  }
   return (
     <div>
-      
+      <div>
+        <div className='row'>
+          <div className='col-lg-4 col-md-6'>
+            <input
+              className="form-control pb-2 pt-2 mb-2"
+              type="text"
+              id="maVatTu"
+              placeholder="Mã vật tư"
+              name="maVatTu"
+              onChange={handleChange}
+            />
+          </div>
+          <div className='col-lg-4 col-md-6'>
+            <input
+              className="form-control pb-2 pt-2 mb-2"
+              type="text"
+              id="tenVatTu"
+              placeholder="Tên vật tư"
+              name="tenVatTu"
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <table className='container-fluid'>
+          <tr>
+            <td>
+              <b>Số lượng nhập</b>
+            </td>
+            <td>
+              <div div className='row'>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Từ</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="number"
+                    placeholder="0"
+                    name="slnDau"
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Đến</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="number"
+                    placeholder="1000000000"
+                    name="slnCuoi"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Số lượng tồn kho: </b>
+            </td>
+            <td>
+              <div div className='row'>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Từ</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="number"
+                    placeholder="0"
+                    name="sltkDau"
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Đến</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="number"
+                    placeholder="1000000000"
+                    name="sltkCuoi"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Giá nhập:</b>
+            </td>
+            <td>
+              <div className='row'>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Từ</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="number"
+                    placeholder="0"
+                    name="giaDau"
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Đến</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="number"
+                    placeholder="1000000000"
+                    name="giaCuoi"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Ngày nhập:</b>
+            </td>
+            <td>
+              <div className='row'>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Từ</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="date"
+                    name="ngayDau"
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className='col-lg-4 col-md-6'>
+                  <text style={{ fontWeight: 600 }}>Đến</text>
+                  <input
+                    className="form-control pb-2 pt-2 mb-2"
+                    type="date"
+                    name="ngayCuoi"
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <b>Chi nhánh: </b>
+            </td>
+            <td>
+              <div className='col-lg-5 col-md-8'>
+                <select
+                  className="form-select pb-2 pt-2 mt-2"
+                  id="type"
+                  name="chiNhanh"
+                  onChange={handleChange}
+                >
+                  {user?.Loai === 'ChuHeThong' ? branches.map((item, index) => (
+                    <option key={index} value={item.tenChiNhanh}>
+                      {item.tenChiNhanh}
+                    </option>
+                  )) :
+                    <option value={user?.chinhanh}>
+                      {user?.chinhanh}
+                    </option>
+                  }
+                </select>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
       <button
         type="submit"
         className="btn pb-2 pt-2 mb-3 me-3 mt-3"
         style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-        //onClick={onSearch}
+        onClick={onSearch}
       >
         Tìm kiếm
       </button>
       <button
         onClick={() => setModalOpen(true)}
-        className="btn pb-2 pt-2 mb-3 mt-3"
+        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
         style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
       >
         Thêm
       </button>
 
-      <div className='text-end'>
-        <h1 className="noteVND">**Tính theo đơn vị VNĐ</h1>
+      <div className="text-end">
+        <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
       </div>
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
           <tr className="table-secondary">
-            <th>Mã thiết bị</th>
-            <th>Tên thiết bị</th>
+            <th>Mã vật tư thiết bị</th>
+            <th>Tên vật tư thiết bị</th>
             <th>Số lượng nhập</th>
-            <th>Giá thiết bị</th>
+            <th>Số lượng tồn kho</th>
+            <th>Đơn giá nhập</th>
+            <th>Ngày nhập</th>
             <th></th>
           </tr>
         </thead>
-        {chuaSuDungThietBi.map((row, idx) => {
+        {materials.map((row, idx) => {
           return (
             <tr key={row.Id}>
-              <td>{row.maThietBi}</td>
-              <td>{row.tenThietBi}</td>
-              <td>{row.slNhapThietBi}</td>
-              <td>{row.giaThietBi}</td>
+              <td>{row.maVatTu}</td>
+              <td>{row.tenVatTu}</td>
+              <td>{row.soLuongNhap}</td>
+              <td>{row.soLuongTonKho}</td>
+              <td>{new Intl.NumberFormat("en-DE").format(row.donGiaNhap)}</td>
+              <td>{moment(new Date(row.ngayNhap)).format("DD/MM/YYYY")}</td>
               <td className="fit">
                 <span className="actions">
                   <BsFillTrashFill
@@ -139,8 +327,20 @@ const QuanLyKhoChuaSuDung = (props) => {
         })}
         <tbody></tbody>
       </table>
-      
-    </div>
+      {
+        modalOpen && (
+          <FormVatTuChuaSuDung
+            closeModal={() => {
+              setModalOpen(false);
+              setRowToEdit(null);
+            }}
+            onSubmit={handleSubmit}
+            defaultValue={rowToEdit !== null && materials[rowToEdit]}
+            branches={branches}
+          />
+        )
+      }
+    </div >
   );
 }
 export default QuanLyKhoChuaSuDung;

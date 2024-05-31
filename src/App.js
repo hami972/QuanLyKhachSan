@@ -25,6 +25,7 @@ import HoSoCaNhan from './views/HoSoCaNhan.js';
 import { useState, useEffect } from 'react';
 import api from '../src/api/Api.js';
 import BookingHistory from './views/BookingHistory.js';
+import MaterialUsed from './views/MaterialUsed.js'
 function App() {
   const [kindOfRoom, setKindOfRoom] = useState([]);
 
@@ -82,6 +83,9 @@ function App() {
             
             <Route path="/" exact>
               <IntroductionPage />
+            </Route>
+            <Route path="/abc" exact>
+              <MaterialUsed />
             </Route>
             
           </Switch>

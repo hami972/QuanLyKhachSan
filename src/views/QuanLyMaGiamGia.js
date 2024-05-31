@@ -17,7 +17,7 @@ const QuanLyMaGiamGia = (props) => {
 
   const handleDeleteRow = (targetIndex) => {
     const shouldDelete = window.confirm(
-      'Bạn có chắc chắn muốn xóa tài khoản này không?'
+      'Bạn có chắc chắn muốn xóa không?'
     );
     if (shouldDelete) {
       setRows(magiamgia.filter((_, idx) => idx !== targetIndex));
@@ -123,7 +123,6 @@ const QuanLyMaGiamGia = (props) => {
             <th>Phần trăm giảm</th>
             <th>Thời gian bắt đầu</th>
             <th>Thời gian kết thúc</th>
-            {/* <th>Dịch vụ áp dụng</th> */}
             <th></th>
           </tr>
         </thead>

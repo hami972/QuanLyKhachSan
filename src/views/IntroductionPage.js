@@ -167,31 +167,30 @@ const IntroductionPage = (props) => {
                             opacity: !nextImage && currentIndex === 0 ? 1 : 0,
                         }} />
                 </div>
-
                 <button className="slick-next" onClick={clickNextImage}></button>
             </div>
             <section className="">
-            <div style={{ backgroundColor: "#905700", padding: '50px', color: '#fff'}}>
+                <div style={{ backgroundColor: "#905700", padding: '50px', color: '#fff'}}>
                     <div style={{ backgroundColor: "#905700", padding: '20px'}}>
                         <h1> Đặt phòng ngay </h1>
                     </div>
                     <div className='form'>
                         <form className='row'>
-                        <div className="col-2 mb-3">
-                    <       input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check in'/>
-                        </div>
-                        <div className="col-2 mb-3">
-                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check out'/>
-                        </div>
-                        <div className="col-2 mb-3">
-                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng người lớn'/>
-                        </div>
-                        <div className="col-2 mb-3">
-                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng trẻ em'/>
-                        </div>
-                        <div className="col-3 mb-3">
-                            <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold'}} type='submit' value='Xem phòng'/>
-                        </div>
+                            <div className="col-2 mb-3">
+                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check in'/>
+                            </div>
+                            <div className="col-2 mb-3">
+                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check out'/>
+                            </div>
+                            <div className="col-2 mb-3">
+                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng người lớn'/>
+                            </div>
+                            <div className="col-2 mb-3">
+                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng trẻ em'/>
+                            </div>
+                            <div className="col-3 mb-3">
+                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold'}} type='submit' value='Xem phòng'/>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -201,7 +200,7 @@ const IntroductionPage = (props) => {
                 <div className='mt-4'>
                     {rooms.map((item, index) => {
                         return (
-                            <FloatInEffect key={item.id}>
+                            <FloatInEffect key={index}>
                                 <div className={`wrapperRoom mb-4 ${index % 2 === 0 ? '' : 'ms-auto'}`}>
                                     <img alt="" src={item.image} style={{ width: "100%" }} />
                                     <div className='p-3'>
@@ -217,9 +216,7 @@ const IntroductionPage = (props) => {
                                 </div>
                             </FloatInEffect>
                         )
-
                     })}
-
                 </div>
                 <h4 align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
             </section>
@@ -229,8 +226,8 @@ const IntroductionPage = (props) => {
                 <div className='containerServices container mt-4 mb-4 d-none d-md-flex'>
                     {serviceList.map((item, index) => {
                         return (
-                            <React.Fragment key={item.id}>
-                                <input key={index} type="checkbox" id={"c" + index} name="slideServices" checked={item.isChecked} onChange={() => updateServiceList(index, !item.isChecked)} />
+                            <React.Fragment key={index}>
+                                <input type="checkbox" id={"c" + index} name="slideServices" checked={item.isChecked} onChange={() => updateServiceList(index, !item.isChecked)} />
                                 <label for={"c" + index} className='cardServices' style={{ backgroundImage: `url(${item.image})`, height: "60vh", justifyContent: 'center' }}>
                                     <div className='rowServices'>
                                         <div className='descriptionServices'>
@@ -248,7 +245,7 @@ const IntroductionPage = (props) => {
                     <Slider {...settingsService} >
                         {serviceList.map((item, index) => {
                             return (
-                                <div className="container p-4" >
+                                <div className="container p-4" key={index}>
                                     <div style={{ position: "relative", borderRadius: "2rem", overflow: "hidden", boxShadow: "1px 3px 9px 1px rgba(0, 0, 0, 0.8)" }}>
                                         <img alt="" src={item.image} style={{ width: "100%" }} />
                                         <div>
@@ -260,12 +257,10 @@ const IntroductionPage = (props) => {
                                 </div>
                             )
                         })}
-
                     </Slider>
                 </div>
                 <h4 align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
             </section >
-
 
             <section className='bg-light ps-5 pe-5 pb-3 pt-3 row g-0' style={{ color: "#a36300" }}>
                 <NavLink to="/contacts" className="text-decoration-none">
@@ -290,12 +285,15 @@ const IntroductionPage = (props) => {
                         </div>
                     </div>
                 </NavLink>
+                
             </section>
-
-
+            <div style = {{ position: 'fixed', bottom: '80px', right: '10px'}}>
+                <a href="https://m.me/hotelroyal2" target="_blank" rel="noopener noreferrer">
+                    <img src="/images/message.png" alt="Messenger Icon" />
+                </a>
+            </div>
             <Footer style={{ marginTop: 0 }} />
-        </div >
+        </div>
     );
-
-}
+};
 export default IntroductionPage;
