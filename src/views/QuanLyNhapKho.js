@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import './mistyles.css';
 import api from "../api/Api";
 import { AuthContext } from '../hook/AuthProvider'
-const QuanLyKhoDangSuDung = (props) => {
+const QuanLyNhapKho = (props) => {
   const { user } = useContext(AuthContext);
   const [kindOfRoom, setKindOfRoom] = useState([]);
   const [tang, setFloors] = useState([]);
@@ -71,9 +71,9 @@ const QuanLyKhoDangSuDung = (props) => {
   return (
     <div>
       <div className='text-end'>
-        
+
         <div className='col-lg-5 col-md-8'>
-        <b style={{align: "left"}}>Chi nhánh: </b>
+          <b style={{ align: "left" }}>Chi nhánh: </b>
           <select
             className="form-select pb-2 pt-2 mt-2"
             id="type"
@@ -92,7 +92,7 @@ const QuanLyKhoDangSuDung = (props) => {
             }
           </select>
         </div>
-        
+
       </div>
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
@@ -105,7 +105,7 @@ const QuanLyKhoDangSuDung = (props) => {
         <tbody>
           {dangSuDungThietBi.map((row, idx) => (
             <tr key={idx}>
-              <td>{idx+1}</td>
+              <td>{idx + 1}</td>
               <td>{row.name}</td>
               <td>{row.quantity}</td>
             </tr>
@@ -116,4 +116,4 @@ const QuanLyKhoDangSuDung = (props) => {
   );
 };
 
-export default QuanLyKhoDangSuDung;
+export default QuanLyNhapKho;

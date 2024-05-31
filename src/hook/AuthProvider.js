@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
           setScopeQL(nav.nav2_3)
           setScopeQLLH(nav.nav2_3)
         }
-        else if (userData.Loai === 'Chủ hệ thống') {
+        else if (userData.Loai === 'ChuHeThong') {
           setScope(nav.nav2_2)
           setScopeQL(nav.nav2_2)
         }

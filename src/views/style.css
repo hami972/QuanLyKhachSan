@@ -1163,3 +1163,44 @@ input[type="date"]:not(.has-value):before {
 .dropdown:hover .dropdownContent {
     visibility: visible;
 }
+
+/* uploadIconFacility */
+.containerFacility {
+    position: relative;
+    width: 50%;
+}
+
+.imageFacility {
+    opacity: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: .5s ease;
+    backface-visibility: hidden;
+}
+
+.middleFacility {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.containerFacility:hover .image {
+    opacity: 0.3;
+}
+
+.containerFacility:hover .middle {
+    opacity: 1;
+}
+
+.uploadImageFacility {
+    background-color: #04AA6D;
+    color: white;
+    font-size: 16px;
+    padding: 16px 32px;
+}

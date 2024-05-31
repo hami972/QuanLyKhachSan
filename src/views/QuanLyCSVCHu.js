@@ -5,7 +5,7 @@ import { FormMaGiamGia } from "../components/FormMaGiamGia";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import api from "../api/Api";
 import moment from "moment";
-const QuanLyKhoDaSuDung = (props) => {
+const QuanLyCSVCHu = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [magiamgia, setRows] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
@@ -162,4 +162,4 @@ const QuanLyKhoDaSuDung = (props) => {
     </div>
   );
 };
-export default QuanLyKhoDaSuDung;
+export default QuanLyCSVCHu;

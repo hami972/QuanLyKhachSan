@@ -2,28 +2,22 @@ import React from 'react'
 import './mistyles.css'
 import moment from 'moment';
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-import { FormVatTuChuaSuDung } from '../components/FormVatTuChuaSuDung';
+import { FormCSVC } from '../components/FormCSVC';
 import { useEffect, useState, useContext } from 'react';
 import api from '../api/Api';
 import { AuthContext } from '../hook/AuthProvider'
 
-const QuanLyKhoChuaSuDung = (props) => {
+const QuanLyCSVC = (props) => {
   const { user } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [materials, setMaterials] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [branches, setBranches] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
-    maVatTu: '',
-    tenVatTu: '',
-    slnDau: '',
-    slnCuoi: '',
-    sltkDau: '',
-    sltkCuoi: '',
-    giaDau: '',
-    giaCuoi: '',
-    ngayDau: '',
-    ngayCuoi: '',
+    maCSVC: '',
+    tenCSVC: '',
+    slNhap: '',
+    slTonKho: '',
     chiNhanh: '',
   })
 
@@ -111,7 +105,7 @@ const QuanLyKhoChuaSuDung = (props) => {
               className="form-control pb-2 pt-2 mb-2"
               type="text"
               id="maVatTu"
-              placeholder="Mã vật tư"
+              placeholder="Mã CSVC"
               name="maVatTu"
               onChange={handleChange}
             />
@@ -121,7 +115,7 @@ const QuanLyKhoChuaSuDung = (props) => {
               className="form-control pb-2 pt-2 mb-2"
               type="text"
               id="tenVatTu"
-              placeholder="Tên vật tư"
+              placeholder="Tên CSVC"
               name="tenVatTu"
               onChange={handleChange}
             />
@@ -186,62 +180,6 @@ const QuanLyKhoChuaSuDung = (props) => {
               </div>
             </td>
           </tr>
-          <tr>
-            <td>
-              <b>Giá nhập:</b>
-            </td>
-            <td>
-              <div className='row'>
-                <div className='col-lg-4 col-md-6'>
-                  <text style={{ fontWeight: 600 }}>Từ</text>
-                  <input
-                    className="form-control pb-2 pt-2 mb-2"
-                    type="number"
-                    placeholder="0"
-                    name="giaDau"
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className='col-lg-4 col-md-6'>
-                  <text style={{ fontWeight: 600 }}>Đến</text>
-                  <input
-                    className="form-control pb-2 pt-2 mb-2"
-                    type="number"
-                    placeholder="1000000000"
-                    name="giaCuoi"
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <b>Ngày nhập:</b>
-            </td>
-            <td>
-              <div className='row'>
-                <div className='col-lg-4 col-md-6'>
-                  <text style={{ fontWeight: 600 }}>Từ</text>
-                  <input
-                    className="form-control pb-2 pt-2 mb-2"
-                    type="date"
-                    name="ngayDau"
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className='col-lg-4 col-md-6'>
-                  <text style={{ fontWeight: 600 }}>Đến</text>
-                  <input
-                    className="form-control pb-2 pt-2 mb-2"
-                    type="date"
-                    name="ngayCuoi"
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </td>
-          </tr>
 
           <tr>
             <td>
@@ -292,12 +230,10 @@ const QuanLyKhoChuaSuDung = (props) => {
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
           <tr className="table-secondary">
-            <th>Mã vật tư thiết bị</th>
-            <th>Tên vật tư thiết bị</th>
+            <th>Mã CSVC</th>
+            <th>Tên CSVC</th>
             <th>Số lượng nhập</th>
             <th>Số lượng tồn kho</th>
-            <th>Đơn giá nhập</th>
-            <th>Ngày nhập</th>
             <th></th>
           </tr>
         </thead>
@@ -308,8 +244,6 @@ const QuanLyKhoChuaSuDung = (props) => {
               <td>{row.tenVatTu}</td>
               <td>{row.soLuongNhap}</td>
               <td>{row.soLuongTonKho}</td>
-              <td>{new Intl.NumberFormat("en-DE").format(row.donGiaNhap)}</td>
-              <td>{moment(new Date(row.ngayNhap)).format("DD/MM/YYYY")}</td>
               <td className="fit">
                 <span className="actions">
                   <BsFillTrashFill
@@ -329,7 +263,7 @@ const QuanLyKhoChuaSuDung = (props) => {
       </table>
       {
         modalOpen && (
-          <FormVatTuChuaSuDung
+          <FormCSVC
             closeModal={() => {
               setModalOpen(false);
               setRowToEdit(null);
@@ -343,4 +277,4 @@ const QuanLyKhoChuaSuDung = (props) => {
     </div >
   );
 }
-export default QuanLyKhoChuaSuDung;
+export default QuanLyCSVC;

@@ -13,13 +13,12 @@ import {
 } from "firebase/storage";
 import { app } from "../hook/FirebaseConfig.js";
 const HoSoCaNhan = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const [showDialog, setShowDialog] = useState(false);
   const [branches, setBranches] = useState([]);
   const [ndshow, setNdshow] = useState('');
 
   // change image
-
   const storage = getStorage(app);
   const [file, setFile] = useState(null);
   const [isUploaded, setUploaded] = useState(true);
@@ -72,6 +71,8 @@ const HoSoCaNhan = () => {
     await Api.updateUser(formState)
     handleShowDialog("Lưu thông tin thành công!")
 
+    // Update context with new user info
+    setUser(formState);
   };
 
   useEffect(() => {
