@@ -13,6 +13,7 @@ export const FormCSVC = ({
   onSubmit,
   defaultValue,
   branches,
+  existingMaterials,
 }) => {
   const { user } = useContext(AuthContext);
   const [formState, setFormState] = useState(
@@ -79,6 +80,21 @@ export const FormCSVC = ({
     }
   };
 
+  //checkDuplicate maCSVC in same branches
+  const checkDuplicate = () => {
+    const isDuplicate = existingMaterials.some(
+      (item) =>
+        item.maCSVC === formState.maCSVC &&
+        item.chiNhanh === formState.chiNhanh &&
+        item.Id !== formState.Id // Exclude current item being edited
+    );
+    if (isDuplicate) {
+      setErrors("Không được nhập trùng mã CSVC trong cùng chi nhánh");
+      return false;
+    }
+    return true;
+  };
+
   const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
@@ -87,6 +103,7 @@ export const FormCSVC = ({
     e.preventDefault();
 
     if (!validateForm()) return;
+    if (!checkDuplicate()) return;
 
     onSubmit(formState);
 

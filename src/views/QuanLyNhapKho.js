@@ -11,6 +11,7 @@ const QuanLyNhapKho = (props) => {
   const { user } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [materials, setMaterials] = useState([]);
+  const [receivingStock, setReceivingStock] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [branches, setBranches] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
@@ -26,24 +27,36 @@ const QuanLyNhapKho = (props) => {
   })
 
   useEffect(() => {
+    getReceivingStocks();
+    getBranches();
     getMaterials();
-    getBranches()
   }, []);
   const getBranches = async () => {
     const branches = await api.getAllBranchs();
     setBranches(branches);
   };
 
-  const getMaterials = async () => {
+  const getReceivingStocks = async () => {
     const branches = await api.getAllBranchs();
+    const receivingStock = await api.getAllReceivingStock()
+    if (user?.Loai !== 'ChuHeThong') {
+      const fil = receivingStock.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+      setReceivingStock(fil);
+    }
+    else {
+      const fil = receivingStock.filter((item) => item.chiNhanh === branches[0].tenChiNhanh);
+      setReceivingStock(fil);
+    }
+  }
+
+  const getMaterials = async () => {
     const materials = await api.getAllMaterials()
     if (user?.Loai !== 'ChuHeThong') {
       const fil = materials.filter((item, idx) => item.chiNhanh === user?.chinhanh)
       setMaterials(fil);
     }
     else {
-      const fil = materials.filter((item) => item.chiNhanh === branches[0].tenChiNhanh);
-      setMaterials(fil);
+      setMaterials(materials);
     }
   }
 
@@ -61,27 +74,43 @@ const QuanLyNhapKho = (props) => {
   };
 
   const handleSubmit = async (newRow) => {
-    console.log(newRow);
     if (rowToEdit == null) {
       if (user?.Loai === 'ChuHeThong') {
-        const id = await api.addMaterial(newRow);
-        newRow.Id = id;
-        setMaterials([...materials, newRow]);
+        const id = await api.addReceivingStock(newRow);
+        newRow.Id = id.docId;
+        getReceivingStocks();
       }
       else {
-        const id = await api.addMaterial({ ...newRow, chiNhanh: user?.chinhanh });
-        newRow.Id = id;
-        setMaterials([...materials, newRow]);
+        const id = await api.addReceivingStock({ ...newRow, chiNhanh: user.chinhanh });
+        newRow.Id = id.docId;
+        setReceivingStock([newRow, ...receivingStock]);
       }
-
+      const result = materials.filter((item1, idx) => item1.maCSVC === newRow.maCSVC)
+      let nhap = parseInt(result[0].slNhap) + parseInt(newRow.slNhap)
+      let ton = parseInt(result[0].slTon) + parseInt(newRow.slNhap)
+      let updated2 = materials.map((item, idx) => {
+        if (item.maCSVC !== newRow.maCSVC) return item;
+        return { ...item, slNhap: nhap.toString(), slTon: ton.toString() };
+      })
+      setMaterials(updated2)
+      await api.updateMaterial({ slNhap: nhap.toString(), slTon: ton.toString() }, result[0].Id)
     }
     else {
-      api.updateMaterial(newRow, newRow.Id);
-      let updatedMaterials = materials.map((currRow, idx) => {
-        if (idx !== rowToEdit) return currRow;
-        return newRow;
-      })
-      setMaterials(updatedMaterials);
+      //await api.updateMaterialUsed(newRow, newRow.Id);
+      //let updated = materialsUsed.map((currRow, idx) => {
+      //if (idx !== rowToEdit) return currRow;
+      //return newRow;
+      //})
+      //const result = materials.filter((item1, idx) => item1.maVatTu === newRow.maVatTu)
+      //let x = parseInt(khoiphucSL) - parseInt(newRow.SL)
+      //console.log('x' + x)
+      //let updated2 = materials.map((item, idx) => {
+      //if (item.maVatTu !== newRow.maVatTu) return item;
+      //return { ...item, soLuongTonKho: x };
+      //})
+      //setMaterials(updated2)
+      //await api.updateMaterial({ soLuongTonKho: x.toString() }, result[0].Id)
+      //setMaterialUsed(updated)
     }
   };
 
@@ -272,7 +301,7 @@ const QuanLyNhapKho = (props) => {
           </tr>
         </thead>
         <tbody>
-          {materials.map((row, idx) => {
+          {receivingStock.map((row, idx) => {
             return (
               <tr key={row.Id}>
                 <td>{row.maCSVC}</td>
@@ -305,8 +334,9 @@ const QuanLyNhapKho = (props) => {
               setRowToEdit(null);
             }}
             onSubmit={handleSubmit}
-            defaultValue={rowToEdit !== null && materials[rowToEdit]}
+            defaultValue={rowToEdit !== null && receivingStock[rowToEdit]}
             branches={branches}
+            materials={materials}
           />
         )
       }

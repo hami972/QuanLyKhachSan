@@ -482,23 +482,28 @@ img {
 }
 
 .empty {
-  background-color: #4c683f; /* green */
+  background-color: #4c683f;
+  /* green */
 }
 
 .occupied {
-  background-color: #2596be; /* blue */
+  background-color: #2596be;
+  /* blue */
 }
 
 .deposit {
-  background-color: #878500; /* yellow */
+  background-color: #878500;
+  /* yellow */
 }
 
 .check-out-due {
-  background-color: #af2c4e; /* red */
+  background-color: #af2c4e;
+  /* red */
 }
 
 .check-in-soon {
-  background-color: #e28743; /* orange */
+  background-color: #e28743;
+  /* orange */
 }
 
 .room-container {

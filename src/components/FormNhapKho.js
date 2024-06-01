@@ -1,39 +1,35 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../hook/AuthProvider";
+import moment from "moment";
+import Select from "react-select";
 export const FormNhapKho = ({
     closeModal,
     onSubmit,
     defaultValue,
     branches,
+    materials
 }) => {
     const { user } = useContext(AuthContext);
     const [formState, setFormState] = useState(
         defaultValue || {
-            maVatTu: "",
-            tenVatTu: "",
-            soLuongNhap: "",
-            soLuongTonKho: "",
-            donGiaNhap: "",
-            ngayNhap: "",
-            chiNhanh: "",
+            maCSVC: "",
+            tenCSVC: "",
+            slNhap: "",
+            giaNhap: "",
+            ngayNhap: moment().format("YYYY-MM-DD"),
+            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : "",
         }
     );
     const [errors, setErrors] = useState("");
 
     const validateForm = () => {
-        if (!defaultValue) formState.soLuongTonKho = formState.soLuongNhap;
         if (
-            formState.maVatTu != "" &&
-            formState.tenVatTu != "" &&
-            formState.soLuongNhap != "" &&
-            (defaultValue ? formState.soLuongTonKho != "" : true) &&
-            formState.donGiaNhap != "" &&
+            formState.maCSVC != "" &&
+            formState.tenCSVC != "" &&
+            formState.slNhap != "" &&
+            formState.giaNhap != "" &&
             formState.ngayNhap != ""
         ) {
-            if (parseInt(formState.soLuongNhap) < parseInt(formState.soLuongTonKho)) {
-                setErrors("Số lượng tồn kho không được lớn hơn số lượng nhập!");
-                return false;
-            }
             setErrors("");
             return true;
         } else {
@@ -41,20 +37,17 @@ export const FormNhapKho = ({
             for (const [key, value] of Object.entries(formState)) {
                 if (value == "") {
                     switch (key) {
-                        case "maVatTu":
-                            errorFields.push("Mã vật tư");
+                        case "maCSVC":
+                            errorFields.push("Mã CSVC");
                             break;
-                        case "tenVatTu":
-                            errorFields.push("Tên vật tư");
+                        case "tenCSVC":
+                            errorFields.push("Tên CSVC");
                             break;
-                        case "soLuongNhap":
+                        case "slNhap":
                             errorFields.push("Số lượng nhập");
                             break;
-                        case "soLuongTonKho":
-                            errorFields.push("Số lượng tồn kho");
-                            break;
-                        case "donGiaNhap":
-                            errorFields.push("Đơn giá nhập");
+                        case "giaNhap":
+                            errorFields.push("Giá nhập");
                             break;
                         case "ngayNhap":
                             errorFields.push("Ngày nhập");
@@ -108,62 +101,57 @@ export const FormNhapKho = ({
         >
             <div
                 className="col-sm-4 modal1"
-                style={{ height: "80%", overflowY: "auto" }}
             >
                 <form>
-                    <div className="mb-2"><b>Mã vật tư</b></div>
-                    <input
-                        name="maVatTu"
-                        className="form-control pb-2 pt-2 mb-2"
-                        onChange={handleChange}
-                        value={formState.maVatTu}
-                    />
-                    <div className="mb-2"><b>Tên vật tư</b></div>
-                    <input
-                        name="tenVatTu"
-                        className="form-control pb-2 pt-2 mb-2"
-                        onChange={handleChange}
-                        type="text"
-                        value={formState.tenVatTu}
+                    <div className="mb-2" style={{ fontWeight: "500" }}>
+                        Mã CSVC
+                    </div>
+                    <Select
+                        className="mb-2"
+                        value={
+                            materials
+                                .filter((item) => item.chiNhanh === formState.chiNhanh)
+                                .find((item) => `${item.maCSVC} - ${item.tenCSVC}` == `${formState.maCSVC} - ${formState.tenCSVC}`) || ""
+                        }
+                        onChange={(value) =>
+                            value !== null
+                                ? setFormState({
+                                    ...formState,
+                                    maCSVC: `${value.maCSVC}`,
+                                    tenCSVC: `${value.tenCSVC}`
+                                })
+                                : setFormState({ ...formState, maTenCSVC: "" })
+                        }
+                        options={materials.filter((item) => item.chiNhanh === formState.chiNhanh)}
+                        isClearable
+                        getOptionLabel={(item) => `${item.maCSVC} - ${item.tenCSVC}`}
+                        getOptionValue={(item) => item}
+                        placeholder=""
                     />
                     <div className="mb-2"><b>Số lượng nhập</b></div>
                     <input
-                        name="soLuongNhap"
+                        name="slNhap"
                         onChange={handleChange}
                         type="number"
-                        value={formState.soLuongNhap}
+                        value={formState.slNhap}
                         onKeyDown={isNumberPress}
                         onPaste={isNumberCopy}
                         className="form-control pb-2 pt-2 mb-2"
                     />
-                    {defaultValue && (
-                        <div>
-                            <div className="mb-2"><b>Số lượng tồn kho</b></div>
-                            <input
-                                name="soLuongTonKho"
-                                onChange={handleChange}
-                                type="number"
-                                className="form-control pb-2 pt-2 mb-2"
-                                value={formState.soLuongTonKho}
-                                onKeyDown={isNumberPress}
-                                onPaste={isNumberCopy}
-                            />
-                        </div>
-                    )}
                     <div>
                         <div className="mb-2"><b>Đơn giá nhập</b></div>
                         <input
-                            name="donGiaNhap"
+                            name="giaNhap"
                             className="form-control pb-2 pt-2 mb-2"
                             onChange={handleChange}
                             type="number"
-                            value={formState.donGiaNhap}
+                            value={formState.giaNhap}
                             onKeyDown={isNumberPress}
                             onPaste={isNumberCopy}
                         />
                     </div>
                     <div>
-                        <div className="mb-2"><b>Đơn giá nhập</b></div>
+                        <div className="mb-2"><b>Ngày nhập</b></div>
                         <input
                             name="ngayNhap"
                             onChange={handleChange}
@@ -196,7 +184,8 @@ export const FormNhapKho = ({
 
                     {errors && <div className="error">{errors}</div>}
                     <div className="text-end">
-                        <button type="submit" className="btn pb-2 pt-2 ps-3 pe-3 mt-2 btnGradient" onClick={handleSubmit}>
+                        <button type="submit" className="btn pb-2 pt-2 ps-3 pe-3" style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                            onClick={handleSubmit}>
                             Lưu
                         </button>
                     </div>

@@ -614,6 +614,7 @@ const getMaterialUsedBySearch = async (searchCriteria) => {
     return [];
   }
 };
+
 const getAllMaterials = async () => {
   try {
     const response = await client.get(
@@ -629,6 +630,7 @@ const getAllMaterials = async () => {
     return [];
   }
 };
+
 const addMaterial = async (data) => {
   const endpoint = "/Material/add";
   try {
@@ -654,11 +656,69 @@ const updateMaterial = async (data, id) => {
     console.error("error: ", error.message);
   }
 };
-const getMaterialsBySeacrh = async (searchCriteria) => {
+const getMaterialsBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(
       `Material/Materials?${queryParams}`
+    );
+
+    if (response.data.success) {
+      return response.data.materials;
+    } else {
+      console.log("not get materials");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
+
+const getAllReceivingStock = async () => {
+  try {
+    const response = await client.get(
+      "/ReceivingStock/get"
+    );
+    if (response.data.success) {
+      return response.data.materials;
+    } else {
+      console.log("not get materials");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
+const addReceivingStock = async (data) => {
+  const endpoint = "/ReceivingStock/add";
+  try {
+    const response = await client.post(endpoint, data);
+    return response.data.docId;
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+const deleteReceivingStock = async (id) => {
+  try {
+    await client.delete("/ReceivingStock/delete/" + id);
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+const updateReceivingStock = async (data, id) => {
+  const endpoint = "/ReceivingStock/update/" + id;
+  console.log(id);
+  try {
+    const response = await client.put(endpoint, data);
+  } catch (error) {
+    console.error("error: ", error.message);
+  }
+};
+const getReceivingStockBySearch = async (searchCriteria) => {
+  try {
+    const queryParams = new URLSearchParams(searchCriteria).toString();
+    const response = await client.get(
+      `ReceivingStock/Materials?${queryParams}`
     );
 
     if (response.data.success) {
@@ -766,7 +826,7 @@ export default {
   addMaterial,
   updateMaterial,
   deleteMaterial,
-  getMaterialsBySeacrh,
+  getMaterialsBySearch,
   addMaterialUsed,
   getMaterialsUsed,
   updateMaterialUsed,
@@ -776,4 +836,9 @@ export default {
   addWashingMachine,
   updateWashingMachine,
   deleteWashingMachine,
+  getAllReceivingStock,
+  addReceivingStock,
+  deleteReceivingStock,
+  updateReceivingStock,
+  getReceivingStockBySearch
 };
