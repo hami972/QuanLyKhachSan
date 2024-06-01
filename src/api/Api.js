@@ -671,6 +671,44 @@ const updateUser = async (userData) => {
       return [];
     }
   };
+  const getWashingMachine = async () => {
+    try {
+      const response = await client.get("/WashingMachine/getWashingMachine");
+      if (response.data.success) {
+        return response.data.washingMachine;
+      } else {
+        console.log("not get review");
+      }
+    } catch (error) {
+      console.log("error: ", error.message);
+      return [];
+    }
+  };
+  const addWashingMachine = async (data) => {
+    const endpoint = "/WashingMachine/add";
+    try {
+      const response = await client.post(endpoint, data); // <- POST
+      return response.data.docId;
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
+  
+  const updateWashingMachine = async (data, id) => {
+    const endpoint = "/WashingMachine/update/" + id;
+    try {
+      await client.put(endpoint, data);
+    } catch (error) {
+      console.error("error: ", error.message);
+    }
+  };
+  const deleteWashingMachine = async (id) => {
+    try {
+      await client.delete("/WashingMachine/delete/" + id);
+    } catch (error) {
+      console.log("error: ", error.message);
+    }
+  };
   export default {
     getAllDiscounts,
     addDiscount,
@@ -734,4 +772,8 @@ const updateUser = async (userData) => {
     updateMaterialUsed,
     deleteMaterialUsed,
     getMaterialUsedBySearch,
+    getWashingMachine,
+    addWashingMachine,
+    updateWashingMachine,
+    deleteWashingMachine,
   };
