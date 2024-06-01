@@ -2,7 +2,7 @@ import React from 'react'
 import './mistyles.css'
 import QuanLyNhapKho from './QuanLyNhapKho';
 import QuanLyCSVC from './QuanLyCSVC';
-import QuanLyCSVCHu from './QuanLyCSVC';
+import QuanLyCSVCHu from './QuanLyCSVCHu';
 import { useLocation, Redirect, Route, Switch } from 'react-router';
 import { NavLink } from 'react-router-dom';
 const QuanLyKho = (props) => {

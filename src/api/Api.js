@@ -731,6 +731,65 @@ const getReceivingStockBySearch = async (searchCriteria) => {
     return [];
   }
 };
+
+const getAllDamagedMaterial = async () => {
+  try {
+    const response = await client.get(
+      "/DamagedMaterial/get"
+    );
+    if (response.data.success) {
+      return response.data.materials;
+    } else {
+      console.log("not get materials");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
+const addDamagedMaterial = async (data) => {
+  const endpoint = "/DamagedMaterial/add";
+  try {
+    const response = await client.post(endpoint, data);
+    return response.data.docId;
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+const deleteDamagedMaterial = async (id) => {
+  try {
+    await client.delete("/DamagedMaterial/delete/" + id);
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+const updateDamagedMaterial = async (data, id) => {
+  const endpoint = "/DamagedMaterial/update/" + id;
+  console.log(id);
+  try {
+    const response = await client.put(endpoint, data);
+  } catch (error) {
+    console.error("error: ", error.message);
+  }
+};
+const getDamagedMaterialBySearch = async (searchCriteria) => {
+  try {
+    const queryParams = new URLSearchParams(searchCriteria).toString();
+    const response = await client.get(
+      `DamagedMaterial/Materials?${queryParams}`
+    );
+
+    if (response.data.success) {
+      return response.data.materials;
+    } else {
+      console.log("not get materials");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
+
 const getWashingMachine = async () => {
   try {
     const response = await client.get("/WashingMachine/getWashingMachine");
@@ -840,5 +899,10 @@ export default {
   addReceivingStock,
   deleteReceivingStock,
   updateReceivingStock,
-  getReceivingStockBySearch
+  getReceivingStockBySearch,
+  getAllDamagedMaterial,
+  addDamagedMaterial,
+  deleteDamagedMaterial,
+  updateDamagedMaterial,
+  getDamagedMaterialBySearch
 };

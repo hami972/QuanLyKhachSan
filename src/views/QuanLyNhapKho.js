@@ -150,7 +150,7 @@ const QuanLyNhapKho = (props) => {
               className="form-control pb-2 pt-2 mb-2"
               type="text"
               id="tenCSVC"
-              placeholder="Tên vật tư"
+              placeholder="Tên CSVC"
               name="tenCSVC"
               onChange={handleChange}
             />
@@ -292,8 +292,8 @@ const QuanLyNhapKho = (props) => {
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
           <tr className="table-secondary">
-            <th>Mã vật tư thiết bị</th>
-            <th>Tên vật tư thiết bị</th>
+            <th>Mã CSVC</th>
+            <th>Tên CSVC</th>
             <th>Số lượng nhập</th>
             <th>Đơn giá nhập</th>
             <th>Ngày nhập</th>
