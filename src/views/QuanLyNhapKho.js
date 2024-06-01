@@ -2,26 +2,24 @@ import React from 'react'
 import './mistyles.css'
 import moment from 'moment';
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-import { FormVatTuChuaSuDung } from '../components/FormVatTuChuaSuDung';
+import { FormNhapKho } from '../components/FormNhapKho.js';
 import { useEffect, useState, useContext } from 'react';
 import api from '../api/Api';
 import { AuthContext } from '../hook/AuthProvider'
 
-const QuanLyKhoChuaSuDung = (props) => {
+const QuanLyNhapKho = (props) => {
   const { user } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [materials, setMaterials] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [branches, setBranches] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
-    maVatTu: '',
-    tenVatTu: '',
+    maCSVC: '',
+    tenCSVC: '',
     slnDau: '',
     slnCuoi: '',
-    sltkDau: '',
-    sltkCuoi: '',
-    giaDau: '',
-    giaCuoi: '',
+    giaNhapDau: '',
+    giaNhapCuoi: '',
     ngayDau: '',
     ngayCuoi: '',
     chiNhanh: '',
@@ -33,17 +31,19 @@ const QuanLyKhoChuaSuDung = (props) => {
   }, []);
   const getBranches = async () => {
     const branches = await api.getAllBranchs();
-    setBranches([{ tenChiNhanh: "Tất cả" }, ...branches]);
+    setBranches(branches);
   };
 
   const getMaterials = async () => {
+    const branches = await api.getAllBranchs();
     const materials = await api.getAllMaterials()
     if (user?.Loai !== 'ChuHeThong') {
       const fil = materials.filter((item, idx) => item.chiNhanh === user?.chinhanh)
       setMaterials(fil);
     }
     else {
-      setMaterials(materials)
+      const fil = materials.filter((item) => item.chiNhanh === branches[0].tenChiNhanh);
+      setMaterials(fil);
     }
   }
 
@@ -103,16 +103,16 @@ const QuanLyKhoChuaSuDung = (props) => {
     }
   }
   return (
-    <div>
+    <div >
       <div>
         <div className='row'>
           <div className='col-lg-4 col-md-6'>
             <input
               className="form-control pb-2 pt-2 mb-2"
               type="text"
-              id="maVatTu"
-              placeholder="Mã vật tư"
-              name="maVatTu"
+              id="maCSVC"
+              placeholder="Mã CSVC"
+              name="maCSVC"
               onChange={handleChange}
             />
           </div>
@@ -120,9 +120,9 @@ const QuanLyKhoChuaSuDung = (props) => {
             <input
               className="form-control pb-2 pt-2 mb-2"
               type="text"
-              id="tenVatTu"
+              id="tenCSVC"
               placeholder="Tên vật tư"
-              name="tenVatTu"
+              name="tenCSVC"
               onChange={handleChange}
             />
           </div>
@@ -130,7 +130,7 @@ const QuanLyKhoChuaSuDung = (props) => {
         <table className='container-fluid'>
           <tr>
             <td>
-              <b>Số lượng nhập</b>
+              <b>Số lượng</b>
             </td>
             <td>
               <div div className='row'>
@@ -151,35 +151,6 @@ const QuanLyKhoChuaSuDung = (props) => {
                     type="number"
                     placeholder="1000000000"
                     name="slnCuoi"
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <b>Số lượng tồn kho: </b>
-            </td>
-            <td>
-              <div div className='row'>
-                <div className='col-lg-4 col-md-6'>
-                  <text style={{ fontWeight: 600 }}>Từ</text>
-                  <input
-                    className="form-control pb-2 pt-2 mb-2"
-                    type="number"
-                    placeholder="0"
-                    name="sltkDau"
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className='col-lg-4 col-md-6'>
-                  <text style={{ fontWeight: 600 }}>Đến</text>
-                  <input
-                    className="form-control pb-2 pt-2 mb-2"
-                    type="number"
-                    placeholder="1000000000"
-                    name="sltkCuoi"
                     onChange={handleChange}
                   />
                 </div>
@@ -273,8 +244,8 @@ const QuanLyKhoChuaSuDung = (props) => {
       <button
         type="submit"
         className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
         onClick={onSearch}
+        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
       >
         Tìm kiếm
       </button>
@@ -295,41 +266,40 @@ const QuanLyKhoChuaSuDung = (props) => {
             <th>Mã vật tư thiết bị</th>
             <th>Tên vật tư thiết bị</th>
             <th>Số lượng nhập</th>
-            <th>Số lượng tồn kho</th>
             <th>Đơn giá nhập</th>
             <th>Ngày nhập</th>
             <th></th>
           </tr>
         </thead>
-        {materials.map((row, idx) => {
-          return (
-            <tr key={row.Id}>
-              <td>{row.maVatTu}</td>
-              <td>{row.tenVatTu}</td>
-              <td>{row.soLuongNhap}</td>
-              <td>{row.soLuongTonKho}</td>
-              <td>{new Intl.NumberFormat("en-DE").format(row.donGiaNhap)}</td>
-              <td>{moment(new Date(row.ngayNhap)).format("DD/MM/YYYY")}</td>
-              <td className="fit">
-                <span className="actions">
-                  <BsFillTrashFill
-                    className="delete-btn"
-                    onClick={() => handleDeleteRow(idx)}
-                  />
-                  <BsFillPencilFill
-                    className="edit-btn"
-                    onClick={() => handleEditRow(idx)}
-                  />
-                </span>
-              </td>
-            </tr>
-          );
-        })}
-        <tbody></tbody>
+        <tbody>
+          {materials.map((row, idx) => {
+            return (
+              <tr key={row.Id}>
+                <td>{row.maCSVC}</td>
+                <td>{row.tenCSVC}</td>
+                <td>{row.slNhap}</td>
+                <td>{new Intl.NumberFormat("en-DE").format(row.giaNhap)}</td>
+                <td>{moment(new Date(row.ngayNhap)).format("DD/MM/YYYY")}</td>
+                <td className="fit">
+                  <span className="actions">
+                    <BsFillTrashFill
+                      className="delete-btn"
+                      onClick={() => handleDeleteRow(idx)}
+                    />
+                    <BsFillPencilFill
+                      className="edit-btn"
+                      onClick={() => handleEditRow(idx)}
+                    />
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
       {
         modalOpen && (
-          <FormVatTuChuaSuDung
+          <FormNhapKho
             closeModal={() => {
               setModalOpen(false);
               setRowToEdit(null);
@@ -343,4 +313,4 @@ const QuanLyKhoChuaSuDung = (props) => {
     </div >
   );
 }
-export default QuanLyKhoChuaSuDung;
+export default QuanLyNhapKho;

@@ -1,11 +1,10 @@
 import React from 'react'
 import './mistyles.css'
-import QuanLyKhoChuaSuDung from './QuanLyKhoChuaSuDung';
-import QuanLyKhoDaSuDung from './QuanLyKhoDaSuDung';
+import QuanLyNhapKho from './QuanLyNhapKho';
+import QuanLyCSVC from './QuanLyCSVC';
+import QuanLyCSVCHu from './QuanLyCSVC';
 import { useLocation, Redirect, Route, Switch } from 'react-router';
 import { NavLink } from 'react-router-dom';
-import QuanLyKhoDangSuDung from './QuanLyKhoDangSuDung';
-import MaterialUsed from './MaterialUsed';
 const QuanLyKho = (props) => {
   const { pathname } = useLocation();
   return (
@@ -13,29 +12,29 @@ const QuanLyKho = (props) => {
       <div className="container mt-3">
         <ul className="nav nav-tabs maintab">
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/chuasudung">Quản lý thiết bị đã nhập và chưa sử dụng</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/facilites">Cơ sở vật chất</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/dasudung">Quản lý thiết bị đã sử dụng</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/recevingStock">Lịch sử nhập kho</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/dangsudung">Quản lý thiết bị đang sử dụng</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/quanlykho/damaged">CSVC bị hỏng</NavLink>
           </li>
         </ul>
       </div>
       <div className="container mt-3">
         <Switch>
-          <Route path="/manager/quanlykho/chuasudung">
-            <QuanLyKhoChuaSuDung />
+          <Route path="/manager/quanlykho/facilites">
+            <QuanLyCSVC />
           </Route>
-          <Route path="/manager/quanlykho/dasudung">
-            <MaterialUsed />
+          <Route path="/manager/quanlykho/recevingStock">
+            <QuanLyNhapKho />
           </Route>
-          <Route path="/manager/quanlykho/dangsudung">
-            <QuanLyKhoDangSuDung/>
+          <Route path="/manager/quanlykho/damaged">
+            <QuanLyCSVCHu />
           </Route>
           {pathname === "/manager/quanlykho" ? (
-            <Redirect to="/manager/quanlykho/chuasudung" />
+            <Redirect to="/manager/quanlykho/facilites" />
           ) : null}
         </Switch>
       </div>
