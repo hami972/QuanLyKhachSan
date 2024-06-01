@@ -116,7 +116,7 @@ const QuanLyLoaiPhong = (props) => {
                             <td>{idx + 1}</td>
                             <td>{row.maLoaiPhong}</td>
                             <td>{row.ten}</td>
-                            <td>{row.donGia}</td>
+                            <td>{new Intl.NumberFormat("en-DE").format(row.donGia)}</td>
                             <td>{row.soLuongNguoiToiDa}</td>
                             <td className="fit">
                                 <span className="actions">

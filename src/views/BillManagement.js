@@ -291,7 +291,7 @@ const BillManagement = (props) => {
                     type="submit"
                     className="btn pb-2 pt-2 mt-2"
                     onClick={onSearch}
-                    style={{ backgroundColor: "#0096FF", color: "#FFFFFF" }}
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
                   >
                     Tìm kiếm
                   </button>
