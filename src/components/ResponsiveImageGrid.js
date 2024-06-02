@@ -7,11 +7,13 @@ import {
 } from "firebase/storage";
 import { app } from "../hook/FirebaseConfig.js";
 
-const ResponsiveImageGrid = ({ updateImages }) => {
+const ResponsiveImageGrid = ({ updateImages, uploadedImages }) => {
 
     // change image
     const storage = getStorage(app);
     const [file, setFile] = useState([]);
+    const [images, setImages] = useState(uploadedImages);
+    const [selectedImage, setSelectedImage] = useState(null);
     const [isUploaded, setUploaded] = useState(true);
     const [percentUploaded, setPercentUploaded] = useState("");
     const addImage = (e) => {
@@ -36,7 +38,7 @@ const ResponsiveImageGrid = ({ updateImages }) => {
                     // Cập nhật state cho file và images với mảng fileList
                     setFile(fileList);
                     setImages([...images, ...fileList.map(file => file.dataURL)]);
-
+                    updateImages([...images, ...fileList.map(file => file.dataURL)]);
                 }
             };
 
@@ -64,8 +66,9 @@ const ResponsiveImageGrid = ({ updateImages }) => {
                     (error) => { },
                     () => {
                         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            setImages([...images, downloadURL]);
-                            updateImages([...images, downloadURL]);
+                            const updatedImages = [...images, downloadURL];
+                            setImages(updatedImages);
+                            updateImages(updatedImages);
                             setUploaded(true);
                         });
                     }
@@ -77,14 +80,29 @@ const ResponsiveImageGrid = ({ updateImages }) => {
         file.length > 0 && upload();
     }, [file]);
 
+    const handleDeleteImage = (index) => {
+        const updatedImages = [...images];
+        updatedImages.splice(index, 1);
+        setImages(updatedImages);
+        updateImages(updatedImages);
+    };
 
-    const [images, setImages] = useState([]);
+    const handleImageClick = (image) => {
+        setSelectedImage(image);
+    };
+
+    const closeModalImage = () => {
+        setSelectedImage(null);
+    };
 
     return (
         <div className="masonry-grid">
             {images.map((image, index) => (
-                <div className="masonry-item">
-                    <img src={image} />
+                <div className="masonry-item" key={index}>
+                    <img src={image} onClick={() => handleImageClick(image)} />
+                    <button type="button" className="delete-btn-images" onClick={() => handleDeleteImage(index)}>
+                        <i className="fa-solid fa-xmark" style={{ color: "#ebe9e4" }}></i>
+                    </button>
                 </div>
             ))}
             <div className="masonry-item add-image-container">
@@ -92,6 +110,15 @@ const ResponsiveImageGrid = ({ updateImages }) => {
                     <input id="imageIcon" type="file" multiple accept="image/*" onChange={(e) => addImage(e)} />
                 </div>
             </div>
+            {selectedImage && (
+                <div className="image-modal">
+                    <div className="image-modal-content">
+                        <img src={selectedImage} />
+                        <button className="close-modal" onClick={closeModalImage}>Close</button>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

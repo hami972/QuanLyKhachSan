@@ -99,7 +99,7 @@ export const FormCSVCHu = ({
             >
                 <form>
                     <div className="mb-2" style={{ fontWeight: "500" }}>
-                        Mã CSVC
+                        Tên CSVC
                     </div>
                     <Select
                         className="mb-2"

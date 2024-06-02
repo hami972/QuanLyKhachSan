@@ -273,6 +273,7 @@ const QuanLyCSVC = (props) => {
             onSubmit={handleSubmit}
             defaultValue={rowToEdit !== null && materials[rowToEdit]}
             branches={branches}
+            existingMaterials={materials}
           />
         )
       }

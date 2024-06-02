@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
-import ResponsiveImageGrid from "../views/ResponsiveImageGrid";
+import ResponsiveImageGrid from "./ResponsiveImageGrid";
 import api from '../api/Api';
 import { AuthContext } from '../hook/AuthProvider'
+import Select from "react-select";
 
 const defaultCoSoVatChat = [
   "Giường",
@@ -23,6 +24,7 @@ export const FormLoaiPhong = ({
   kindOfRoom,
   branches
 }) => {
+  const { user } = useContext(AuthContext);
   const [formState, setFormState] = useState(
     defaultValue || {
       maLoaiPhong: '',
@@ -31,11 +33,11 @@ export const FormLoaiPhong = ({
       soLuongNguoiToiDa: '',
       viewPhong: '',
       dienTich: '',
-      images: '',
-      coSoVatChat: defaultCoSoVatChat.map((item) => ({ name: item, quantity: 0 })),
+      images: [],
+      coSoVatChat: [],
+      chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : "",
     }
   );
-  const { user } = useContext(AuthContext);
   const [materials, setMaterials] = useState([]);
 
   useEffect(() => {
@@ -119,19 +121,18 @@ export const FormLoaiPhong = ({
       return false;
     }
   };
-  const handleChange1 = (e) => {
+  const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
   };
 
-  const handleChange = (e, index) => {
-    const { value } = e.target;
-    const newItems = [...formState.coSoVatChat];
-    newItems[index].quantity = value;
+  const handleChangeBranch = (e) => {
     setFormState({
       ...formState,
-      coSoVatChat: newItems,
+      [e.target.name]: e.target.value,
+      coSoVatChat: []
     });
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -160,22 +161,43 @@ export const FormLoaiPhong = ({
   };
 
   // add materials in room type
-  const [items, setItems] = useState([{ facility: '', quantity: '' }]);
 
-  const handleAddItem = () => {
-    setItems([...items, { facility: '', quantity: '' }]);
+  const handleAddMaterial = () => {
+    setFormState({
+      ...formState,
+      coSoVatChat: [...formState.coSoVatChat, { maCSVC: '', tenCSVC: '', soLuong: '' }]
+    });
   };
 
-  const handleChangeItem = (index, key, value) => {
-    const newItems = [...items];
-    newItems[index][key] = value;
-    setItems(newItems);
+  const handleChangeMaterialQuantity = (index, key, value) => {
+    const newMaterials = [...formState.coSoVatChat];
+    newMaterials[index][key] = value;
+    setFormState({
+      ...formState,
+      coSoVatChat: newMaterials
+    });
   };
 
-  const handleRemoveItem = (index) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    setItems(newItems);
+  const handleChangeMaterial = (index, selectedOption) => {
+    const updatedMaterials = [...formState.coSoVatChat];
+    updatedMaterials[index] = {
+      ...updatedMaterials[index],
+      maCSVC: selectedOption?.maCSVC || '',
+      tenCSVC: selectedOption?.tenCSVC || ''
+    };
+    setFormState({
+      ...formState,
+      coSoVatChat: updatedMaterials
+    });
+  };
+
+  const handleRemoveMaterial = (index) => {
+    const newMaterials = [...formState.coSoVatChat];
+    newMaterials.splice(index, 1);
+    setFormState({
+      ...formState,
+      coSoVatChat: newMaterials
+    });
   };
 
   return (
@@ -193,7 +215,7 @@ export const FormLoaiPhong = ({
               <input
                 name="maLoaiPhong"
                 className="form-control pb-2 pt-2 mb-2"
-                onChange={handleChange1}
+                onChange={handleChange}
                 value={formState.maLoaiPhong}
               />
             </div>
@@ -201,7 +223,7 @@ export const FormLoaiPhong = ({
               <div className="mb-2"><b>Tên loại phòng</b></div>
               <input
                 name="tenLoaiPhong"
-                onChange={handleChange1}
+                onChange={handleChange}
                 className="form-control pb-2 pt-2 mb-2"
                 type="text"
                 value={formState.tenLoaiPhong}
@@ -211,7 +233,7 @@ export const FormLoaiPhong = ({
               <div className="mb-2"><b>Diện tích (m2)</b></div>
               <input
                 name="dienTich"
-                onChange={handleChange1}
+                onChange={handleChange}
                 className="form-control pb-2 pt-2 mb-2"
                 type="text"
                 value={formState.dienTich}
@@ -222,7 +244,7 @@ export const FormLoaiPhong = ({
               <input
                 name="donGia"
                 className="form-control pb-2 pt-2 mb-2"
-                onChange={handleChange1}
+                onChange={handleChange}
                 type="number"
                 value={formState.donGia}
                 onKeyDown={isNumberPress}
@@ -233,7 +255,7 @@ export const FormLoaiPhong = ({
               <div className="mb-2"><b>Số lượng người tối đa</b></div>
               <input
                 name="soLuongNguoiToiDa"
-                onChange={handleChange1}
+                onChange={handleChange}
                 type="number"
                 value={formState.soLuongNguoiToiDa}
                 className="form-control pb-2 pt-2 mb-2"
@@ -245,7 +267,7 @@ export const FormLoaiPhong = ({
               <div className="mb-2"><b>View phòng</b></div>
               <input
                 name="viewPhong"
-                onChange={handleChange1}
+                onChange={handleChange}
                 type="text"
                 value={formState.viewPhong}
                 className="form-control pb-2 pt-2 mb-2"
@@ -257,7 +279,7 @@ export const FormLoaiPhong = ({
                 className="form-select pb-2 pt-2 mb-2"
                 id="type"
                 name="chiNhanh"
-                onChange={handleChange}
+                onChange={handleChangeBranch}
                 value={formState.chiNhanh}
               >
                 {branches.map((item, index) => {
@@ -271,43 +293,44 @@ export const FormLoaiPhong = ({
               </select>
             </div>
             <div className="mb-2"><b>Cơ sở vật chất</b></div>
-            {formState.coSoVatChat.map((item, index) => (
-              <div key={index}>
-                <p>{item.name}</p>
-                <input
-                  type="number"
-                  className="form-control pb-2 pt-2 mb-2"
-                  placeholder={`Nhập số lượng`}
-                  value={item.quantity}
-                  onChange={(e) => handleChange(e, index)}
-                />
-              </div>
-            ))}
 
-            {items.map((item, index) => (
+            {formState.coSoVatChat.map((material, index) => (
               <div key={index}>
-                <select
-                  value={item.facility}
-                  onChange={(e) => handleChangeItem(index, 'facility', e.target.value)}
-                >
-                  <option value="">-- Select Facility --</option>
-                  {/* Option items here */}
-                </select>
+                <div className="mb-2" style={{ fontWeight: "500" }}>
+                  Tên CSVC
+                </div>
+                <Select
+                  className="mb-2"
+                  placeholder="Tên CSVC"
+                  value={
+                    materials
+                      .filter((item) => item.chiNhanh === formState.chiNhanh)
+                      .find((item) => `${item.maCSVC} - ${item.tenCSVC}` === `${material.maCSVC} - ${material.tenCSVC}`) || ""
+                  }
+                  onChange={(selectedOption) => handleChangeMaterial(index, selectedOption)
+                  }
+                  options={materials
+                    .filter((item) => item.chiNhanh === formState.chiNhanh)
+                    .filter((item) => !formState.coSoVatChat.some((cs) => cs.maCSVC === item.maCSVC))}
+                  isClearable
+                  getOptionLabel={(item) => `${item.maCSVC} - ${item.tenCSVC}`}
+                  getOptionValue={(item) => item}
+                />
                 <input
                   type="number"
-                  placeholder="Quantity"
-                  value={item.quantity}
-                  onChange={(e) => handleChange(index, 'quantity', e.target.value)}
+                  placeholder="Số lượng"
+                  value={material.soLuong}
+                  onChange={(e) => handleChangeMaterialQuantity(index, 'soLuong', e.target.value)}
                 />
-                <button type="button" onClick={() => handleRemoveItem(index)}>X</button>
+                <button type="button" onClick={() => handleRemoveMaterial(index)}>Remove</button>
               </div>
             ))}
-            <button type="button" onClick={handleAddItem}>Add</button>
+            <button type="button" onClick={handleAddMaterial}>Add Material</button>
 
           </div>
 
           <div className="mb-2"><b>Ảnh phòng</b></div>
-          <ResponsiveImageGrid updateImages={updateImages} />
+          <ResponsiveImageGrid updateImages={updateImages} uploadedImages={formState.images} />
 
 
 

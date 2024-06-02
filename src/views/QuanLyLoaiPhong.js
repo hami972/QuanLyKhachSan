@@ -16,12 +16,11 @@ const QuanLyLoaiPhong = (props) => {
     const [rowToEdit, setRowToEdit] = useState(null);
     const [searchCriteria, setSearchCriteria] = useState({
         maLoaiPhong: '',
-        ten: '',
+        tenLoaiPhong: '',
         donGia: '',
         soLuongNguoiToiDa: '',
         viewPhong: '',
         chiNhanh: '',
-        coSoVatChat: [],
     })
 
     const getBranches = async () => {
@@ -55,9 +54,16 @@ const QuanLyLoaiPhong = (props) => {
     const handleSubmit = async (newRow) => {
         console.log(newRow);
         if (rowToEdit == null) {
-            const id = await api.addKindOfRoom(newRow);
-            newRow.Id = id;
-            setKindOfRoom([...kindOfRoom, newRow]);
+            if (user?.Loai === 'ChuHeThong') {
+                const id = await api.addKindOfRoom(newRow);
+                newRow.Id = id;
+                setKindOfRoom([...kindOfRoom, newRow]);
+            }
+            else {
+                const id = await api.addKindOfRoom({ ...newRow, chiNhanh: user?.chinhanh });
+                newRow.Id = id;
+                setKindOfRoom([...kindOfRoom, newRow]);
+            }
         }
         else {
             api.updateKindOfRoom(newRow, newRow.Id);
@@ -141,7 +147,7 @@ const QuanLyLoaiPhong = (props) => {
                         <tr key={row.Id}>
                             <td>{idx + 1}</td>
                             <td>{row.maLoaiPhong}</td>
-                            <td>{row.ten}</td>
+                            <td>{row.tenLoaiPhong}</td>
                             <td>{new Intl.NumberFormat("en-DE").format(row.donGia)}</td>
                             <td>{row.soLuongNguoiToiDa}</td>
                             <td className="fit">

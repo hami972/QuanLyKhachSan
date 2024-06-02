@@ -217,7 +217,6 @@ export const FormCSVC = ({
               </select>
             </div>
           )}
-
           {errors && <div className="error">{errors}</div>}
           <div className="text-end">
             <button type="submit" className="btn pb-2 pt-2 ps-3 pe-3" style={{ backgroundColor: "#905700", color: "#FFFFFF" }} onClick={handleSubmit}>
