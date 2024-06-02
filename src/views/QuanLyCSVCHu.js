@@ -274,7 +274,7 @@ const QuanLyCSVCHu = (props) => {
                 <td>{row.maCSVC}</td>
                 <td>{row.tenCSVC}</td>
                 <td>{row.slHu}</td>
-                <td>{moment(new Date(row.ngayNhap)).format("DD/MM/YYYY")}</td>
+                <td>{moment(new Date(row.ngayGhiNhan)).format("DD/MM/YYYY")}</td>
                 <td className="fit">
                   <span className="actions">
                     <BsFillTrashFill

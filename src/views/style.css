@@ -1218,3 +1218,66 @@ input[type="date"]:not(.has-value):before {
     font-size: 16px !important;
     font-weight: bold !important;
 }
+
+/* Mansory images*/
+.masonry-grid {
+    column-count: 6;
+    column-gap: 10px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    /* Prevent horizontal scrolling */
+}
+
+.masonry-item {
+    break-inside: avoid;
+    margin-bottom: 10px;
+    max-width: 100%;
+    /* Ensure items do not exceed container width */
+}
+
+.masonry-item img {
+    width: 100%;
+    display: block;
+    border: 2px solid #ccc;
+    box-sizing: border-box;
+    /* Ensure borders are included in width calculation */
+}
+
+.add-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ccc;
+    height: 200px;
+    width: 100%;
+    box-sizing: border-box;
+    /* Ensure borders are included in width calculation */
+}
+
+.add-image-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    /* Ensure form does not exceed container width */
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .masonry-grid {
+        column-count: 4;
+    }
+}
+
+@media (max-width: 768px) {
+    .masonry-grid {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .masonry-grid {
+        column-count: 1;
+    }
+}

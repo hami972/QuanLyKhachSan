@@ -288,9 +288,8 @@ iframe {
 
 .modal1 {
   border-radius: 5px;
-  padding: 2rem;
+  padding: 15px 25px;
   background-color: white;
-  width: 25em;
 }
 
 .modal .btn {

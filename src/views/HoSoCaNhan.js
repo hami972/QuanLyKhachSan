@@ -163,10 +163,10 @@ const HoSoCaNhan = () => {
                   <b>{user?.maNV}</b>
                 </div>
               )}
-              {user?.Loai != 'KhachHang' && <div className="mt-5 d-none d-sm-block" style={{ fontSize: "16px", color: "#858585" }}>
+              {user?.Loai != 'KhachHang' && user?.Loai != 'ChuHeThong' && <div className="mt-5 d-none d-sm-block" style={{ fontSize: "16px", color: "#858585" }}>
                 <hr />
                 <div>Vào làm việc từ</div>
-                <div>12/10/2020</div>
+                <div>{moment(new Date(user?.ngayVaoLam)).format("DD/MM/YYYY")}</div>
               </div>}
             </div>
           </div>

@@ -1,13 +1,16 @@
 import React from 'react'
 import './mistyles.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import api from '../api/Api';
 import { FormLoaiPhong } from '../components/FormLoaiPhong';
+import { AuthContext } from '../hook/AuthProvider'
 
 const QuanLyLoaiPhong = (props) => {
+    const { user } = useContext(AuthContext);
+    const [branches, setBranches] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [kindOfRoom, setKindOfRoom] = useState([]);
     const [rowToEdit, setRowToEdit] = useState(null);
@@ -17,11 +20,18 @@ const QuanLyLoaiPhong = (props) => {
         donGia: '',
         soLuongNguoiToiDa: '',
         viewPhong: '',
+        chiNhanh: '',
         coSoVatChat: [],
     })
 
+    const getBranches = async () => {
+        const branches = await api.getAllBranchs();
+        setBranches(branches);
+    };
+
     useEffect(() => {
         getAllKindOfRoom();
+        getBranches();
     }, []);
 
     const getAllKindOfRoom = async () => {
@@ -71,18 +81,34 @@ const QuanLyLoaiPhong = (props) => {
         <div>
             <div className='row'>
                 <div className='col-lg-4 col-md-6'>
-                    <input className="form-control pb-2 pt-2 mb-3" type="text" id="maLoaiPhong" placeholder="Nhập mã loại phòng" name="maLoaiPhong"
+                    <input className="form-control pb-2 pt-2 mb-2" type="text" id="maLoaiPhong" placeholder="Nhập mã loại phòng" name="maLoaiPhong"
                         onChange={handleChange} />
                 </div>
                 <div className='col-lg-4 col-md-6'>
-                    <input className="form-control pb-2 pt-2" type="text" id="tenLoaiPhong" placeholder="Nhập tên loại phòng" name="tenLoaiPhong"
+                    <input className="form-control pb-2 pt-2 mb-2" type="text" id="tenLoaiPhong" placeholder="Nhập tên loại phòng" name="tenLoaiPhong"
                         onChange={handleChange} />
                 </div>
-            </div>
-            <div className='col-auto row align-items-center'>
                 <div className='col-lg-4 col-md-6'>
                     <input className="form-control pb-2 pt-2" type="number" id="soLuongNguoiToiDa" placeholder="Nhập số lượng người tối đa" name="soLuongNguoiToiDa"
                         onChange={handleChange} />
+                </div>
+                <div className='col-lg-4 col-md-6'>
+                    <select
+                        className="form-select pb-2 pt-2 mt-2"
+                        id="type"
+                        name="chiNhanh"
+                        onChange={handleChange}
+                    >
+                        {user?.Loai === 'ChuHeThong' ? branches.map((item, index) => (
+                            <option key={index} value={item.tenChiNhanh}>
+                                {item.tenChiNhanh}
+                            </option>
+                        )) :
+                            <option value={user?.chinhanh}>
+                                {user?.chinhanh}
+                            </option>
+                        }
+                    </select>
                 </div>
             </div>
             <button type="submit"
@@ -146,6 +172,7 @@ const QuanLyLoaiPhong = (props) => {
                         onSubmit={handleSubmit}
                         defaultValue={rowToEdit !== null && kindOfRoom[rowToEdit]}
                         kindOfRoom={kindOfRoom}
+                        branches={branches}
                     />
                 )
             }

@@ -13,6 +13,7 @@ import {
   deleteUser,
 } from "firebase/auth";
 import { AuthContext } from "../hook/AuthProvider";
+import moment from "moment";
 
 const XemThongTinNhanVien = (props) => {
   const { user } = useContext(AuthContext);
@@ -116,6 +117,7 @@ const XemThongTinNhanVien = (props) => {
             CCCD: "",
             SDT: newRow.soDienThoai,
             Loai: newRow.chucVu,
+            ngayVaoLam: moment().format("YYYY-MM-DD")
           };
           api.setUserInfo(userData).catch((error) => console.error(error));
           // ...

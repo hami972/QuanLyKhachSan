@@ -178,7 +178,7 @@ export const FormChiTietNhanVien = ({
               </option>
             ))}
           </select>
-          
+
           <div className="mb-2"><b>Lương cơ bản/giờ</b></div>
           <input
             type="number"

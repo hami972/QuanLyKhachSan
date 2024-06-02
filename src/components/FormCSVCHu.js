@@ -26,7 +26,7 @@ export const FormCSVCHu = ({
             formState.maCSVC != "" &&
             formState.tenCSVC != "" &&
             formState.slHu != "" &&
-            formState.ngayNhap != ""
+            formState.ngayGhiNhan != ""
         ) {
             setErrors("");
             return true;
@@ -44,7 +44,7 @@ export const FormCSVCHu = ({
                         case "slHu":
                             errorFields.push("Số lượng hư");
                             break;
-                        case "ngayNhap":
+                        case "ngayGhiNhan":
                             errorFields.push("Ngày ghi nhận");
                             break;
                         default:
@@ -136,7 +136,7 @@ export const FormCSVCHu = ({
                     <div>
                         <div className="mb-2"><b>Ngày ghi nhận</b></div>
                         <input
-                            name="ngayNhap"
+                            name="ngayGhiNhan"
                             onChange={handleChange}
                             className="form-control pb-2 pt-2 mb-2"
                             type="date"
