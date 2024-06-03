@@ -18,66 +18,54 @@ const ResponsiveImageGrid = ({ updateImages, uploadedImages }) => {
     const [percentUploaded, setPercentUploaded] = useState("");
     const addImage = (e) => {
         const files = e.target.files;
-
-        // Tạo một mảng mới để lưu trữ danh sách các tệp
-        const fileList = [];
-
-        // Lặp qua mảng các tệp và đọc từng tệp một
-        for (let i = 0; i < files.length; i++) {
-            const reader = new FileReader();
-
-            reader.onload = (readerEvent) => {
-                // Thêm tệp đã đọc vào mảng fileList
-                fileList.push({
-                    name: files[i].name,
-                    dataURL: readerEvent.target.result
-                });
-
-                // Nếu đã đọc hết tất cả các tệp, thực hiện việc đặt state
-                if (fileList.length === files.length) {
-                    // Cập nhật state cho file và images với mảng fileList
-                    setFile(fileList);
-                    setImages([...images, ...fileList.map(file => file.dataURL)]);
-                    updateImages([...images, ...fileList.map(file => file.dataURL)]);
-                }
-            };
-
-            reader.readAsDataURL(files[i]);
-        }
+        const newFiles = Array.from(files);
+        setFile((prevFiles) => [...prevFiles, ...newFiles]);
     };
 
     useEffect(() => {
-        const upload = () => {
-            setUploaded(false);
+        const upload = async () => {
+            if (file.length === 0) return;
 
-            // Lặp qua mỗi tệp trong fileList và thực hiện việc tải lên cho từng tệp
-            file.forEach((fileItem) => {
-                const name = new Date().getTime() + fileItem.name;
-                const storageRef = ref(storage, name);
+            setUploaded(true);
 
-                const uploadTask = uploadBytesResumable(storageRef, fileItem);
+            try {
+                const uploadTasks = file.map(async (fileItem) => {
+                    const name = new Date().getTime() + fileItem.name;
+                    const storageRef = ref(storage, name);
+                    const uploadTask = uploadBytesResumable(storageRef, fileItem);
 
-                uploadTask.on(
-                    "state_changed",
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        setPercentUploaded("Upload " + Math.round(progress) + "%");
-                    },
-                    (error) => { },
-                    () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            const updatedImages = [...images, downloadURL];
-                            setImages(updatedImages);
-                            updateImages(updatedImages);
-                            setUploaded(true);
-                        });
-                    }
-                );
-            });
+                    return new Promise((resolve, reject) => {
+                        uploadTask.on(
+                            "state_changed",
+                            (snapshot) => {
+                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                setPercentUploaded(`Upload ${Math.round(progress)}%`);
+                            },
+                            reject,
+                            () => {
+                                getDownloadURL(uploadTask.snapshot.ref)
+                                    .then((downloadURL) => {
+                                        resolve(downloadURL);
+                                    })
+                                    .catch(reject);
+                            }
+                        );
+                    });
+                });
+
+                const urls = await Promise.all(uploadTasks);
+                const updatedImages = [...images, ...urls];
+                setImages(updatedImages);
+                updateImages(updatedImages);
+            } catch (error) {
+                console.error("Error uploading images:", error);
+            } finally {
+                setUploaded(false);
+                setFile([]);
+            }
         };
 
-        // Nếu fileList không rỗng, thực hiện việc tải lên
-        file.length > 0 && upload();
+        upload();
     }, [file]);
 
     const handleDeleteImage = (index) => {

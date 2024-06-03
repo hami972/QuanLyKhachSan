@@ -55,7 +55,7 @@ const RoomsPage = ({ rooms }) => {
                         <div className="row " style={{ backgroundColor: '#fff', alignItems: 'center', display: 'flex', borderRadius: '5px', borderStyle: 'groove', marginTop: '50px' }}>
                             <div className="col-5 outset">
                                 <NavLink to={`/rooms/${room.id}`}>
-                                    <img src={room.image} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
+                                    <img src={room.images[0]} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
                                 </NavLink>
                             </div>
                             <div className="col-5 column">
