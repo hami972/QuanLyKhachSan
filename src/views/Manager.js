@@ -9,11 +9,12 @@ import QuanLyChiNhanh from './QuanLyChiNhanh';
 import QuanLyMaGiamGia from './QuanLyMaGiamGia';
 import QuanLyDanhGia from './QuanLyDanhGia';
 import QuanLyKho from './QuanLyKho';
-import RoomManage from './RoomManage';
 import BaoCao from './BaoCao';
 import QuanLyLoaiPhong from './QuanLyLoaiPhong';
 import BillManagement from './BillManagement';
 import BookingHistory from './BookingHistory';
+import QuanLyPhong from './QuanLyPhong';
+import QuanLyDatPhong from './QuanLyDatPhong';
 const Manager = (props) => {
     const { pathname } = useLocation();
     return (
@@ -24,23 +25,26 @@ const Manager = (props) => {
                     <div className="col py-3" style={{ overflowX: "auto", minHeight: "400px" }}>
                         <Route >
                             <Switch>
-                                <Route path="/manager/datphong">
-                                    <RoomManage/>
+                                <Route path="/manager/quanlyphong">
+                                    <QuanLyPhong />
+                                </Route>
+                                <Route path="/manager/quanlydatphong">
+                                    <QuanLyDatPhong />
                                 </Route>
                                 <Route path="/manager/quanlynhanvien">
                                     <QuanLyNhanVien />
                                 </Route>
                                 <Route path="/manager/baocao">
-                                    <BaoCao/>
+                                    <BaoCao />
                                 </Route>
                                 <Route path="/manager/quanlyhoadon">
-                                    <BillManagement/>
-                                </Route> 
+                                    <BillManagement />
+                                </Route>
                                 <Route path="/manager/quanlykho">
-                                    <QuanLyKho/>
+                                    <QuanLyKho />
                                 </Route>
                                 <Route path="/manager/quanlyloaiphong">
-                                    <QuanLyLoaiPhong/>
+                                    <QuanLyLoaiPhong />
                                 </Route>
                                 <Route path="/manager/quanlydichvu">
 
@@ -55,7 +59,7 @@ const Manager = (props) => {
                                     <QuanLyDanhGia />
                                 </Route>
                                 <Route path="/manager/lichsudatphong">
-                                    <BookingHistory/>
+                                    <BookingHistory />
                                 </Route>
                             </Switch>
                         </Route>

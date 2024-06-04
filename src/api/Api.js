@@ -828,6 +828,32 @@ const deleteWashingMachine = async (id) => {
     console.log("error: ", error.message);
   }
 };
+
+const getAllBlocks = async () => {
+  try {
+    const response = await client.get(
+      "/Block/get"
+    );
+    if (response.data.success) {
+      return response.data.materials;
+    } else {
+      console.log("not get materials");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
+const addBlock = async (data) => {
+  const endpoint = "/Block/add";
+  try {
+    const response = await client.post(endpoint, data);
+    return response.data.docId;
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+
 export default {
   getAllDiscounts,
   addDiscount,
@@ -904,5 +930,7 @@ export default {
   addDamagedMaterial,
   deleteDamagedMaterial,
   updateDamagedMaterial,
-  getDamagedMaterialBySearch
+  getDamagedMaterialBySearch,
+  getAllBlocks,
+  addBlock
 };

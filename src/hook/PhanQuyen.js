@@ -10,7 +10,7 @@ const nav0 = [
     { path: '/thanhtoan', name: 'Thanh toán' },
     { path: '/services', name: 'Dịch vụ' },
     { path: '/contacts', name: 'Liên lạc' },
-    { path: 'manager/datphong', name: 'Quản lý lịch đặt phòng' },
+    { path: 'manager/quanlyphong', name: 'Quản lý phòng' },
     { path: 'manager/baocao', name: 'Báo cáo, thống kê' },
     { path: 'manager/quanlykho', name: 'Quản lý kho' },
     { path: 'manager/quanlyhoadon', name: 'Quản lý hóa đơn' },
@@ -29,7 +29,7 @@ const nav1 = [
 ]
 //NhanVien
 const nav2 = [
-    { path: '/datphong', name: 'Quản lý lịch đặt phòng' },
+    { path: '/quanlydatphong', name: 'Quản lý đặt phòng' },
     { path: '/baocao', name: 'Báo cáo, thống kê' },
     { path: '/quanlykho', name: 'Quản lý kho' },
     { path: '/quanlyhoadon', name: 'Quản lý hóa đơn' },
@@ -42,7 +42,7 @@ const nav2 = [
 
 //Quản lý chi nhánh
 const nav2_1 = [
-    { path: '/datphong', name: 'Quản lý lịch đặt phòng' },
+    { path: '/quanlyphong', name: 'Quản lý phòng' },
     { path: '/baocao', name: 'Báo cáo, thống kê' },
     { path: '/quanlykho', name: 'Quản lý kho' },
     { path: '/quanlyhoadon', name: 'Quản lý hóa đơn' },
@@ -62,7 +62,7 @@ const nav2_2 = [
 
 //Tiếp tân 4 tab đầu
 const nav2_3 = [
-    { path: '/datphong', name: 'Quản lý đặt phòng' },
+    { path: '/quanlydatphong', name: 'Quản lý đặt phòng' },
     { path: '/quanlykho', name: 'Quản lý kho' },
     { path: '/quanlyhoadon', name: 'Quản lý hóa đơn' },
     { path: '/quanlydichvu', name: 'Quản lý dịch vụ' },
