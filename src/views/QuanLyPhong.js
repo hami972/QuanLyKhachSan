@@ -4,7 +4,6 @@ import { useLocation, Redirect, Route, Switch } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import QuanLyToa from './QuanLyToa';
 import QuanLyTang from './QuanLyTang';
-import QuanLyTangPhong from './QuanLyTangPhong';
 
 const QuanLyPhong = (props) => {
     const { pathname } = useLocation();
@@ -18,9 +17,6 @@ const QuanLyPhong = (props) => {
                     <li className="nav-item">
                         <NavLink className="nav-link fontBrown" to="/manager/quanlyphong/danhSachTang">Danh sách tầng</NavLink>
                     </li>
-                    <li className="nav-item">
-                        <NavLink className="nav-link fontBrown" to="/manager/quanlyphong/dsPhong">Danh sách phòng</NavLink>
-                    </li>
                 </ul>
             </div>
             <div className="container mt-3">
@@ -30,9 +26,6 @@ const QuanLyPhong = (props) => {
                     </Route>
                     <Route path="/manager/quanlyphong/danhSachTang">
                         <QuanLyTang />
-                    </Route>
-                    <Route path="/manager/quanlyphong/dsPhong">
-                        <QuanLyTangPhong />
                     </Route>
                     {pathname === "/manager/quanlyphong" ? (
                         <Redirect to="/manager/quanlyphong/danhSachToa" />

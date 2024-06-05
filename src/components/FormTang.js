@@ -18,6 +18,7 @@ export const FormTang = ({
       chiNhanh: "",
       toa: blocks[0].tenToa || "",
       tenLoaiPhong: "",
+      dsPhong: "",
     }
   );
   const [errors, setErrors] = useState("");
@@ -26,7 +27,8 @@ export const FormTang = ({
     if (
       formState.maTang != "" &&
       formState.tenTang != "" &&
-      formState.tenLoaiPhong != ""
+      formState.tenLoaiPhong != "" &&
+      formState.dsPhong != ""
     ) {
       //const isIdExists = tang.some(
       //(t) => t.maTang == formState.maTang
@@ -87,15 +89,8 @@ export const FormTang = ({
     const roomTypes = await api.getAllKindOfRoom();
     const fil = roomTypes.filter((item, idx) => item.chiNhanh === user?.chinhanh)
     setRoomTypes(fil);
-    //setFormState({ ...formState, maLoaiPhong: fil[0].maLoaiPhong, tenLoaiPhong: fil[0].tenLoaiPhong });
   }
 
-  //const getAllBlocks = async () => {
-  // const blocks = await api.getAllBlocks();
-  //const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-  //setBlocks(fil);
-  //setFormState({ ...formState, toa: fil[0].tenToa });
-  //}
 
   const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
@@ -195,6 +190,14 @@ export const FormTang = ({
             getOptionLabel={(item) => `${item.tenLoaiPhong}`}
             getOptionValue={(item) => item}
             placeholder=""
+          />
+          <div className="mb-2"><b>Danh sách phòng</b></div>
+          <input
+            className="form-control pb-2 pt-2 mb-2"
+            name="dsPhong"
+            onChange={handleChange}
+            type="text"
+            value={formState.dsPhong}
           />
 
           {errors && <div className="error">{`Please include: ${errors}`}</div>}

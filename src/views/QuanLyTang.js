@@ -26,11 +26,16 @@ const QuanLyTang = (props) => {
     };
 
     const handleDeleteRow = (blockIndex, floorIndex) => {
-        const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
+        const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa tầng này không?');
         if (shouldDelete) {
-            const updatedBlocks = [...blocks];
-            updatedBlocks[blockIndex].tang.splice(floorIndex, 1);
-            setBlocks(updatedBlocks);
+            const result = blocks[blockIndex];
+            if (result) {
+                const updatedTangList = result.tang.filter((_, idx) => idx !== floorIndex);
+                api.updateBlock({ tang: updatedTangList }, result.Id);
+                const updatedBlocks = [...blocks]; // Copy the blocks array
+                updatedBlocks[blockIndex] = { ...result, tang: updatedTangList }; // Update the specific block
+                setBlocks(updatedBlocks); // Update the state with the new blocks array
+            }
         }
     };
 
@@ -40,20 +45,38 @@ const QuanLyTang = (props) => {
     };
 
     const handleSubmit = async (newRow) => {
-        const { blockIndex, floorIndex } = rowToEdit;
-        const updatedBlocks = [...blocks];
-        const updatedTangList = [...updatedBlocks[blockIndex].tang];
-        updatedTangList[floorIndex] = {
-            ...updatedTangList[floorIndex],
-            maTang: newRow.maTang,
-            tenTang: newRow.tenTang,
-            tenLoaiPhong: newRow.tenLoaiPhong,
-            dsPhong: newRow.dsPhong,
-        };
-        updatedBlocks[blockIndex].tang = updatedTangList;
-        setBlocks(updatedBlocks);
-        setModalOpen(false);
-        setRowToEdit(null);
+        if (rowToEdit === null) {
+            const result = blocks[0]; // Assuming you're adding to the first block, adjust as needed
+            if (result) {
+                const updatedTangList = [
+                    ...result.tang,
+                    {
+                        maTang: newRow.maTang,
+                        tenTang: newRow.tenTang,
+                        tenLoaiPhong: newRow.tenLoaiPhong,
+                        dsPhong: newRow.dsPhong,
+                    },
+                ];
+                await api.updateBlock({ tang: updatedTangList }, result.Id);
+                const updatedBlocks = [...blocks];
+                updatedBlocks[0].tang = updatedTangList; // Assuming you're adding to the first block, adjust as needed
+                setBlocks(updatedBlocks);
+            }
+        }
+        else {
+            const { blockIndex, floorIndex } = rowToEdit;
+            const result = blocks[blockIndex];
+            if (result) {
+                const updatedTangList = [...result.tang];
+                updatedTangList[floorIndex] = newRow;
+                console.log("Updated Tang List:", updatedTangList); // Check the updated tang list
+                const response = await api.updateBlock({ tang: updatedTangList }, result.Id);
+                console.log("API Response:", response); // Check the API response
+                const updatedBlocks = [...blocks];
+                updatedBlocks[blockIndex].tang = updatedTangList;
+                setBlocks(updatedBlocks);
+            }
+        }
     };
 
     const handleChange = (e) => {

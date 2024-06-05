@@ -10,9 +10,9 @@ import { FormPhong } from '../components/FormPhong';
 const QuanLyDSPhong = (props) => {
     const { user } = useContext(AuthContext);
     const [modalOpen, setModalOpen] = useState(false);
-    const [materials, setMaterials] = useState([]);
     const [rowToEdit, setRowToEdit] = useState(null);
     const [branches, setBranches] = useState([]);
+    const [rooms, setRooms] = useState([]);
     const [searchCriteria, setSearchCriteria] = useState({
 
         toa: '',
@@ -30,6 +30,25 @@ const QuanLyDSPhong = (props) => {
     const handleSubmit = () => {
 
     }
+
+    const getBlocks = async () => {
+        const blocks = await api.getAllBlocks();
+        const filteredBlocks = blocks.filter(block => block.chiNhanh === user?.chinhanh);
+        const allRooms = filteredBlocks.reduce((accumulator, currentBlock) => {
+            currentBlock.tang.forEach(floor => {
+                floor.dsPhong && floor.dsPhong.split('-').forEach(room => {
+                    accumulator.push(room.trim());
+                });
+            });
+            return accumulator;
+        }, []);
+        setRooms(allRooms);
+    }
+
+    useEffect(() => {
+        getBlocks();
+    }, []);
+
 
     return (
         <div>
@@ -88,41 +107,17 @@ const QuanLyDSPhong = (props) => {
                         }
                     </select>
                 </div>
-                <div className='col-lg-4 col-md-6'>
-                    <div className='form-control pb-2 pt-2 mb-2'>
-                        {user?.chinhanh}
-                    </div>
-                </div>
             </div>
-            <button
-                type="submit"
-                className="btn pb-2 pt-2 mb-3 me-3 mt-2"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-                onClick={onSearch}
-            >
-                Tìm kiếm
-            </button>
-            <button
-                onClick={() => setModalOpen(true)}
-                className="btn pb-2 pt-2 mb-3 me-3 mt-2"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-            >
-                Thêm
-            </button>
-            {
-                modalOpen && (
-                    <FormPhong
-                        closeModal={() => {
-                            setModalOpen(false);
-                            setRowToEdit(null);
-                        }}
-                        onSubmit={handleSubmit}
-                        defaultValue={rowToEdit !== null && materials[rowToEdit]}
-                        branches={branches}
-                        existingMaterials={materials}
-                    />
-                )
-            }
+
+            <div className="row g-2">
+                {rooms.map((room, index) => (
+                    <div key={index} className="col-auto">
+                        <div className='room-square'>
+                            {room}
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
