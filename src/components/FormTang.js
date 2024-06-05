@@ -7,18 +7,16 @@ export const FormTang = ({
   closeModal,
   onSubmit,
   defaultValue,
-  tang,
+  blocks
 }) => {
   const { user } = useContext(AuthContext);
-  const [blocks, setBlocks] = useState([]);
   const [roomTypes, setRoomTypes] = useState([]);
   const [formState, setFormState] = useState(
     defaultValue || {
       maTang: "",
       tenTang: "",
-      loaiPhong: "",
       chiNhanh: "",
-      toa: "",
+      toa: blocks[0].tenToa || "",
       tenLoaiPhong: "",
     }
   );
@@ -30,33 +28,32 @@ export const FormTang = ({
       formState.tenTang != "" &&
       formState.tenLoaiPhong != ""
     ) {
-      const isIdExists = tang.some(
-        (t) => t.maTang == formState.maTang
-      );
-      if (!defaultValue && isIdExists) {
-        setErrors(
-          "Tầng này đã tồn tại! Vui lòng nhập một tầng khác."
-        );
-        return false;
-        // } else if (formState.phanTram > 100 || formState.phanTram <= 0) {
-        //   setErrors("Phần trăm giảm giá phải lớn hơn 0 và không lớn hơn 100");
-        //   return false;
-        // } else if (formState.TGBatDau >= formState.TGKetThuc) {
-        //   setErrors(
-        //     "Thời gian kết thúc phải lớn hơn hoặc bằng thời gian bắt đầu 1 ngày"
-        //   );
-        //   return false;
-        // } else if (new Date() > formState.TGKetThuc) {
-        //   setErrors("Thời gian kết thúc phải là sau ngày hôm nay");
-        //   return false;
-        // } else {
-        // setErrors("");
-        // return true;
-      }
-      else {
-        setErrors("");
-        return true;
-      }
+      //const isIdExists = tang.some(
+      //(t) => t.maTang == formState.maTang
+      //);
+      //if (!defaultValue && isIdExists) {
+      //setErrors(
+      // "Tầng này đã tồn tại! Vui lòng nhập một tầng khác."
+      //);
+      // } else if (formState.phanTram > 100 || formState.phanTram <= 0) {
+      //   setErrors("Phần trăm giảm giá phải lớn hơn 0 và không lớn hơn 100");
+      //   return false;
+      // } else if (formState.TGBatDau >= formState.TGKetThuc) {
+      //   setErrors(
+      //     "Thời gian kết thúc phải lớn hơn hoặc bằng thời gian bắt đầu 1 ngày"
+      //   );
+      //   return false;
+      // } else if (new Date() > formState.TGKetThuc) {
+      //   setErrors("Thời gian kết thúc phải là sau ngày hôm nay");
+      //   return false;
+      // } else {
+      // setErrors("");
+      // return true;
+      // }
+      //else {
+      setErrors("");
+      return true;
+      //}
     } else {
       let errorFields = [];
       for (const [key, value] of Object.entries(formState)) {
@@ -83,7 +80,7 @@ export const FormTang = ({
 
   useEffect(() => {
     getAllRoomTypes();
-    getAllBlocks();
+    //getAllBlocks();
   }, []);
 
   const getAllRoomTypes = async () => {
@@ -93,12 +90,12 @@ export const FormTang = ({
     //setFormState({ ...formState, maLoaiPhong: fil[0].maLoaiPhong, tenLoaiPhong: fil[0].tenLoaiPhong });
   }
 
-  const getAllBlocks = async () => {
-    const blocks = await api.getAllBlocks();
-    const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-    setBlocks(fil);
-    setFormState({ ...formState, toa: fil[0].tenToa });
-  }
+  //const getAllBlocks = async () => {
+  // const blocks = await api.getAllBlocks();
+  //const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+  //setBlocks(fil);
+  //setFormState({ ...formState, toa: fil[0].tenToa });
+  //}
 
   const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });

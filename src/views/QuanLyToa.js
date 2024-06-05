@@ -24,14 +24,22 @@ const QuanLyToa = (props) => {
     const getBlocks = async () => {
         const blocks = await api.getAllBlocks();
         const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-        setBlocks(fil);
+        const _fil = fil.map(block => ({
+            ...block,
+            slTang: block.tang.length,
+            slPhong: block.tang.reduce((total, tang) => total + (tang.dsPhong ? tang.dsPhong.split('-').length : 0), 0)
+        }));
+
+        setBlocks(_fil);
     };
 
-    const handleDeleteRow = (targetIndex) => {
-        const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
+    const handleDeleteRow = async (targetIndex) => {
+        const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa tòa này không?');
         if (shouldDelete) {
+            const toaToDelete = blocks[targetIndex];
             setBlocks(blocks.filter((_, idx) => idx !== targetIndex));
-            //api.deleteMaterial(blocks[targetIndex].Id);
+            api.deleteBlock(toaToDelete.Id);
+
         }
     };
 

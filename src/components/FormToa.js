@@ -12,6 +12,7 @@ export const FormToa = ({
             maToa: "",
             tenToa: "",
             chiNhanh: "",
+            tang: []
         }
     );
     const [errors, setErrors] = useState("");

@@ -854,6 +854,23 @@ const addBlock = async (data) => {
   }
 };
 
+const updateBlock = async (data, id) => {
+  const endpoint = "/Block/update/" + id;
+  try {
+    await client.put(endpoint, data);
+  } catch (error) {
+    console.error("error: ", error.message);
+  }
+};
+
+const deleteBlock = async (id) => {
+  try {
+    await client.delete("/Block/delete/" + id);
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+
 export default {
   getAllDiscounts,
   addDiscount,
@@ -932,5 +949,7 @@ export default {
   updateDamagedMaterial,
   getDamagedMaterialBySearch,
   getAllBlocks,
-  addBlock
+  addBlock,
+  updateBlock,
+  deleteBlock
 };

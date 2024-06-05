@@ -20,8 +20,6 @@ export const FormPhong = ({
     );
     const [errors, setErrors] = useState("");
 
-    const [loaiCanThem, setLoaiCanThem] = useState(["Tòa", "Tầng", "Phòng"])
-
     const validateForm = () => {
         if (
             formState.maTang != "" &&
@@ -126,67 +124,50 @@ export const FormPhong = ({
         >
             <div className="col-sm-4 modal1">
                 <form>
-                    <div className="mb-2">
-                        <b>Thêm</b>
+                    <div>
+                        <div className="mb-2"><b>Tòa</b></div>
+                        <select
+                            className="form-select pb-2 pt-2 mb-2"
+                            id="type"
+                            name="toa"
+                            onChange={handleChange}
+                            value={formState.toa}
+                        >
+                            {tang.map((item, index) => {
+                                return (
+                                    <option key={index} value={item.tenToa}>
+                                        {item.tenToa}
+                                    </option>
+                                );
+                            })}
+                        </select>
                     </div>
-                    <select
-                        className="form-select pb-2 pt-2 mb-2"
-                        id="type"
-                        name="toa"
-                        onChange={handleChange}
-                    >
-                        
-                    </select>
+                    <div>
+                        <div className="mb-2"><b>Tầng</b></div>
+                        <select
+                            className="form-select pb-2 pt-2 mb-2"
+                            id="type"
+                            name="toa"
+                            onChange={handleChange}
+                            value={formState.toa}
+                        >
+                            {tang.map((item, index) => {
+                                return (
+                                    <option key={index} value={item.tenToa}>
+                                        {item.tenToa}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                    </div>
                     <div className="mb-2">
-                        <b>Mã tầng</b>
+                        <b>Mã phòng</b>
                     </div>
                     <input
                         name="maTang"
                         className="form-control pb-2 pt-2 mb-2"
                         onChange={handleChange}
                         value={formState.maTang}
-                    />
-                    <div className="mb-2">
-                        <b>Tên phòng</b>
-                    </div>
-                    <input
-                        className="form-control pb-2 pt-2 mb-2"
-                        name="tenTang"
-                        onChange={handleChange}
-                        type="text"
-                        value={formState.tenTang}
-                    />
-                    <div className="mb-2"><b>Loại phòng</b></div>
-                    <input
-                        name="loaiPhong"
-                        className="form-control pb-2 pt-2 mb-2"
-                        onChange={handleChange}
-                        type="text"
-                        value={formState.loaiPhong}
-                    />
-                    <div className="mb-2"><b>Chi nhánh</b></div>
-                    <input
-                        className="form-control pb-2 pt-2 mb-2"
-                        name="chiNhanh"
-                        onChange={handleChange}
-                        type="text"
-                        value={formState.chiNhanh}
-                    />
-                    <div className="mb-2"><b>Số lượng phòng</b></div>
-                    <input
-                        className="form-control pb-2 pt-2 mb-2"
-                        name="soLuongPhong"
-                        onChange={handleChange}
-                        type="number"
-                        value={formState.soLuongPhong}
-                    />
-                    <div className="mb-2"><b>Danh sách tên phòng</b></div>
-                    <input
-                        className="form-control pb-2 pt-2 mb-2"
-                        name="tenPhong"
-                        onChange={handleChange}
-                        type="text"
-                        value={formState.tenPhong}
                     />
 
                     {errors && <div className="error">{`Please include: ${errors}`}</div>}

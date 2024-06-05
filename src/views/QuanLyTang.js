@@ -1,59 +1,59 @@
-import React from 'react'
-import './mistyles.css'
-import { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import api from '../api/Api';
 import { FormTang } from '../components/FormTang';
 import { AuthContext } from '../hook/AuthProvider'
+import { BarController } from 'chart.js';
 
 const QuanLyTang = (props) => {
-    const [floors, setFloors] = useState([]);
+    const [blocks, setBlocks] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [rowToEdit, setRowToEdit] = useState(null);
     const { user } = useContext(AuthContext);
     const [searchCriteria, setSearchCriteria] = useState({
         slDau: '',
         slCuoi: '',
-    })
-
+    });
 
     useEffect(() => {
-        getFloors();
+        getBlocks();
     }, []);
 
-    const getFloors = async () => {
-        const floors = await api.getAllFloors();
-        setFloors(floors);
+    const getBlocks = async () => {
+        const blocks = await api.getAllBlocks();
+        const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+        setBlocks(fil);
     };
 
-    const handleDeleteRow = (targetIndex) => {
+    const handleDeleteRow = (blockIndex, floorIndex) => {
         const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
         if (shouldDelete) {
-            setFloors(floors.filter((_, idx) => idx !== targetIndex));
-            //api.deleteMaterial(Floors[targetIndex].Id);
+            const updatedBlocks = [...blocks];
+            updatedBlocks[blockIndex].tang.splice(floorIndex, 1);
+            setBlocks(updatedBlocks);
         }
     };
 
-    const handleEditRow = (idx) => {
-        setRowToEdit(idx);
+    const handleEditRow = (blockIndex, floorIndex) => {
+        setRowToEdit({ blockIndex, floorIndex });
         setModalOpen(true);
     };
 
     const handleSubmit = async (newRow) => {
-        console.log(newRow);
-        if (rowToEdit == null) {
-            const id = await api.addFloor({ ...newRow, chiNhanh: user?.chinhanh });
-            newRow.Id = id;
-            setFloors([...floors, newRow]);
-        }
-        else {
-            api.updateFloor(newRow, newRow.Id);
-            let updated_floor = floors.map((currRow, idx) => {
-                if (idx !== rowToEdit) return currRow;
-                return newRow;
-            })
-            setFloors(updated_floor);
-        }
+        const { blockIndex, floorIndex } = rowToEdit;
+        const updatedBlocks = [...blocks];
+        const updatedTangList = [...updatedBlocks[blockIndex].tang];
+        updatedTangList[floorIndex] = {
+            ...updatedTangList[floorIndex],
+            maTang: newRow.maTang,
+            tenTang: newRow.tenTang,
+            tenLoaiPhong: newRow.tenLoaiPhong,
+            dsPhong: newRow.dsPhong,
+        };
+        updatedBlocks[blockIndex].tang = updatedTangList;
+        setBlocks(updatedBlocks);
+        setModalOpen(false);
+        setRowToEdit(null);
     };
 
     const handleChange = (e) => {
@@ -61,12 +61,12 @@ const QuanLyTang = (props) => {
     };
 
     const onSearch = () => {
-
-    }
+        // Perform search based on search criteria
+    };
 
     return (
         <div>
-            <div div className='row'>
+            <div className='row'>
                 <div className='col-auto m-auto'><b>Số lượng</b></div>
                 <div className="row col">
                     <div className='col-lg-4 col-md-6'>
@@ -119,45 +119,42 @@ const QuanLyTang = (props) => {
                         <th></th>
                     </tr>
                 </thead>
-                {floors.map((row, idx) => {
-                    return (
-                        <tr key={row.Id}>
-                            <td>{row.maTang}</td>
-                            <td>{row.tenTang}</td>
-                            <td>{row.toa}</td>
-                            <td>{row.tenLoaiPhong}</td>
-                            <td>{row.slPhong}</td>
+                {blocks.map((toa, blockIndex) => (
+                    toa?.tang?.map((tang, floorIndex) => (
+                        <tr key={`${toa.maToa}-${tang.maTang}`}>
+                            <td>{tang.maTang}</td>
+                            <td>{tang.tenTang}</td>
+                            <td>{toa.tenToa}</td>
+                            <td>{tang.tenLoaiPhong}</td>
+                            <td>{tang.dsPhong ? tang.dsPhong.split('-').length : 0}</td>
                             <td className="fit">
                                 <span className="actions">
                                     <BsFillTrashFill
                                         className="delete-btn"
-                                        onClick={() => handleDeleteRow(idx)}
+                                        onClick={() => handleDeleteRow(blockIndex, floorIndex)}
                                     />
                                     <BsFillPencilFill
                                         className="edit-btn"
-                                        onClick={() => handleEditRow(idx)}
+                                        onClick={() => handleEditRow(blockIndex, floorIndex)}
                                     />
                                 </span>
                             </td>
                         </tr>
-                    );
-                })}
-                <tbody></tbody>
+                    ))
+                ))}
             </table>
-            {
-                modalOpen && (
-                    <FormTang
-                        closeModal={() => {
-                            setModalOpen(false);
-                            setRowToEdit(null);
-                        }}
-                        onSubmit={handleSubmit}
-                        defaultValue={rowToEdit !== null && floors[rowToEdit]}
-                        tang={floors}
-                    />
-                )
-            }
-        </div >
+            {modalOpen && (
+                <FormTang
+                    closeModal={() => {
+                        setModalOpen(false);
+                        setRowToEdit(null);
+                    }}
+                    onSubmit={handleSubmit}
+                    defaultValue={rowToEdit !== null && blocks[rowToEdit.blockIndex].tang[rowToEdit.floorIndex]}
+                    blocks={blocks}
+                />
+            )}
+        </div>
     );
 }
 
