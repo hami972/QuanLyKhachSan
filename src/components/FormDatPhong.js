@@ -1,7 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import api from '../api/Api';
+import React, { useState, useContext } from "react";
 import { AuthContext } from '../hook/AuthProvider'
-import Select from "react-select";
 
 export const FormDatPhong = ({
     closeModal,
@@ -9,7 +7,6 @@ export const FormDatPhong = ({
     defaultValue,
 }) => {
     const { user } = useContext(AuthContext);
-    const [roomTypes, setRoomTypes] = useState([]);
     const [formState, setFormState] = useState(
         defaultValue || {
             tang: "",
@@ -21,7 +18,9 @@ export const FormDatPhong = ({
             CCCD: "",
             tinhTrang: "",
             email: "",
-            tenKhachHang: ""
+            tenKhachHang: "",
+            ngayBatDau: "",
+            ngayKetThuc: ""
         }
     );
     const [errors, setErrors] = useState("");
@@ -86,18 +85,6 @@ export const FormDatPhong = ({
         }
     };
 
-    useEffect(() => {
-        getAllRoomTypes();
-        //getAllBlocks();
-    }, []);
-
-    const getAllRoomTypes = async () => {
-        const roomTypes = await api.getAllKindOfRoom();
-        const fil = roomTypes.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-        setRoomTypes(fil);
-    }
-
-
     const handleChange = (e) => {
         setFormState({ ...formState, [e.target.name]: e.target.value });
     };
@@ -134,43 +121,38 @@ export const FormDatPhong = ({
                 if (e.target.className === "modal-container") closeModal();
             }}
         >
-            <div className="col-sm-4 modal1">
+            <div className="col-sm-4 modal1" style={{ overflowY: "auto", height: "80%" }}>
                 <form>
+                    <div className="mb-2">
+                        <b>Phòng</b>
+                    </div>
+                    <div
+                        name="maPhong"
+                        className="form-control pb-2 pt-2 mb-2">
+                        {formState.maPhong}</div>
                     <div className="mb-2">
                         <b>Tòa</b>
                     </div>
                     <div
                         name="toa"
-                        className="form-control pb-2 pt-2 mb-2"
-                        onChange={handleChange}
-                        value={formState.toa}
-                    ></div>
+                        className="form-control pb-2 pt-2 mb-2">
+                        {formState.toa}</div>
                     <div className="mb-2">
                         <b>Tầng</b>
                     </div>
                     <div
-                        name="tang"
-                        className="form-control pb-2 pt-2 mb-2"
-                        onChange={handleChange}
-                        value={formState.tang}
-                    ></div>
+                        name="tenLoaiPhong"
+                        className="form-control pb-2 pt-2 mb-2">
+                        {formState.tang}
+                    </div>
                     <div className="mb-2">
                         <b>Loại phòng</b>
                     </div>
                     <div
                         name="tenLoaiPhong"
-                        className="form-control pb-2 pt-2 mb-2"
-                        onChange={handleChange}
-                        value={formState.tenLoaiPhong}
-                    ></div>
-                    <div className="mb-2"><b>Danh sách phòng</b></div>
-                    <input
-                        className="form-control pb-2 pt-2 mb-2"
-                        name="tenKhachHang"
-                        onChange={handleChange}
-                        type="text"
-                        value={formState.tenKhachHang}
-                    />
+                        className="form-control pb-2 pt-2 mb-2">
+                        {formState.tenLoaiPhong}
+                    </div>
                     <div className="mb-2"><b>Tên khách hàng</b></div>
                     <input
                         className="form-control pb-2 pt-2 mb-2"
@@ -187,13 +169,13 @@ export const FormDatPhong = ({
                         type="text"
                         value={formState.CCCD}
                     />
-                    <div className="mb-2"><b>Email</b></div>
+                    <div className="mb-2"><b>Số điện thoại</b></div>
                     <input
                         className="form-control pb-2 pt-2 mb-2"
-                        name="email"
+                        name="soDienThoai"
                         onChange={handleChange}
                         type="text"
-                        value={formState.email}
+                        value={formState.soDienThoai}
                     />
                     <div className="mb-2"><b>Email</b></div>
                     <input
@@ -203,6 +185,26 @@ export const FormDatPhong = ({
                         type="text"
                         value={formState.email}
                     />
+                    <div>
+                        <div className="mb-2"><b>Ngày bắt đầu</b></div>
+                        <input
+                            name="ngayBatDau"
+                            onChange={handleChange}
+                            className="form-control pb-2 pt-2 mb-2"
+                            type="date"
+                            value={formState.ngayBatDau}
+                        />
+                    </div>
+                    <div>
+                        <div className="mb-2"><b>Ngày kết thúc</b></div>
+                        <input
+                            name="ngayKetThuc"
+                            onChange={handleChange}
+                            className="form-control pb-2 pt-2 mb-2"
+                            type="date"
+                            value={formState.ngayKetThuc}
+                        />
+                    </div>
 
                     {errors && <div className="error">{`Please include: ${errors}`}</div>}
                     <div className="text-end">
