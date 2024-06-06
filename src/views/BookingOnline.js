@@ -1,13 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import moment from "moment";
 import { FormBookingSchedule } from "../components/FormBookingSchedule";
-import Api from "../api/Api";
-import { AuthContext } from "../hook/AuthProvider";
+import api from "../api/Api";
+import { AuthContext } from '../hook/AuthProvider';
 import NotificationModal from "../components/NotificationModal";
 import TopNav from "../components/TopNav";
 import Footer from "../components/Footer";
 
 const BookingOnline = () => {
+  const { user } = useContext(AuthContext);
   const [nameWashingMachine, setNameWashingMachine] = useState([
     {
       name: "Máy giặt sấy 1",
@@ -40,8 +41,6 @@ const BookingOnline = () => {
   const [searchCriteria, setSearchCriteria] = useState({
     startDate: moment().format('YYYY-MM-DD'),
   });
-
-  const { user } = useContext(AuthContext);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [washingMachine, setWashingMachine] = useState([]);
@@ -51,13 +50,13 @@ const BookingOnline = () => {
   const [notiBody, setNotiBody] = useState("");
 
   useEffect(() => {
-    getAllWashingMachine();
+      getWashingMachine();
   }, []);
 
-  const getAllWashingMachine = async () => {
+  const getWashingMachine = async () => {
     try {
-      const response = await Api.getWashingMachine();
-      setWashingMachine(response || []);  // Ensure response is an array
+      const washingMachine = await api.getWashingMachine();
+      setWashingMachine(washingMachine);
     } catch (error) {
       console.error('Error fetching washing machines:', error);
     }
@@ -69,13 +68,19 @@ const BookingOnline = () => {
       ...searchCriteria,
       [name]: value,
     });
-  };
+  };  
 
   const handleDeleteRow = (targetIndex) => {
     const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa không?');
     if (shouldDelete) {
-      setWashingMachine(washingMachine.filter((_, idx) => idx !== targetIndex));
-      Api.deleteWashingMachine(washingMachine[targetIndex].maMay);
+      let foundKeys = -1;
+      washingMachine.forEach((value, key) => {
+        if (value.MaLichGiat === targetIndex.MaLichGiat) {
+          foundKeys=key;
+        }
+      });
+      setWashingMachine(washingMachine.filter((_, idx) => idx !== foundKeys));
+      api.deleteWashingMachine(washingMachine[foundKeys].Id);
     }
   };
 
@@ -85,12 +90,12 @@ const BookingOnline = () => {
   };
 
   const handleSubmit = async (newRow) => {
-    if (rowToEdit == null) {
-      const id = await Api.addWashingMachine(newRow);
+    if (rowToEdit == null && flag==="add") {
+      const id = await api.addWashingMachine(newRow);
       newRow.id = id;
       setWashingMachine([...washingMachine, newRow]);
     } else {
-      Api.updateWashingMachine(newRow, newRow.id);
+      api.updateWashingMachine(newRow, newRow.Id);
       const updatedMachines = washingMachine.map((currRow, idx) => {
         if (idx !== rowToEdit) return currRow;
         return newRow;
@@ -99,32 +104,48 @@ const BookingOnline = () => {
     }
   };
 
-  const filteredWashingMachine = washingMachine.filter(machine => machine.Ngay === searchCriteria.startDate);
+  const filteredWashingMachine = washingMachine.filter(machine => machine.date === searchCriteria.startDate);
 
   const setItemToEdit = (worktime, machine) => {
-    const filteredMachine = washingMachine.find(m => m.Gio === worktime.gio && m.Ngay === searchCriteria.startDate);
+    const filteredMachine = washingMachine.find(m => m.Gio === worktime.gio && m.date === searchCriteria.startDate);
 
     // Only allow setting the item to edit if the machine is booked by the current user or is available
     if (filteredMachine) {
-      if (filteredMachine.email !== user.email) return;
+      if (filteredMachine.email !== user.email) {
       setFlag("edit");
+      return;
+      }
+      setFlag("edit");
+      setSelectedItem({
+        ...filteredMachine,
+        MaLichGiat: filteredMachine.MaLichGiat,
+        tenKhachHang: filteredMachine.tenKhachHang,
+        SDT: filteredMachine.SDT,
+        email: filteredMachine.email,
+        Gio: filteredMachine.Gio,
+        date: filteredMachine.date,
+        tinhTrang: filteredMachine.tinhTrang,
+      });
     } else {
       setFlag("add");
+      setSelectedItem({
+        ...machine,
+        MaLichGiat: Math.floor(Math.random() * 100001),
+        email: user.email,
+        Gio: worktime.gio,
+        date: searchCriteria.startDate,
+        tinhTrang: "Đã đặt lịch",
+      });
     }
 
-    setSelectedItem({
-      ...machine,
-      email: user.email,
-      Gio: worktime.gio,
-      date: searchCriteria.startDate,
-    });
+    
 
     setModalOpen(true);
   };
 
   return (
     <div>
-      <TopNav />
+      {/* <TopNav /> */}
       <div className="col-lg-4 col-md-8" style={{marginLeft: '200px'}}>
         <div className="mb-2"><b>Thời gian</b></div>
         <input
@@ -181,17 +202,18 @@ const BookingOnline = () => {
                 <div className="row ms-0 me-0" style={{ fontWeight: "bold" }}>
                   {workTime.map((worktime, idx) => {
                     const machine = filteredWashingMachine.find(
-                      m => m.Gio === worktime.gio
+                      m => m.Gio === worktime.gio & m.name === item.name
                     );
                     let bgColor = "#0096FF"; // Default blue color
 
                     if (machine) {
-                      if (machine.SDT === user.SDT) {
+                      if (machine.email === user.email) {
                         bgColor = "#FF0000"; // Red color for user's machine
                       } else {
                         bgColor = "#bfbfbf"; // Grey color for booked machine
                       }
                     }
+                  
 
                     return (
                       <div className="col-auto" style={{ cursor: "default" }} key={idx}>

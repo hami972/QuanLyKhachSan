@@ -792,11 +792,11 @@ const getDamagedMaterialBySearch = async (searchCriteria) => {
 
 const getWashingMachine = async () => {
   try {
-    const response = await client.get("/WashingMachine/getWashingMachine");
+    const response = await client.get("/WashingMachine/get");
     if (response.data.success) {
       return response.data.washingMachine;
     } else {
-      console.log("not get review");
+      console.log("not get washing machine");
     }
   } catch (error) {
     console.log("error: ", error.message);
@@ -806,8 +806,8 @@ const getWashingMachine = async () => {
 const addWashingMachine = async (data) => {
   const endpoint = "/WashingMachine/add";
   try {
-    const response = await client.post(endpoint, data); // <- POST
-    return response.data.docId;
+    const washingMachine = await client.post(endpoint, data); // <- POST
+    return washingMachine.data.docId;
   } catch (error) {
     console.log("error: ", error.message);
   }
@@ -816,16 +816,36 @@ const addWashingMachine = async (data) => {
 const updateWashingMachine = async (data, id) => {
   const endpoint = "/WashingMachine/update/" + id;
   try {
-    await client.put(endpoint, data);
+    const response = await client.put(endpoint, data);
   } catch (error) {
     console.error("error: ", error.message);
   }
 };
+
 const deleteWashingMachine = async (id) => {
   try {
     await client.delete("/WashingMachine/delete/" + id);
   } catch (error) {
     console.log("error: ", error.message);
+  }
+};
+
+const getWashingMachineUsedBySearch = async (searchCriteria) => {
+  try {
+    // Xây dựng query parameter từ searchCriteria object
+    const queryParams = new URLSearchParams(searchCriteria).toString();
+    
+    const response = await client.get(`/WashingMachine/search?${queryParams}`);
+    
+    if (response.data.success) {
+      return response.data.washingMachine;
+    } else {
+      console.log("not get washingMachine");
+      return [];
+    }
+  } catch (error) {
+    console.error("error: ", error.message);
+    return [];
   }
 };
 
@@ -938,6 +958,7 @@ export default {
   addWashingMachine,
   updateWashingMachine,
   deleteWashingMachine,
+  getWashingMachineUsedBySearch,
   getAllReceivingStock,
   addReceivingStock,
   deleteReceivingStock,

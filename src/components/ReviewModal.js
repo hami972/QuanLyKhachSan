@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-const ReviewModal = ({ show, handleClose, handleSubmit, defaultValue, maLoaiPhong, Id }) => {
+const ReviewModal = ({ show, handleClose, handleSubmit, defaultValue, maLoaiPhong, MaDanhGia }) => {
   const [formState, setFormState] = useState(
     defaultValue || {
       soSao: "",
       danhGia: "",
       maLoaiPhong,
-      Id,
+      MaDanhGia,
     }
   );
   const [errors, setErrors] = useState("");
@@ -104,6 +104,7 @@ const ReviewModal = ({ show, handleClose, handleSubmit, defaultValue, maLoaiPhon
                 type="submit"
                 className="btn pb-2 pt-2 ps-3 pe-3 mt-2"
                 style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                
               >
                 Lưu
               </button>
