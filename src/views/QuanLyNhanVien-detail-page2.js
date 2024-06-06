@@ -151,7 +151,7 @@ const XemThongTinNhanVien = (props) => {
   const onSearch = async () => {
     console.log(searchCriteria);
 
-    const searchResults = await api.getStaffsBySeacrh(searchCriteria);
+    const searchResults = await api.getStaffsBySearch(searchCriteria);
     console.log(searchResults);
     setStaffs(searchResults);
   };

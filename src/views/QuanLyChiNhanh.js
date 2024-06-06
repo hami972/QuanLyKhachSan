@@ -66,7 +66,7 @@ const QuanLyChiNhanh = (props) => {
     const onSearch = async () => {
         console.log(searchCriteria)
 
-        const searchResults = await api.getBranchsBySeacrh(searchCriteria);
+        const searchResults = await api.getBranchsBySearch(searchCriteria);
         console.log(searchResults);
         setBranchs(searchResults);
     }

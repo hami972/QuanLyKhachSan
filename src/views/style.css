@@ -1363,3 +1363,12 @@ input[type="date"]:not(.has-value):before {
 .booked .room-square {
     background-color: rgb(78, 78, 78)
 }
+
+
+.checked-in .room-square {
+    background-color: purple;
+}
+
+.ending-today .room-square {
+    background-color: red;
+}

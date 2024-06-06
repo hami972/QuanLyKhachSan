@@ -121,7 +121,7 @@ const QuanLyNhapKho = (props) => {
   const onSearch = async () => {
     console.log(searchCriteria)
 
-    const searchResults = await api.getMaterialsBySeacrh(searchCriteria);
+    const searchResults = await api.getMaterialsBySearch(searchCriteria);
     console.log(searchResults);
     if (user?.Loai !== 'ChuHeThong') {
       const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)

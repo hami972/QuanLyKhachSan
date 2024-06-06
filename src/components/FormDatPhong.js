@@ -5,10 +5,12 @@ export const FormDatPhong = ({
     closeModal,
     onSubmit,
     defaultValue,
+    ngayBatDau,
+    ngayKetThuc
 }) => {
     const { user } = useContext(AuthContext);
-    const [formState, setFormState] = useState(
-        defaultValue || {
+    const [formState, setFormState] = useState(() => {
+        const newState = defaultValue || {
             tang: "",
             chiNhanh: "",
             toa: "",
@@ -16,16 +18,31 @@ export const FormDatPhong = ({
             maPhong: "",
             soDienThoai: "",
             CCCD: "",
-            tinhTrang: "",
+            tinhTrang: "Đặt phòng",
             email: "",
             tenKhachHang: "",
             ngayBatDau: "",
-            ngayKetThuc: ""
+            ngayKetThuc: "",
+            maDatPhong: '',
+        };
+
+        // Set ngayBatDau và ngayKetThuc nếu có giá trị mới
+        if (ngayBatDau !== "") {
+            newState.ngayBatDau = ngayBatDau;
         }
-    );
+        if (ngayKetThuc !== "") {
+            newState.ngayKetThuc = ngayKetThuc;
+        }
+
+        return newState;
+    });
     const [errors, setErrors] = useState("");
 
     const validateForm = () => {
+        if (formState.maDatPhong != "") {
+            setErrors("");
+            return true;
+        }
         if (
             formState.soDienThoai != "" &&
             formState.CCCD != "" &&
@@ -123,6 +140,15 @@ export const FormDatPhong = ({
         >
             <div className="col-sm-4 modal1" style={{ overflowY: "auto", height: "80%" }}>
                 <form>
+                    <div>
+                        <div className="mb-2"><b>Mã đặt phòng</b></div>
+                        <input
+                            name="maDatPhong"
+                            value={formState.maDatPhong}
+                            onChange={handleChange}
+                            className="form-control pb-2 pt-2 mb-2"
+                        />
+                    </div>
                     <div className="mb-2">
                         <b>Phòng</b>
                     </div>
@@ -204,6 +230,21 @@ export const FormDatPhong = ({
                             type="date"
                             value={formState.ngayKetThuc}
                         />
+                    </div>
+                    <div>
+                        <div className="mb-2"><b>Ngày kết thúc</b></div>
+                        <select
+                            className="form-select pb-2 pt-2 mb-2"
+                            id="type"
+                            name="tinhTrang"
+                            onChange={handleChange}
+                            value={formState.chiNhanh}
+                        >
+                            <option value="Đặt phòng">Đặt phòng</option>
+                            <option value="Check-in">Check-in</option>
+                            <option value="Dọn phòng">Check-out</option>
+                        </select>
+
                     </div>
 
                     {errors && <div className="error">{`Please include: ${errors}`}</div>}

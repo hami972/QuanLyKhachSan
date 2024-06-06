@@ -83,7 +83,7 @@ const updateBranch = async (data, id) => {
     console.error("error: ", error.message);
   }
 };
-const getBranchsBySeacrh = async (searchCriteria) => {
+const getBranchsBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(
@@ -139,7 +139,7 @@ const updateStaff = async (data, id) => {
     console.error("error: ", error.message);
   }
 };
-const getStaffsBySeacrh = async (searchCriteria) => {
+const getStaffsBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(`/StaffManagement/Staffs?${queryParams}`);
@@ -231,7 +231,7 @@ const getDocByField = async (endpoint) => {
     return [];
   }
 };
-const getDocsBySeacrh = async (endpoint, searchCriteria) => {
+const getDocsBySearch = async (endpoint, searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(`${endpoint}?${queryParams}`);
@@ -525,6 +525,25 @@ const deleteBookedRoom = async (id) => {
     console.log("error: ", error.message);
   }
 };
+
+const getBookedRoomBySearch = async (searchCriteria) => {
+  try {
+    const queryParams = new URLSearchParams(searchCriteria).toString();
+    const response = await client.get(
+      `BookedRoom/bookedRoom?${queryParams}`
+    );
+
+    if (response.data.success) {
+      return response.data.materials;
+    } else {
+      console.log("not get materials");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
+
 const getAllReview = async () => {
   try {
     const response = await client.get("/Review/getReview");
@@ -834,9 +853,9 @@ const getWashingMachineUsedBySearch = async (searchCriteria) => {
   try {
     // Xây dựng query parameter từ searchCriteria object
     const queryParams = new URLSearchParams(searchCriteria).toString();
-    
+
     const response = await client.get(`/WashingMachine/search?${queryParams}`);
-    
+
     if (response.data.success) {
       return response.data.washingMachine;
     } else {
@@ -905,19 +924,19 @@ export default {
   addBranch,
   updateBranch,
   deleteBranch,
-  getBranchsBySeacrh,
+  getBranchsBySearch,
   getAllStaffs,
   addStaff,
   updateStaff,
   deleteStaff,
-  getStaffsBySeacrh,
+  getStaffsBySearch,
   getDocs,
   addDoc,
   updateDoc,
   deleteDoc,
   getDoc,
   getDocByField,
-  getDocsBySeacrh,
+  getDocsBySearch,
   findAccountofStaff,
   getAllBills,
   addBill,
@@ -972,5 +991,6 @@ export default {
   getAllBlocks,
   addBlock,
   updateBlock,
-  deleteBlock
+  deleteBlock,
+  getBookedRoomBySearch
 };
