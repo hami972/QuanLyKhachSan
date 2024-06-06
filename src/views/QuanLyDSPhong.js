@@ -28,94 +28,76 @@ const QuanLyDSPhong = (props) => {
         setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
     };
 
+    const updateRoomDetails = (newDetails) => rooms.map((currRow, idx) => {
+        if (idx !== rowToEdit) return currRow;
+        return { ...currRow, ...newDetails };
+    });
+
+
     const handleSubmit = async (newRow) => {
+        let updatedRooms;
+        let oldRoomDetails = {};
 
-        if (newRow.maDatPhong) {
+        if (newRow.Id) {
+            if (newRow.tenKhachHang === '') {
+                const updatedBookedRooms = bookedRooms.map(room => {
+                    if (room.Id === newRow.Id) {
+                        oldRoomDetails = {
+                            tenKhachHang: room.tenKhachHang,
+                            email: room.email,
+                            soDienThoai: room.soDienThoai,
+                            ngayBatDau: moment().format("YYYY-MM-DD"),
+                            ngayKetThuc: room.ngayKetThuc,
+                            CCCD: room.CCCD
+                        };
+                        return { ...room, ...newRow, tinhTrang: "Check-in" };
+                    }
+                    return room;
+                });
 
-            const updatedBookedRooms = bookedRooms.map(bookedRoom => {
-                if (bookedRoom.maDatPhong === newRow.maDatPhong) {
-                    return {
-                        ...bookedRoom,
-                        maPhong: newRow.maPhong,
-                        toa: newRow.toa,
-                        tang: newRow.tang,
-                        loaiPhong: newRow.tenLoaiPhong,
-                        tinhTrang: "Check-in"
-                    };
+                setBookedRooms(updatedBookedRooms);
+                updatedRooms = updateRoomDetails({ ...oldRoomDetails, tinhTrang: "Check-in" });
+                setRooms(updatedRooms);
+
+                await api.updateBookedRoom({ ...newRow, ngayBatDau: moment().format("YYYY-MM-DD"), tinhTrang: "Check-in" });
+                await api.addBill({
+                    ...oldRoomDetails, ngayCheckIn: moment().format("YYYY-MM-DD"), ngayCheckOut: '',
+                    tinhTrang: "Chưa thanh toán", maPhong: newRow.maPhong, toa: newRow.toa,
+                    maDatPhong: newRow.Id, tang: newRow.tang, loaiPhong: newRow.tenLoaiPhong, donGia: '', ngayLap: '',
+                    maGiamGia: '', chiNhanh: user?.chinhanh
+                });
+            } else {
+                if (newRow.tinhTrang === "Dọn xong") {
+                    updatedRooms = updateRoomDetails({
+                        tenKhachHang: "", email: "", soDienThoai: "", ngayBatDau: "",
+                        ngayKetThuc: "", CCCD: "", tinhTrang: "Trống", Id: ""
+                    });
+                    setRooms(updatedRooms);
+                    setBookedRooms(bookedRooms.filter((_, idx) => idx !== rowToEdit));
+                    await api.deleteBookedRoom(newRow.Id);
+                } else {
+                    updatedRooms = updateRoomDetails(newRow);
+                    setRooms(updatedRooms);
+                    await api.updateBookedRoom(newRow, newRow.Id);
+                    if (newRow.tinhTrang === "Check-in") {
+                        await api.addBill({
+                            ...newRow, ngayCheckIn: moment().format("YYYY-MM-DD"),
+                            ngayCheckOut: '', tinhTrang: "Chưa thanh toán",
+                            chiNhanh: user?.chinhanh
+                        });
+                    }
                 }
-                return bookedRoom;
-            });
-
-            setBookedRooms(updatedBookedRooms);
-
-            const updatedRooms = rooms.map(room => {
-                if (room.maDatPhong === newRow.maDatPhong) {
-                    return {
-                        ...room,
-                        CCCD: '',
-                        email: '',
-                        ngayBatDau: '',
-                        ngayKetThuc: '',
-                        soDienThoai: '',
-                        tenKhachHang: '',
-                        tinhTrang: "Trống",
-                        maDatPhong: ''
-                    };
-                }
-                return room;
-            });
-
-            const updatedRoomsWithRoomCode = rooms.map(room => {
-                if (room.maPhong === newRow.maPhong) {
-                    return {
-                        ...room,
-                        tenKhachHang: newRow.tenKhachHang,
-                        email: newRow.email,
-                        soDienThoai: newRow.soDienThoai,
-                        ngayBatDau: newRow.ngayBatDau,
-                        ngayKetThuc: newRow.ngayKetThuc,
-                        CCCD: newRow.CCCD,
-                        tinhTrang: "Check-in",
-                        maDatPhong: newRow.maDatPhong
-                    };
-                }
-                return room;
-            });
-
-            setRooms(updatedRoomsWithRoomCode)
-
-            await api.updateBookedRoom({
-                maPhong: newRow.maPhong,
-                toa: newRow.toa,
-                tang: newRow.tang,
-                loaiPhong: newRow.tenLoaiPhong,
-                tinhTrang: "Check-in"
-            }, newRow.maDatPhong);
-        }
-        else {
-            newRow.tinhTrang = "Đặt phòng";
-            const id = await api.addBookedRoom(newRow);
-            newRow.maDatPhong = id;
-            const updatedBookedRooms = [...bookedRooms, newRow].sort((a, b) => b.ngayBatDau - a.ngayBatDau);
-            setBookedRooms(updatedBookedRooms);
-            const isRoomExist = rooms.some(room => room.maPhong === newRow.maPhong);
-
-            if (isRoomExist) {
-                setRooms(rooms.map(room =>
-                    room.maPhong === newRow.maPhong ? {
-                        ...room,
-                        tenKhachHang: newRow.tenKhachHang,
-                        email: newRow.email,
-                        soDienThoai: newRow.soDienThoai,
-                        ngayBatDau: newRow.ngayBatDau,
-                        ngayKetThuc: newRow.ngayKetThuc,
-                        CCCD: newRow.CCCD,
-                        tinhTrang: "Đặt phòng"
-                    } : room
-                ));
             }
+        } else {
+            const id = await api.addBookedRoom({ ...newRow, chiNhanh: user?.chinhanh, tinhTrang: "Đặt phòng" });
+            newRow.Id = id;
+            setBookedRooms([...bookedRooms, newRow].sort((a, b) => b.ngayBatDau - a.ngayBatDau));
+            updatedRooms = updateRoomDetails({ ...newRow, tinhTrang: "Đặt phòng" });
+            setRooms(updatedRooms);
         }
+
     };
+
 
     const handleEditRow = (idx) => {
         setRowToEdit(idx);
@@ -143,7 +125,7 @@ const QuanLyDSPhong = (props) => {
                     ngayKetThuc: bookedRoom.ngayKetThuc,
                     CCCD: bookedRoom.CCCD,
                     tinhTrang: bookedRoom.tinhTrang,
-                    maDatPhong: bookedRoom.maDatPhong
+                    Id: bookedRoom.Id
                 };
             }
             return room;
@@ -185,7 +167,7 @@ const QuanLyDSPhong = (props) => {
                             tenLoaiPhong: floor.tenLoaiPhong,
                             tinhTrang: "Trống",
                             chiNhanh: user?.chinhanh,
-                            maDatPhong: ''
+                            Id: ''
                         };
                         accumulator.push(roomInfo);
                     });
@@ -198,8 +180,10 @@ const QuanLyDSPhong = (props) => {
         }
     };
 
-    const onSearch = () => {
+    const onSearch = async () => {
         let filteredRooms = initialRooms;
+
+        const bookedRooms = await api.getAllBookedRoom();
 
         if (searchCriteria.toa !== 'Tất cả') {
             filteredRooms = filteredRooms.filter(room => room.toa === searchCriteria.toa);
@@ -214,32 +198,30 @@ const QuanLyDSPhong = (props) => {
         }
         if (searchCriteria.ngayBatDau !== '' || searchCriteria.ngayKetThuc !== '') {
             filteredRooms = filteredRooms.map(room => {
-                const bookedRoom = bookedRooms.find(bookedRoom => bookedRoom.maPhong === room.maPhong);
-                if (bookedRoom) {
+                const matchingBookedRooms = bookedRooms.filter(bookedRoom => bookedRoom.maPhong === room.maPhong);
+
+                const bookedRoom = matchingBookedRooms.find(bookedRoom => {
                     const isStartDateValid = searchCriteria.ngayBatDau >= bookedRoom.ngayKetThuc;
                     const isEndDateValid = searchCriteria.ngayKetThuc !== '' ? searchCriteria.ngayKetThuc <= bookedRoom.ngayBatDau : false;
+                    return !(isStartDateValid || isEndDateValid);
+                });
 
-                    if (isStartDateValid || isEndDateValid) {
-                        return {
-                            ...room
-                        };
-                    } else {
-                        return {
-                            ...room, tenKhachHang: bookedRoom.tenKhachHang,
-                            email: bookedRoom.email,
-                            soDienThoai: bookedRoom.soDienThoai,
-                            ngayBatDau: bookedRoom.ngayBatDau,
-                            ngayKetThuc: bookedRoom.ngayKetThuc,
-                            CCCD: bookedRoom.CCCD,
-                            tinhTrang: bookedRoom.tinhTrang,
-                            maDatPhong: bookedRoom.maDatPhong
-                        };
-                    }
+                if (bookedRoom) {
+                    return {
+                        ...room,
+                        tenKhachHang: bookedRoom.tenKhachHang,
+                        email: bookedRoom.email,
+                        soDienThoai: bookedRoom.soDienThoai,
+                        ngayBatDau: bookedRoom.ngayBatDau,
+                        ngayKetThuc: bookedRoom.ngayKetThuc,
+                        CCCD: bookedRoom.CCCD,
+                        tinhTrang: bookedRoom.tinhTrang,
+                        Id: bookedRoom.Id
+                    };
                 }
 
                 return room;
             });
-
         }
         else {
             filteredRooms = filteredRooms.map(room => {
@@ -254,7 +236,7 @@ const QuanLyDSPhong = (props) => {
                         ngayKetThuc: bookedRoom.ngayKetThuc,
                         CCCD: bookedRoom.CCCD,
                         tinhTrang: bookedRoom.tinhTrang,
-                        maDatPhong: bookedRoom.maDatPhong
+                        Id: bookedRoom.Id
                     };
                 }
                 return room;
@@ -357,6 +339,9 @@ const QuanLyDSPhong = (props) => {
                         className={`col-auto 
                     ${room.tinhTrang === 'Đặt phòng' ? 'booked' : ''} 
                     ${room.tinhTrang === 'Check-in' ? 'checked-in' : ''}
+                    ${room.tinhTrang === 'Check-out' ? 'checked-out' : ''}
+                    ${room.tinhTrang === 'Dọn phòng' ? 'tidy' : ''}
+                    ${room.tinhTrang === 'Dọn xong' ? 'complete_tidy' : ''}
                     ${moment(room.ngayKetThuc).isSame(moment(), 'day') ? 'ending-today' : ''}`}
                         onClick={() => handleEditRow(index)}>
                         <div className='room-square'>
