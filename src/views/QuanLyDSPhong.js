@@ -98,6 +98,14 @@ const QuanLyDSPhong = (props) => {
 
     };
 
+    // change time per second
+    //useEffect(() => {
+    // const interval = setInterval(() => {
+    //setCurrentTime(new Date());
+    // }, 1000); // Cập nhật currentTime mỗi giây
+
+    //return () => clearInterval(interval); // Clear interval khi component unmount
+    // }, []);
 
     const handleEditRow = (idx) => {
         setRowToEdit(idx);

@@ -1,14 +1,29 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import './style.css'
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-const RoomsPage = ({ rooms }) => {
+import { useHistory } from 'react-router-dom';
+import api from '../api/Api';
+
+const RoomsPage = () => {
+
+    const [kindOfRoom, setKindOfRoom] = useState([]);
+
     const history = useHistory();
     const handleButtonClick = (room) => {
-        history.push(`/rooms/${room.id}`);
+        history.push(`/rooms/${room.maLoaiPhong}`);
     };
+
+    useEffect(() => {
+        getAllKindOfRoom();
+    }, []);
+
+    const getAllKindOfRoom = async () => {
+        const kindOfRoom = await api.getAllKindOfRoom();
+        setKindOfRoom(kindOfRoom);
+    }
+
     return (
         <div>
             <TopNav />
@@ -39,11 +54,9 @@ const RoomsPage = ({ rooms }) => {
                             <div className="col-2 mb-3">
                                 <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng người lớn' />
                             </div>
-                            <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng trẻ em' />
-                            </div>
+
                             <div className="col-3 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold' }} type='submit' value='Xem phòng' />
+                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }} type='submit' value='Xem phòng' />
                             </div>
                         </form>
                     </div>
@@ -51,8 +64,14 @@ const RoomsPage = ({ rooms }) => {
             </section>
             <section class="container mt-5 mb-5">
                 <div class="row" >
-                    {rooms.map(room => (
-                        <div className="row " style={{ backgroundColor: '#fff', alignItems: 'center', display: 'flex', borderRadius: '5px', borderStyle: 'groove', marginTop: '50px' }}>
+                    {kindOfRoom.map(room => (
+                        <div className="row "
+                            key={room.maLoaiPhong}
+                            style={{
+                                backgroundColor: '#fff', alignItems: 'center', display: 'flex',
+                                borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
+                            }}
+                            onClick={() => handleButtonClick(room)}>
                             <div className="col-5 outset">
                                 <NavLink to={`/rooms/${room.id}`}>
                                     <img src={room.images[0]} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
@@ -71,7 +90,14 @@ const RoomsPage = ({ rooms }) => {
                                 </div>
                             </div>
                             <div className="col-2 ">
-                                {/* <button type="button" onClick={handleButtonClick(room)} style={{ color: '#fff', fontWeight: 'bold', backgroundColor: '#905700', }} className='bluecolor block m-2 py-2 px-4 rounded'> Đặt phòng </button> */}
+                                <button type="button" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleButtonClick(room);
+                                    }} style={{
+                                    color: '#fff', fontWeight: 'bold',
+                                    backgroundColor: '#905700',
+                                }}
+                                    className='bluecolor block m-2 py-2 px-4 rounded'> Đặt phòng </button>
                             </div>
                         </div>
                     )

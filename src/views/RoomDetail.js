@@ -7,11 +7,28 @@ import Footer from '../components/Footer';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
+import api from '../api/Api';
 
-const RoomDetail = ({ rooms }) => {
-  const { roomId } = useParams();
+const RoomDetail = () => {
+  //const { roomId } = useParams();
+
+  const [kindOfRoom, setKindOfRoom] = useState([]);
+
   const history = useHistory();
-  const room = rooms.find(room => room.id === roomId);
+  const handleButtonClick = (room) => {
+    // history.push(`/rooms/${room.id}`);
+  };
+
+  useEffect(() => {
+    getAllKindOfRoom();
+  }, []);
+
+  const getAllKindOfRoom = async () => {
+    const kindOfRoom = await api.getAllKindOfRoom();
+    setKindOfRoom(kindOfRoom);
+  }
+
+  //const room = kindOfRoom.find(room => room.id === roomId);
   const collection = [
     { src: '/images/nvsgdcaocap.png', alt: "Caption one" },
     { src: '/images/nvstieuchuan1.png', alt: "Caption two" },
@@ -20,20 +37,17 @@ const RoomDetail = ({ rooms }) => {
     { src: '/images/doncaocap1.png', alt: "Caption five" },
     { src: '/images/doncaocap2.png', alt: "Caption six" },
   ];
-  const handleGoBack = () => {
-    history.goBack();
-  };
-  if (!room) return <div>Phòng không tồn tại.</div>;
+
+  //if (!room) return <div>Phòng không tồn tại.</div>;
   return (
     <div>
       <TopNav />
       <section>
         <div className="row g-0" style={{ backgroundColor: "#905700", color: "#FFF" }}>
           <div >
-            <button > <img src="/images/GoBack_128px.png" style={{ width: '50px' }} alt="Back" /> </button>
-            <h3 align="center">{room.name}</h3>
-            <p className='px-5' style={{ fontSize: '24px' }}>Giá thành: {room.cost}/đêm</p>
-            <p className='px-5' style={{ fontSize: '20px' }}>{room.description}</p>
+            <h3 align="center"></h3>
+            <p className='px-5' style={{ fontSize: '24px' }}>Giá thành: /đêm</p>
+            <p className='px-5' style={{ fontSize: '20px' }}></p>
           </div>
           <div style={{ backgroundColor: "#fff", padding: '50px', color: '#905700' }}>
             <div className='form'>
@@ -51,7 +65,7 @@ const RoomDetail = ({ rooms }) => {
                   <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700' }} type='number' placeholder='Số lượng trẻ em' />
                 </div>
                 <div className="col-3 mb-3 ">
-                  <NavLink to="/thanhtoan" className='btn d-flex align-items-center justify-content-center' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700', fontSize: '22px', fontWeight: 'bold', align: 'middle' }}>
+                  <NavLink to="/thanhtoan" className='btn d-flex align-items-center justify-content-center' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700', fontWeight: 'bold', align: 'middle' }}>
                     Đặt phòng
                   </NavLink>
                 </div>
