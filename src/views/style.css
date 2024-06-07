@@ -1369,6 +1369,14 @@ input[type="date"]:not(.has-value):before {
     background-color: purple;
 }
 
+.checked-out .room-square {
+    background-color: gold;
+}
+
+.tidy .room-square {
+    background-color: green;
+}
+
 .ending-today .room-square {
     background-color: red;
 }

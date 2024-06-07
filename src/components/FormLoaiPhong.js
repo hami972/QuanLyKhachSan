@@ -4,19 +4,6 @@ import api from '../api/Api';
 import { AuthContext } from '../hook/AuthProvider'
 import Select from "react-select";
 
-const defaultCoSoVatChat = [
-  "Giường",
-  "Bàn",
-  "Tủ",
-  "Máy sấy",
-  "Bồn tắm",
-  "Đèn",
-  "Gối",
-  "Quạt",
-  "Giương",
-  "Tủ lạnh",
-  "Máy lạnh",
-];
 export const FormLoaiPhong = ({
   closeModal,
   onSubmit,
@@ -165,7 +152,7 @@ export const FormLoaiPhong = ({
   const handleAddMaterial = () => {
     setFormState({
       ...formState,
-      coSoVatChat: [...formState.coSoVatChat, { maCSVC: '', tenCSVC: '', soLuong: '' }]
+      coSoVatChat: [...formState.coSoVatChat, { maCSVC: '', tenCSVC: '', soLuong: '', icon: '' }]
     });
   };
 
@@ -183,7 +170,8 @@ export const FormLoaiPhong = ({
     updatedMaterials[index] = {
       ...updatedMaterials[index],
       maCSVC: selectedOption?.maCSVC || '',
-      tenCSVC: selectedOption?.tenCSVC || ''
+      tenCSVC: selectedOption?.tenCSVC || '',
+      icon: selectedOption?.icon || ''
     };
     setFormState({
       ...formState,

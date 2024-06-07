@@ -35,7 +35,7 @@ const QuanLyLichDatPhong = (props) => {
         const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
         if (shouldDelete) {
             setBookedRooms(bookedRooms.filter((_, idx) => idx !== targetIndex));
-            api.deleteBookedRooms(bookedRooms[targetIndex].Id);
+            api.deleteBookedRoom(bookedRooms[targetIndex].Id);
         }
     };
 
@@ -47,7 +47,7 @@ const QuanLyLichDatPhong = (props) => {
     const handleSubmit = async (newRow) => {
         console.log(newRow);
         if (rowToEdit !== null) {
-            api.updateMaterial(newRow, newRow.Id);
+            api.updateBookedRoom(newRow, newRow.Id);
             let updatedBookedRooms = bookedRooms.map((currRow, idx) => {
                 if (idx !== rowToEdit) return currRow;
                 return newRow;
@@ -64,12 +64,10 @@ const QuanLyLichDatPhong = (props) => {
         console.log(searchCriteria)
 
         const searchResults = await api.getBookedRoomBySearch(searchCriteria);
-        console.log(searchResults);
-        const filteredBookedRooms = bookedRooms.filter(b => {
-            return b.chiNhanh === user?.chinhanh && new Date(b.ngayKetThuc) >= new Date() && b.tinhTrang !== "Check-in";
+        const filteredBookedRooms = searchResults.filter(b => {
+            return b.chiNhanh === user?.chinhanh && new Date(b.ngayKetThuc) >= new Date() && b.tinhTrang === "Đặt phòng";
         });
-        setBookedRooms(filteredBookedRooms)
-
+        setBookedRooms(filteredBookedRooms);
     }
     return (
         <div>
@@ -110,16 +108,12 @@ const QuanLyLichDatPhong = (props) => {
             </div>
             <button
                 type="submit"
-                className="btn pb-2 pt-2 mb-3 me-3"
+                className="btn pb-2 pt-2 me-3"
                 style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
                 onClick={onSearch}
             >
                 Tìm kiếm
             </button>
-
-            <div className="text-end">
-                <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
-            </div>
             <table className="table">
                 <thead style={{ verticalAlign: "middle" }}>
                     <tr className="table-secondary">

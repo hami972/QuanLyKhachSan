@@ -23,7 +23,7 @@ export const FormDatPhong = ({
             tenKhachHang: "",
             ngayBatDau: "",
             ngayKetThuc: "",
-            maDatPhong: '',
+            Id: ""
         };
 
         // Set ngayBatDau và ngayKetThuc nếu có giá trị mới
@@ -39,7 +39,7 @@ export const FormDatPhong = ({
     const [errors, setErrors] = useState("");
 
     const validateForm = () => {
-        if (formState.maDatPhong != "") {
+        if (formState.Id != "") {
             setErrors("");
             return true;
         }
@@ -143,8 +143,8 @@ export const FormDatPhong = ({
                     <div>
                         <div className="mb-2"><b>Mã đặt phòng</b></div>
                         <input
-                            name="maDatPhong"
-                            value={formState.maDatPhong}
+                            name="Id"
+                            value={formState.Id}
                             onChange={handleChange}
                             className="form-control pb-2 pt-2 mb-2"
                         />
@@ -238,11 +238,13 @@ export const FormDatPhong = ({
                             id="type"
                             name="tinhTrang"
                             onChange={handleChange}
-                            value={formState.chiNhanh}
+                            value={formState.tinhTrang}
                         >
                             <option value="Đặt phòng">Đặt phòng</option>
                             <option value="Check-in">Check-in</option>
-                            <option value="Dọn phòng">Check-out</option>
+                            <option value="Check-out">Check-out</option>
+                            <option value="Dọn phòng">Dọn phòng</option>
+                            <option value="Dọn xong">Dọn xong</option>
                         </select>
 
                     </div>

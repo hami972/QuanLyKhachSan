@@ -530,11 +530,11 @@ const getBookedRoomBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(
-      `BookedRoom/bookedRoom?${queryParams}`
+      `/BookedRoom/bookedRoom?${queryParams}`
     );
 
     if (response.data.success) {
-      return response.data.materials;
+      return response.data.list;
     } else {
       console.log("not get materials");
     }
