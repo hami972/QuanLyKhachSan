@@ -23,6 +23,8 @@ import { AuthProvider } from './hook/AuthProvider.js';
 import RoomManage from './views/RoomManage.js';
 import HoSoCaNhan from './views/HoSoCaNhan.js';
 import BookingOnline from './views/BookingOnline.js'
+import RoomConfirmed from './views/RoomConfirmed.js';
+
 function App() {
   return (
     <AuthProvider>
@@ -41,6 +43,11 @@ function App() {
               <Route path="/thanhtoan">
                 <ThanhToan />
               </Route>
+
+              <Route path="/xacNhanDatPhong">
+                <RoomConfirmed />
+              </Route>
+
               <Route path="/services">
                 <ServicesPage />
               </Route>

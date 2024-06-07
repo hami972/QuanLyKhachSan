@@ -1,23 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react'
-import './style.css'
-import { useParams } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
-import TopNav from '../components/TopNav'
+import React, { useState, useEffect } from 'react';
+import './style.css';
+import { useParams, useLocation } from 'react-router-dom';
+import TopNav from '../components/TopNav';
 import Footer from '../components/Footer';
-import { Slide } from 'react-slideshow-image';
-import 'react-slideshow-image/dist/styles.css';
-import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
+import ImageGallery from 'react-image-gallery';
+import 'react-image-gallery/styles/css/image-gallery.css';
+import { NavLink } from 'react-router-dom';
 import api from '../api/Api';
 
 const RoomDetail = () => {
-  //const { roomId } = useParams();
-
+  const { roomId } = useParams();
+  const location = useLocation();
+  const { room } = location.state || {};
   const [kindOfRoom, setKindOfRoom] = useState([]);
-
-  const history = useHistory();
-  const handleButtonClick = (room) => {
-    // history.push(`/rooms/${room.id}`);
-  };
 
   useEffect(() => {
     getAllKindOfRoom();
@@ -26,28 +21,29 @@ const RoomDetail = () => {
   const getAllKindOfRoom = async () => {
     const kindOfRoom = await api.getAllKindOfRoom();
     setKindOfRoom(kindOfRoom);
-  }
+  };
 
-  //const room = kindOfRoom.find(room => room.id === roomId);
-  const collection = [
-    { src: '/images/nvsgdcaocap.png', alt: "Caption one" },
-    { src: '/images/nvstieuchuan1.png', alt: "Caption two" },
-    { src: '/images/doicaocap2.png', alt: "Caption three" },
-    { src: '/images/doitieuchuan1.png', alt: "Caption four" },
-    { src: '/images/doncaocap1.png', alt: "Caption five" },
-    { src: '/images/doncaocap2.png', alt: "Caption six" },
-  ];
+  // Ensure room data is available
+  if (!room) return <div>Phòng không tồn tại.</div>;
 
-  //if (!room) return <div>Phòng không tồn tại.</div>;
+  const images = room.images.map((img) => ({
+    original: img,
+    thumbnail: img
+  }));
+
+  const coSoVatChat = [...room.coSoVatChat, {
+    maCSVC: 'CSVC000',
+    tenCSVC: "Wifi",
+    soLuong: "Miễn phí",
+    icon: "/images/iconwifi.png"
+  }]
   return (
     <div>
       <TopNav />
       <section>
         <div className="row g-0" style={{ backgroundColor: "#905700", color: "#FFF" }}>
-          <div >
-            <h3 align="center"></h3>
-            <p className='px-5' style={{ fontSize: '24px' }}>Giá thành: /đêm</p>
-            <p className='px-5' style={{ fontSize: '20px' }}></p>
+          <div>
+            <h3 align="center">{room.tenLoaiPhong}</h3>
           </div>
           <div style={{ backgroundColor: "#fff", padding: '50px', color: '#905700' }}>
             <div className='form'>
@@ -75,19 +71,51 @@ const RoomDetail = () => {
         </div>
       </section>
       <section>
-        <div className="slide-container" style={{ width: '100%', height: '100%' }}>
+        <div>
           <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF", fontSize: '24px' }}>
             <h3 align="center">Các hình ảnh về phòng</h3>
           </header>
-          <Slide >
-            {collection.map((image, index) => (
-              <div className="each-slide" key={index}>
-                <div style={{ height: '900px', width: '100%', 'backgroundImage': `url(${image.src})` }}>
-                  <span >Ảnh {index + 1}</span>
+          <ImageGallery
+            items={images}
+            showPlayButton={true}
+            showFullscreenButton={true}
+            slideInterval={1000}
+            slideOnThumbnailOver={true}
+            showIndex={true}
+            lazyLoad={true}
+            onPlay={() => {
+              alert("slideshow is now playing!");
+            }}
+          />
+        </div>
+      </section>
+      <section>
+        <div className="slide-container" style={{ width: '100%', height: '100%' }}>
+          <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF", fontSize: '24px' }}>
+            <h3 align="center">Thông tin phòng</h3>
+          </header>
+          <div>
+            {coSoVatChat.map((item, index) => (
+              <div key={index}>
+                <div>
+                  <img src={item.icon} alt={item.tenCSVC} style={{ width: '40px' }} />
+                </div>
+                <div>
+                  <p><strong>Mã CSVC:</strong> {item.maCSVC}</p>
+                  <p><strong>Tên CSVC:</strong> {item.tenCSVC}</p>
+                  <p><strong>Số lượng:</strong> {item.soLuong}</p>
                 </div>
               </div>
             ))}
-          </Slide>
+          </div>
+          <div>
+            <div>
+              Đơn giá: {room.donGia}/đêm
+            </div>
+            <NavLink to="/xacNhanDatPhong">
+              Đặt phòng
+            </NavLink>
+          </div>
         </div>
       </section>
       <section>
@@ -98,8 +126,8 @@ const RoomDetail = () => {
         </div>
       </section>
       <Footer style={{ marginTop: "80px" }} />
-
-    </div >
+    </div>
   );
 };
+
 export default RoomDetail;

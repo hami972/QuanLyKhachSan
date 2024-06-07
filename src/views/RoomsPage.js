@@ -12,7 +12,10 @@ const RoomsPage = () => {
 
     const history = useHistory();
     const handleButtonClick = (room) => {
-        history.push(`/rooms/${room.maLoaiPhong}`);
+        history.push({
+            pathname: `/rooms/${room.maLoaiPhong}`,
+            state: { room }
+        });
     };
 
     useEffect(() => {
@@ -73,9 +76,8 @@ const RoomsPage = () => {
                             }}
                             onClick={() => handleButtonClick(room)}>
                             <div className="col-5 outset">
-                                <NavLink to={`/rooms/${room.id}`}>
-                                    <img src={room.images[0]} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
-                                </NavLink>
+                                <img src={room.images[0]} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
+
                             </div>
                             <div className="col-5 column">
                                 <h2 className='row' style={{ color: '#905700' }}>{room.tenLoaiPhong}</h2>
@@ -91,9 +93,9 @@ const RoomsPage = () => {
                             </div>
                             <div className="col-2 ">
                                 <button type="button" onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleButtonClick(room);
-                                    }} style={{
+                                    e.stopPropagation();
+                                    handleButtonClick(room);
+                                }} style={{
                                     color: '#fff', fontWeight: 'bold',
                                     backgroundColor: '#905700',
                                 }}
