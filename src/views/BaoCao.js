@@ -22,7 +22,7 @@ const BaoCao = (props) => {
             <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochinhanh">Chi nhánh</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochiphiphongkham">Chi phí khách sạn</NavLink>
+            <NavLink className="nav-link fontBrown" to="/manager/baocao/baocaotheochiphikhachsan">Chi phí khách sạn</NavLink>
           </li>
         </ul>
       </div>

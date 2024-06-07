@@ -6,30 +6,20 @@ import api from "../api/Api";
 import Select from "react-select";
 import { AuthContext } from "../hook/AuthProvider";
 
-const BillManagement = (props) => {
+const BillManagement = () => {
   const { user } = useContext(AuthContext);
   const [bills, setBills] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [CTHSDT, setCTHSDT] = useState(null);
   const [staffs, setStaffs] = useState([]);
   const [maGiamGia, setMaGiamGia] = useState([]);
-  const [recentDiscount, setRecentDiscount] = useState("");
+  const [recentDiscount, setRecentDiscount] = useState(null);
   const [ThanhTienSauGiamGia, setTTSGG] = useState(0);
+  const [stayDays, setStayDays] = useState(0);
   const [SoTienGiam, setSoTienGiam] = useState(0);
-  const [conNo, setConNo] = useState(0);
-  const [noSauThanhToan, setNoSauThanhToan] = useState(0);
-  const [disableDiscount, setDisaleDiscount] = useState(true);
-  const [patient, setPatient] = useState();
-  const [traGop, setTraGop] = useState(false);
-  const [minimum, setMinimum] = useState(0);
+  const [disableDiscount, setDisableDiscount] = useState(true);
 
-  //component to print
   const componentToPrintRef = useRef();
 
-  const [recentStaff, setRecentStaff] = useState({
-    maNhanVien: "",
-    tenNhanVien: "",
-  });
   const [searchCriteria, setSearchCriteria] = useState({
     maHoaDon: "",
     tenKhachHang: "",
@@ -37,48 +27,57 @@ const BillManagement = (props) => {
     tinhTrang: "",
   });
 
-  var TongTienDT = 0;
-  var TongTienThuoc = 0;
-  var TongTienDV = 0;
-
   const handleChange = (e) => {
     setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
   };
 
-  const setSelectedRowById = async (id) => {
+  const setSelectedRowById = (id) => {
     setSelectedRow(id);
     setPage(2);
   };
+
+  const calculatorStayDays = (checkin) => {
+    const checkInDate = moment(checkin.ngayCheckIn);
+    const checkOutDate = moment();
+    const days = checkOutDate.diff(checkInDate, 'days');
+    if (days===0) return 1;
+    return days;
+  }
+  const calculatorTotal= (checkin) => {
+    const checkInDate = moment(checkin.ngayCheckIn);
+    const checkOutDate = moment();
+    const days = checkOutDate.diff(checkInDate, 'days');
+    if (checkin.donGia!=null)
+      if (days===0)
+        return parseInt(checkin.donGia)
+      else
+        {const total = (days)*parseInt(checkin.donGia);
+        return total;}
+    else return 0;
+  }
   const [page, setPage] = useState(1);
   const nextPage = () => {
     setPage(page + 1);
     window.scrollTo(0, 0);
   };
   const prevPage = () => {
-    // // alert("presv");
-    // if (!disableDiscount) {
-    //   // document.getElementById("maGiamGia").value = "";
-    //   // setSoTienGiam(0);
-    //   setRecentDiscount(null);
-    // }
-
     setPage(page - 1);
     window.scrollTo(0, 0);
   };
 
   const getBills = async () => {
     const bills = await api.getAllBills();
-    const fil = bills.filter(
-      (item, idx) => item.tenChiNhanh === user?.chinhanh
-    );
+    const fil = bills.filter(item => item.chiNhanh === user?.chinhanh);
+    fil.forEach(item => {
+      item.soLuong = calculatorStayDays(item);
+      item.thanhTien = calculatorTotal(item);
+    });
     setBills(fil);
   };
 
   const getStaffs = async () => {
     const staffs = await api.getAllStaffs();
-    const fil = staffs.filter(
-      (item, idx) => item.tenChiNhanh === user?.chinhanh
-    );
+    const fil = staffs.filter(item => item.tenChiNhanh === user?.chinhanh);
     setStaffs(fil);
   };
 
@@ -99,117 +98,46 @@ const BillManagement = (props) => {
 
   const validSubmitData = () => {
     if (bills[selectedRow]?.tinhTrang === "Đã thanh toán") {
-      if (traGop) {
-        const soTienThanhToan =
-          document.getElementById("soTienDaThanhToan").value;
-        const matchSoTienThanhToan =
-          soTienThanhToan != "" &&
-          soTienThanhToan <= patient.congNo &&
-          soTienThanhToan > 0;
-        if (!matchSoTienThanhToan)
-          alert(
-            "Vui lòng nhập số tiền thanh toán lớn hơn " +
-            0 +
-            " và không vượt quá " +
-            patient.congNo
-          );
-        return matchSoTienThanhToan;
-      } else return true;
+      return true;
     }
-    if (traGop) {
-      const soTienThanhToan =
-        document.getElementById("soTienDaThanhToan").value;
-      const matchSoTienThanhToan =
-        soTienThanhToan != "" &&
-        soTienThanhToan >= minimum &&
-        soTienThanhToan <= TongTienDV + TongTienThuoc - SoTienGiam;
-      if (!matchSoTienThanhToan)
-        alert(
-          "Vui lòng nhập số tiền thanh toán ít nhất " +
-          minimum +
-          " và không vượt quá " +
-          (TongTienDV + TongTienThuoc - SoTienGiam)
-        );
-      return matchSoTienThanhToan;
-    } else return true;
+    return true;
   };
 
   const handleSubmit = async () => {
     const choice = window.confirm("Xác nhận thanh toán?");
     if (choice) {
-      if (validSubmitData()) {
-        const newBill = bills[selectedRow] || null;
-        const Id = newBill.Id;
-        if (traGop) {
-          newBill.daThanhToan =
-            parseInt(newBill.daThanhToan) +
-            parseInt(document.getElementById("soTienDaThanhToan").value);
-          const thanhtoan = {
-            ngayThanhToan: moment().format("YYYY-MM-DD"),
-            tienThanhToan: parseInt(
-              document.getElementById("soTienDaThanhToan").value
-            ),
-          };
-          let dsThanhToan = newBill.dsThanhToan || [];
-          if (
-            dsThanhToan == undefined ||
-            dsThanhToan == null ||
-            dsThanhToan.length == 0
-          ) {
-            dsThanhToan = [];
-          }
-          dsThanhToan.push(thanhtoan);
-          newBill.dsThanhToan = dsThanhToan;
-          newBill.ngayLap = thanhtoan.ngayThanhToan;
-          let pt = patient;
-          pt.congNo = noSauThanhToan;
-          setPatient(pt);
-          await api.updatePatient(pt, newBill.IdBenhNhan);
-        } else {
-          newBill.daThanhToan = ThanhTienSauGiamGia;
-          const thanhtoan = {
-            ngayThanhToan: moment().format("YYYY-MM-DD"),
-            tienThanhToan: ThanhTienSauGiamGia,
-          };
-          let dsThanhToan = newBill.dsThanhToan;
-          if (
-            dsThanhToan == undefined ||
-            dsThanhToan == null ||
-            dsThanhToan.length == 0
-          ) {
-            dsThanhToan = [];
-          }
-          dsThanhToan.push(thanhtoan);
-          newBill.dsThanhToan = dsThanhToan;
-          newBill.ngayLap = thanhtoan.ngayThanhToan;
-        }
+      // if (validSubmitData()) {
+        bills[selectedRow].tinhTrang = "Đã thanh toán";
+        bills[selectedRow].ngayLap = moment().format("YYYY-MM-DD");
+        bills[selectedRow].ngayCheckOut = moment().format("YYYY-MM-DD");
+        bills[selectedRow].SoTienGiam = SoTienGiam;
+        bills[selectedRow].ThanhTienSauGiamGia = ThanhTienSauGiamGia;
+        api.updateBill(bills[selectedRow], bills[selectedRow].Id);
+        // const newBill = { ...bills[selectedRow] };
+        // const Id = newBill.Id;
 
-        if (!disableDiscount) {
-          newBill.maGiamGia = recentDiscount.maGiamGia || "";
-          newBill.phanTram = recentDiscount.phanTram || 0;
-          newBill.maNhanVien = user?.maNV;
-          newBill.tenNhanVien = user?.ten;
-        }
-        newBill.tinhTrang = "Đã thanh toán";
-        const pte = patient;
-        newBill.tuoi = Math.abs(
-          new Date(
-            Date.now() - new Date(pte.NgaySinh).getTime()
-          ).getUTCFullYear() - 1970
-        );
-        await api.updateBill(newBill, Id);
-        let updatedBills = bills.map((currRow, idx) => {
-          if (idx !== selectedRow) return currRow;
-          return newBill;
-        });
-        let pt = patient;
-        setBills(updatedBills);
-        setDisaleDiscount(true);
+        // newBill.daThanhToan = ThanhTienSauGiamGia;
+        // const thanhtoan = {
+        //   ngayThanhToan: moment().format("YYYY-MM-DD"),
+        //   tienThanhToan: ThanhTienSauGiamGia,
+        // };
+        // let dsThanhToan = newBill.dsThanhToan || [];
+        // dsThanhToan.push(thanhtoan);
+        // newBill.dsThanhToan = dsThanhToan;
+        // newBill.ngayLap = thanhtoan.ngayThanhToan;
+
+        // if (!disableDiscount) {
+        //   newBill.maGiamGia = recentDiscount?.maGiamGia || "";
+        //   newBill.phanTram = recentDiscount?.phanTram || 0;
+        //   newBill.maNhanVien = user?.maNV;
+        //   newBill.tenNhanVien = user?.ten;
+        // }
+        // newBill.tinhTrang = "Đã thanh toán";
+
+        setDisableDiscount(true);
         setRecentDiscount(null);
-        setRecentStaff(null);
-        setConNo(noSauThanhToan);
         alert("Lưu thành công");
-      }
+      
     }
   };
 
@@ -222,24 +150,20 @@ const BillManagement = (props) => {
     getBills();
     getStaffs();
     getDiscounts();
+    
   }, []);
-
-  useEffect(() => { }, [selectedRow]);
 
   useEffect(() => {
     if (!disableDiscount) {
-      setSoTienGiam((TongTienDV * recentDiscount.phanTram) / 100 || 0);
-      setTTSGG(
-        TongTienDV +
-        TongTienThuoc -
-        ((TongTienDV * recentDiscount.phanTram) / 100 || 0)
-      );
-      setConNo(patient.congNo);
-      if (traGop) {
-        setNoSauThanhToan(patient.congNo + ThanhTienSauGiamGia);
-        document.getElementById("soTienDaThanhToan").value = 0;
-      }
+      const checkInDate = moment(bills[selectedRow]?.ngayCheckIn);
+      const checkOutDate = moment(bills[selectedRow]?.ngayCheckOut);
+      const daysStayed = checkOutDate.diff(checkInDate, 'days');
+      setStayDays(daysStayed)
+      const tongTien = bills[selectedRow]?.thanhTien;
+      setSoTienGiam((tongTien * recentDiscount?.phanTram) / 100 || 0);
+      setTTSGG(tongTien - ((tongTien * recentDiscount?.phanTram) / 100 || 0));
     }
+    
   }, [recentDiscount]);
 
   return (
@@ -261,379 +185,304 @@ const BillManagement = (props) => {
                   />
                 </div>
                 <div className="col-md-6">
+                  <div className="mb-2">Tên khách hàng</div>
+                  <input
+                    type="text"
+                    className="form-control pb-2 pt-2 mb-2"
+                    id="tenKhachHang"
+                    name="tenKhachHang"
+                    onChange={handleChange}
+                    value={searchCriteria.tenKhachHang}
+                  />
+                </div>
+                <div className="col-md-6">
                   <div className="mb-2">Ngày lập</div>
                   <input
                     type="date"
                     className="form-control pb-2 pt-2 mb-2"
                     id="ngayLap"
                     name="ngayLap"
-                    value={searchCriteria.ngayLap}
                     onChange={handleChange}
+                    value={searchCriteria.ngayLap}
                   />
                 </div>
                 <div className="col-md-6">
                   <div className="mb-2">Tình trạng</div>
                   <select
-                    className="form-select pb-2 pt-2 mb-2"
-                    aria-label="Chọn tình trạng"
+                    className="form-control"
                     id="tinhTrang"
                     name="tinhTrang"
                     onChange={handleChange}
                     value={searchCriteria.tinhTrang}
                   >
                     <option value="">Tất cả</option>
-                    <option value="Đã thanh toán">Đã thanh toán</option>
                     <option value="Chưa thanh toán">Chưa thanh toán</option>
+                    <option value="Đã thanh toán">Đã thanh toán</option>
                   </select>
                 </div>
-                <div className="text-end">
-                  <button
-                    type="submit"
-                    className="btn pb-2 pt-2 mt-2"
-                    onClick={onSearch}
-                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
-                  >
-                    Tìm kiếm
-                  </button>
-                </div>
               </div>
+              <div className="col-md-6 mb-4 mt-4"></div>
+              <button className="btn btn-primary col-md-2" onClick={onSearch}>
+                Tìm kiếm
+              </button>
             </div>
-
-            <table className="table">
-              <thead style={{ verticalAlign: "middle" }}>
-                <tr className="table-secondary">
-                  <th>STT</th>
-                  <th>Tên khách hàng</th>
-                  <th>Ngày check in</th>
-                  <th>Ngày check out</th>
-                  <th>Ngày lập</th>
-                  <th>Tình trạng</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bills.map((item, index) => (
-                  <tr
-                    key={item.Id}
-                    onClick={() => setSelectedRowById(index, item.maCTHSDT)}
-                  >
-                    <td>{index + 1}</td>
-                    <td>{item.tenKhachHang}</td>
-                    <td>{item.ngayCheckIn}</td>
-                    <td>{item.ngayCheckOut}</td>
-                    <td>{moment(new Date(item.ngayLap)).format("DD/MM/YYYY")}</td>
-                    <td
-                      style={{
-                        fontStyle: "italic",
-                        color:
-                          item.tinhTrang === "Đã thanh toán"
-                            ? "#269A6C"
-                            : "#B74141",
-                      }}
-                    >
-                      {item.tinhTrang}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-
-        {page === 2 ? (
-          <div>
             <div className="row">
-              <div className="col mt-3">
-                <div
-                  align=""
-                  style={{ fontSize: "25px", fontWeight: "bold" }}
-                >
-                  HÓA ĐƠN
-                </div>
-                <div className=''>
-                  <span style={{ fontWeight: "600" }}>#</span>
-                    {bills[selectedRow]?.maHoaDon}
-                </div>
-              </div>
-              <div className="col-md-auto">
-                <img alt="" src="/images/royalHotelLogo.png" />
-              </div>
-            </div>
-            
-            <div className="row">
-              <table className='mt-3' style={{borderTop: '1px solid #DDDDDD', borderBottom: '1px solid #DDDDDD', tableLayout: 'fixed'}}>
+              <table className="table">
                 <thead>
                   <tr>
-                    <th style={{borderRight: '1px solid #DDDDDD', width: '50%', padding: '25px'}}>
-                      <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                        Khách sạn Hoàng Gia
-                      </div>
-                      <div>
-                        <span style={{ fontWeight: "600" }}>Địa chỉ:</span> 2 Lô E,
-                        KD5, Dương Bá Trạc, Phường 1, quận 8, HCM
-                      </div>
-                      <div>
-                        <span style={{ fontWeight: "600" }}>SĐT:</span> 0843593598
-                      </div>
-                      <div>
-                        <span style={{ fontWeight: "600" }}>Email:</span>{" "}
-                        khachsanhoanggia@gmail.com
-                      </div>
-                    </th>
-
-                    <th style={{ width: '50%', padding: '25px'}}>
-                      <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                        Thông tin khách hàng
-                      </div>
-                      <div className=''>
-                        <span style={{ fontWeight: "600" }}>Tên Khách hàng: </span>
-                        {bills[selectedRow]?.tenKhachHang}
-                      </div>
-                      <div className=''>
-                        <span style={{ fontWeight: "600" }}>Địa chỉ: </span>
-                        {bills[selectedRow]?.DiaChi}
-                      </div>
-                      <div className=''>
-                        <span style={{ fontWeight: "600" }}>Số điện thoại: </span>
-                        {bills[selectedRow]?.soDienThoai}
-                      </div>
-                    </th>
+                    <th scope="col">Mã hóa đơn</th>
+                    <th scope="col">Tên khách hàng</th>
+                    <th scope="col">Ngày lập</th>
+                    <th scope="col">Tình trạng</th>
                   </tr>
                 </thead>
-
+                <tbody>
+                  {bills.map((bill, index) => (
+                    <tr
+                      key={index}
+                      onClick={() => setSelectedRowById(index)}
+                      className={index === selectedRow ? "selected-row" : ""}
+                    >
+                      <td>{bill.maHoaDon}</td>
+                      <td>{bill.tenKhachHang}</td>
+                      <td>{moment(bill.ngayLap).format("DD/MM/YYYY")}</td>
+                      <td>{bill.tinhTrang}</td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
-            <div>
-              <div className="mt-2 pe-2 ps-2" ref={componentToPrintRef}>
-                <table className="table">
-                  <thead style={{ verticalAlign: "middle" }}>
-                    <tr className="table-secondary">
-                      <th>STT</th>
-                      <th>Đơn giá</th>
-                      <th>Ngày check in</th>
-                      <th>Ngày check out</th>
-                      <th>Số lượng ngày cư trú</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedRow !== null ? (
-                       (
-                          <tr
-                            key={selectedRow.Id}
+          </div>
+        ) : page === 2 ? (
+          <div>
+            <div ref={componentToPrintRef}>
+              <div className="container mt-5 mb-5" style={{ fontSize: "12px" }}>
+                <div className="d-flex justify-content-center row">
+                  <div className="col-md-8">
+                    <div className="p-3 bg-white rounded">
+                      <div className="row">
+                      <div className="row">
+                        <div className="col mt-3">
+                          <div
+                            align=""
+                            style={{ fontSize: "25px", fontWeight: "bold" }}
                           >
-                            <td>{1}</td>
-                            <td>
-                              {new Intl.NumberFormat("en-DE").format(
-                                selectedRow.DonGia
-                              )}
-                            </td>
-                            <td>{selectedRow.ngayCheckIn}</td>
-                            <td>{selectedRow.ngayCheckOut}</td>
-                            <td>{selectedRow.SL}</td>
-                          </tr>
-                        )
+                            HÓA ĐƠN
+                          </div>
+                          <div className=''>
+                            <span style={{ fontWeight: "600" }}>#</span>
+                              {bills[selectedRow]?.maHoaDon}
+                          </div>
+                        </div>
+                        <div className="col-md-auto">
+                          <img alt="" src="/images/royalHotelLogo.png" />
+                        </div>
+                      </div>
                       
-                    ) : (
-                      <tr></tr>
-                    )}
-                  </tbody>
-                </table>
+                      <div className="row">
+                        <table className='mt-3' style={{borderTop: '1px solid #DDDDDD', borderBottom: '1px solid #DDDDDD', tableLayout: 'fixed'}}>
+                          <thead>
+                            <tr>
+                              <th style={{borderRight: '1px solid #DDDDDD', width: '50%', padding: '25px'}}>
+                                <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                                  Khách sạn Hoàng Gia
+                                </div>
+                                <div>
+                                  <span style={{ fontWeight: "600" }}>Địa chỉ:</span> 2 Lô E,
+                                  KD5, Dương Bá Trạc, Phường 1, quận 8, HCM
+                                </div>
+                                <div>
+                                  <span style={{ fontWeight: "600" }}>SĐT:</span> 0843593598
+                                </div>
+                                <div>
+                                  <span style={{ fontWeight: "600" }}>Email:</span>{" "}
+                                  khachsanhoanggia@gmail.com
+                                </div>
+                              </th>
 
-                <div className="mt-3">
-                  <table
-                    className="table table-borderless table-sm"
-                    style={{
-                      fontSize: "18px",
-                      borderSpacing: 0,
-                      borderCollapse: "separate",
-                    }}
-                  >
-                    <tbody>
-                      <tr>
-                        <th style={{textAlign: 'right'}}>Thành tiền:</th>
-                        <th>
-                          {new Intl.NumberFormat("en-DE").format(
-                            TongTienDV + TongTienThuoc
-                          )}
-                        </th>
-                      </tr>
-                      <tr>
-                        <th style={{textAlign: 'right'}}>Mã giảm giá:</th>
-                        <th>
-                          {disableDiscount ? (
-                            <Select
-                              styles={{ minWidth: "500px" }}
-                              value={maGiamGia.find(
-                                (item) =>
-                                  item === recentDiscount
-                              ) || ""}
-                              isDisabled
-                              onChange={(value) =>
-                                value !== null &&
-                                  traGop &&
-                                  bills[selectedRow].tinhTrang == "Chưa thanh toán"
-                                  ? (setSoTienGiam(
-                                    (TongTienDV * value.phanTram) / 100
-                                  ),
-                                    setTTSGG(
-                                      TongTienDV +
-                                      TongTienThuoc -
-                                      (TongTienDV * value.phanTram) / 100
-                                    ),
-                                    setConNo(
-                                      patient.congNo +
-                                      TongTienDV +
-                                      TongTienThuoc -
-                                      (TongTienDV * value.phanTram) / 100
-                                    ),
-                                    setNoSauThanhToan(
-                                      patient.congNo +
-                                      TongTienDV +
-                                      TongTienThuoc -
-                                      (TongTienDV * value.phanTram) / 100
-                                    ),
-                                    setRecentDiscount(value))
-                                  : value !== null &&
-                                    traGop &&
-                                    bills[selectedRow].tinhTrang ==
-                                    "Đã thanh toán"
-                                    ? (setSoTienGiam(
-                                      (TongTienDV * value.phanTram) / 100
-                                    ),
-                                      setTTSGG(
-                                        TongTienDV +
-                                        TongTienThuoc -
-                                        (TongTienDV * value.phanTram) / 100
-                                      ),
-                                      setConNo(patient.congNo),
-                                      setNoSauThanhToan(patient.congNo),
-                                      setRecentDiscount(value))
-                                    : value !== null && !traGop
-                                      ? (setSoTienGiam(
-                                        (TongTienDV * value.phanTram) / 100
-                                      ),
-                                        setTTSGG(
-                                          TongTienDV +
-                                          TongTienThuoc -
-                                          (TongTienDV * value.phanTram) / 100
-                                        ),
-                                        setConNo(patient.congNo),
-                                        setNoSauThanhToan(patient.congNo),
-                                        setRecentDiscount(value))
-                                      : setRecentDiscount("")
-                              }
-                              options={maGiamGia}
-                              isClearable
-                              id="maGiamGia"
-                              getOptionLabel={(item) => item.maGiamGia}
-                              getOptionValue={(item) => item}
-                              placeholder={bills[selectedRow]?.maGiamGia}
-                            />
-                          ) : (
-                            <Select
-                              value={maGiamGia.find(
-                                (item) =>
-                                  item === recentDiscount
-                              ) || ""}
-                              onChange={(value) =>
-                                value !== null
-                                  ? (setSoTienGiam(
-                                    (TongTienDV * value.phanTram) / 100
-                                  ),
-                                    setTTSGG(
-                                      TongTienDV +
-                                      TongTienThuoc -
-                                      (TongTienDV * value.phanTram) / 100
-                                    ),
-                                    setConNo(patient.congNo),
-                                    setRecentDiscount(value))
-                                  : setRecentDiscount("")
-                              }
-                              options={maGiamGia}
-                              id="maGiamGia"
-                              isClearable
-                              getOptionLabel={(item) => item.maGiamGia}
-                              getOptionValue={(item) => item}
-                              placeholder=""
-                            />
-                          )}
-                        </th>
-                      </tr>
-                      <tr>
-                        <th style={{textAlign: 'right'}}>Số tiền giảm:</th>
-                        <th>
-                          {SoTienGiam ? new Intl.NumberFormat("en-DE").format(SoTienGiam) : null}
-                        </th>
-                      </tr>
-                      <tr>
-                        <th style={{textAlign: 'right'}}>Thành tiền sau khi giảm:</th>
-                        <th>
-                          {new Intl.NumberFormat("en-DE").format(
-                            ThanhTienSauGiamGia
-                          )}
-                        </th>
-                      </tr>
-                      
-                    </tbody>
-                  </table>
-                </div>
-                <div className="text-end mt-4">
-                  <div style={{ fontSize: "19px" }}><b>NHÂN VIÊN THỰC HIỆN</b></div>
-                  <div style={{ height: "50px" }}></div>
-                  <div className='mt-5 text-uppercase' style={{ fontSize: "19px" }}>
-                    <b>{user?.ten}</b>
+                              <th style={{ width: '50%', padding: '25px'}}>
+                                <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                                  Thông tin khách hàng
+                                </div>
+                                <div className=''>
+                                  <span style={{ fontWeight: "600" }}>Tên Khách hàng: </span>
+                                  {bills[selectedRow]?.tenKhachHang}
+                                </div>
+                                <div className=''>
+                                  <span style={{ fontWeight: "600" }}>Địa chỉ: </span>
+                                  {bills[selectedRow]?.DiaChi}
+                                </div>
+                                <div className=''>
+                                  <span style={{ fontWeight: "600" }}>Số điện thoại: </span>
+                                  {bills[selectedRow]?.soDienThoai}
+                                </div>
+                              </th>
+                            </tr>
+                          </thead>
+
+                        </table>
+                      </div>
+                       
+                      </div>
+                      <div className="mt-3">
+                        <div className="table-responsive">
+                          <table className="table">
+                            <thead>
+                              <tr>
+                                <th>Tên phòng</th>
+                                <th>Số lượng</th>
+                                <th>Ngày check in</th>
+                                <th>Ngày check out</th>
+                                
+                                <th className="text-right">Đơn giá</th>
+                                <th className="text-right">Thành tiền</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{bills[selectedRow]?.maPhong}</td>
+                                <td>{bills[selectedRow]?.soLuong}</td>
+                                <td>{bills[selectedRow]?.ngayCheckIn} </td>
+                                <td>
+                                  {bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
+                                    ? moment().format("YYYY-MM-DD")
+                                    : bills[selectedRow]?.ngayCheckOut}
+                                </td>
+                                <td className="text-right">
+                                  {bills[selectedRow]?.donGia?.toLocaleString(
+                                    "vi-VN",
+                                    {
+                                      style: "currency",
+                                      currency: "VND",
+                                    }
+                                  )}
+                                </td>
+                                <td className="text-right">
+                                  {bills[selectedRow]?.thanhTien?.toLocaleString("vi-VN", 
+                                  {
+                                    style: "currency",
+                                    currency: "VND",
+                                  })}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-8"></div>
+                        <div className="col-md-4 text-right">
+                          <div className="border-bottom">
+                            <div className="d-flex justify-content-between">
+                              <span>Thành tiền</span>
+                              <span>
+                                {(
+                                  bills[selectedRow]?.thanhTien
+                                ).toLocaleString("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                })}
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between">
+                              <span>Giảm giá</span>
+                              <span>
+                              <Select
+                            className="dropdown"
+                            options={maGiamGia}
+                            onChange={(e) => {
+                              setRecentDiscount(e);
+                              setDisableDiscount(false);
+                            }}
+                            getOptionLabel={(option) => option.maGiamGia}
+                            getOptionValue={(option) => option.Id}
+                            placeholder="Chọn mã giảm giá"
+                            value={recentDiscount}
+                            isDisabled={bills[selectedRow]?.tinhTrang === "Đã thanh toán"}
+                          />
+                              {
+                              (() => {
+                                const amount =
+                                  bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
+                                    ? SoTienGiam
+                                    : bills[selectedRow]?.SoTienGiam;
+
+                                return amount !== undefined
+                                  ? amount.toLocaleString("vi-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                    })
+                                  : "N/A";
+                              })()
+                            }
+                                
+                              </span>
+                            </div>
+                          </div>
+                          <div className="d-flex justify-content-between mt-2">
+                            <span className="font-weight-bold">
+                              Thành tiền sau giảm giá
+                            </span>
+                            <span className="font-weight-bold text-success">
+                            {
+                              (() => {
+                                const amount =
+                                  bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
+                                    ? ThanhTienSauGiamGia
+                                    : bills[selectedRow]?.ThanhTienSauGiamGia;
+
+                                return amount !== undefined
+                                  ? amount.toLocaleString("vi-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                    })
+                                  : "N/A";
+                              })()
+                            }
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row mt-3">
+                        <div className="col-md-12">
+                          <p>
+                            <b>Ngày lập:</b> 
+                            {bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
+                                    ? moment().format("YYYY-MM-DD")
+                                    : bills[selectedRow]?.ngayLap}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="d-flex justify-content-end">
+                        <div className="d-flex flex-column mt-3">
+                          <span className="font-weight-bold">
+                            Chữ ký của nhân viên
+                          </span>
+                          <span className="mt-4">
+                            <b>{user?.ten}</b>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="text-end">
-                <ReactToPrint
-                  trigger={() =>
-                    <button className="btn pb-2 pt-2 mt-3 mb-3 me-3"
-                      style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
-                    >In hóa đơn
-                    </button>}
-                  content={() => componentToPrintRef.current}
-                />
-                <button
-                  type="submit"
-                  onClick={handleSubmit}
-                  className="btn pb-2 pt-2 mt-3 mb-3"
-                  style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
-                >
-                  Lưu
-                </button>
-              </div>
             </div>
+            <ReactToPrint
+              trigger={() => (
+                <button className="btn btn-success">In hóa đơn</button>
+              )}
+              content={() => componentToPrintRef.current}
+            />
+            <button className="btn btn-primary" onClick={handleSubmit}>
+              Thanh toán
+            </button>
+            <button className="btn btn-secondary ms-2" onClick={prevPage}>
+              Quay lại
+            </button>
           </div>
-        ) : null}
-      </div>
-      <div className="text-end">
-        {page !== 1 ? (
-          <button
-            type="button"
-            className="btn"
-            style={{ border: "none" }}
-            onClick={() => prevPage()}
-          >
-            <i className="fa-solid fa-chevron-left next_prevBtn"></i>
-          </button>
         ) : (
-          <button className="btn" style={{ border: "none" }}>
-            <i className="fa-solid fa-chevron-left next_prevBtn_disabled"></i>
-          </button>
-        )}
-        {page !== 2 && selectedRow !== null ? (
-          <button
-            type="button"
-            className="btn"
-            style={{ border: "none" }}
-            onClick={() => nextPage()}
-          >
-            <i className="fa-solid fa-chevron-right next_prevBtn"></i>
-          </button>
-        ) : (
-          <button className="btn" style={{ border: "none" }}>
-            <i className="fa-solid fa-chevron-right next_prevBtn_disabled"></i>
-          </button>
+          <div></div>
         )}
       </div>
     </div>
