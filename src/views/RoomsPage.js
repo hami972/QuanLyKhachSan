@@ -9,17 +9,33 @@ import api from '../api/Api';
 const RoomsPage = () => {
 
     const [kindOfRoom, setKindOfRoom] = useState([]);
+    const [branches, setBranches] = useState([]);
+    const [blocks, setBlocks] = useState([])
+    const [bookedRooms, setBookedRooms] = useState([])
+
+    const [filteredRooms, setFilteredRooms] = useState([])// có thể bỏ
+    const [filteredKindOfRooms, setFilteredKindOfRooms] = useState([])
+
+    const [searchCriteria, setSearchCriteria] = useState({
+        ngayBatDau: '',
+        ngayKetThuc: '',
+        soLuongNguoi: 1,
+        chiNhanh: ''
+    });
 
     const history = useHistory();
     const handleButtonClick = (room) => {
         history.push({
             pathname: `/rooms/${room.maLoaiPhong}`,
-            state: { room }
+            state: { room, searchCriteria }
         });
     };
 
     useEffect(() => {
+        getBookedRooms();
         getAllKindOfRoom();
+        getBranchs();
+        getBlocks();
     }, []);
 
     const getAllKindOfRoom = async () => {
@@ -27,10 +43,90 @@ const RoomsPage = () => {
         setKindOfRoom(kindOfRoom);
     }
 
+    const getBookedRooms = async () => {
+        const bookedRooms = await api.getAllBookedRoom();
+        setBookedRooms(bookedRooms);
+    };
+
+    const getBlocks = async () => {
+        const blocks = await api.getAllBlocks();
+        setBlocks(blocks);
+    };
+
+    const getBranchs = async () => {
+        const branches = await api.getAllBranchs();
+        setBranches(branches)
+        setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
+    }
+
+    const handleSearch = () => {
+        const filteredRooms = [];
+        const filteredByCriteria = [];
+
+        // Lọc ra danh sách các phòng thỏa mãn điều kiện từ blocks và kindOfRoom
+        kindOfRoom.forEach(room => {
+            blocks.forEach(block => {
+                if (block.chiNhanh === searchCriteria.chiNhanh) {
+                    block.tang.forEach(tang => {
+                        if (tang.tenLoaiPhong === room.tenLoaiPhong) {
+                            const maPhongs = tang.dsPhong.split('-');
+                            maPhongs.forEach(maPhong => {
+                                filteredRooms.push({
+                                    ...room,
+                                    maPhong: maPhong,
+                                    chiNhanh: block.chiNhanh
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Lọc ra các phòng thỏa mãn điều kiện từ filteredRooms
+        filteredRooms.forEach(room => {
+            if (room.soLuongNguoiToiDa >= searchCriteria.soLuongNguoi) {
+                const isRoomBooked = bookedRooms.some(bookedRoom => {
+                    const isSameRoom = bookedRoom.maPhong === room.maPhong;
+                    const isStartDateValid = searchCriteria.ngayBatDau >= bookedRoom.ngayKetThuc;
+                    const isEndDateValid = searchCriteria.ngayKetThuc !== '' ? searchCriteria.ngayKetThuc <= bookedRoom.ngayBatDau : false;
+                    return isSameRoom && !(isStartDateValid || isEndDateValid);
+                });
+                if (!isRoomBooked) {
+                    filteredByCriteria.push(room);
+                }
+            }
+        });
+
+        // Lọc ra danh sách loại phòng từ filteredByCriteria
+        const filteredKindOfRooms = [];
+        const uniqueMaLoaiPhong = [...new Set(filteredByCriteria.map(room => room.maLoaiPhong))];
+        uniqueMaLoaiPhong.forEach(maLoaiPhong => {
+            const roomsForType = filteredByCriteria.filter(room => room.maLoaiPhong === maLoaiPhong);
+            if (roomsForType.length > 0) {
+                const dsPhong = roomsForType.map(room => room.maPhong).join('-'); // Tạo danh sách mã phòng từ các phòng trong loại phòng
+                filteredKindOfRooms.push({
+                    ...roomsForType[0],
+                    maLoaiPhong: maLoaiPhong,
+                    dsPhong: dsPhong
+                });
+            }
+        });
+
+        setFilteredRooms(filteredByCriteria);
+        setFilteredKindOfRooms(filteredKindOfRooms);
+    }
+
+    const handleSearchChange = (e) => {
+        setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
+    };
+
     return (
         <div>
             <TopNav />
-            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}><h3 align="center">Loại phòng của chúng tôi</h3></header>
+            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}>
+                <h3 align="center">Loại phòng của chúng tôi</h3>
+            </header>
             <section className="container mt-5 mb-5">
                 <div className="row">
                     <div className="col-md-5 text-center">
@@ -49,17 +145,66 @@ const RoomsPage = () => {
                     <div className='form'>
                         <form className='row'>
                             <div className="col-2 mb-3">
-                                <       input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='date' placeholder='Ngày check in' />
+                                <input
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }}
+                                    type='date'
+                                    name="ngayBatDau"
+                                    value={searchCriteria.ngayBatDau}
+                                    onChange={handleSearchChange}
+                                    placeholder='Ngày check in'
+                                />
                             </div>
                             <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='date' placeholder='Ngày check out' />
+                                <input
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }}
+                                    type='date'
+                                    name="ngayKetThuc"
+                                    value={searchCriteria.ngayKetThuc}
+                                    onChange={handleSearchChange}
+                                    placeholder='Ngày check out'
+                                />
                             </div>
                             <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng người lớn' />
+                                <input
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }}
+                                    type='number'
+                                    name="soLuongNguoi"
+                                    value={searchCriteria.soLuongNguoi}
+                                    onChange={handleSearchChange}
+                                    placeholder='Số lượng người lớn'
+                                />
+                            </div>
+                            <div className="col-2 mb-3">
+                                <select
+                                    className="form-select pb-2 pt-2 mb-2"
+                                    id="type"
+                                    name="chiNhanh"
+                                    value={searchCriteria.chiNhanh}
+                                    onChange={handleSearchChange}
+                                >
+                                    <option value="">Chọn chi nhánh</option>
+                                    {branches.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.tenChiNhanh}>
+                                                {item.tenChiNhanh}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
                             </div>
 
                             <div className="col-3 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }} type='submit' value='Xem phòng' />
+                                <button
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }}
+                                    type='button'
+                                    onClick={handleSearch}
+                                >
+                                    Tìm kiếm
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -67,7 +212,7 @@ const RoomsPage = () => {
             </section>
             <section class="container mt-5 mb-5">
                 <div class="row" >
-                    {kindOfRoom.map(room => (
+                    {filteredKindOfRooms.map(room => (
                         <div className="row "
                             key={room.maLoaiPhong}
                             style={{
@@ -76,7 +221,9 @@ const RoomsPage = () => {
                             }}
                             onClick={() => handleButtonClick(room)}>
                             <div className="col-5 outset">
-                                <img src={room.images[0]} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
+                                {room.images && room.images.length > 0 && (
+                                    <img src={room.images[0]} alt={room.tenLoaiPhong} style={{ padding: '10px', width: "100%" }} />
+                                )}
 
                             </div>
                             <div className="col-5 column">

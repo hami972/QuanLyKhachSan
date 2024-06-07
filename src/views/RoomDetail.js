@@ -5,25 +5,28 @@ import TopNav from '../components/TopNav';
 import Footer from '../components/Footer';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
-import { NavLink } from 'react-router-dom';
 import api from '../api/Api';
 
 const RoomDetail = () => {
   const { roomId } = useParams();
   const location = useLocation();
-  const { room } = location.state || {};
-  const [kindOfRoom, setKindOfRoom] = useState([]);
+  const { room, searchCriteria } = location.state || {};
+  const [branches, setBranches] = useState([]);
+  const [soLuong, setSoLuong] = useState();
 
   useEffect(() => {
-    getAllKindOfRoom();
+    getBranchs();
   }, []);
 
-  const getAllKindOfRoom = async () => {
-    const kindOfRoom = await api.getAllKindOfRoom();
-    setKindOfRoom(kindOfRoom);
+  const getBranchs = async () => {
+    const branches = await api.getAllBranchs();
+    setBranches(branches);
   };
 
-  // Ensure room data is available
+  const handleSearchChange = (e) => {
+    // Do something when search criteria changes
+  };
+
   if (!room) return <div>Phòng không tồn tại.</div>;
 
   const images = room.images.map((img) => ({
@@ -36,7 +39,7 @@ const RoomDetail = () => {
     tenCSVC: "Wifi",
     soLuong: "Miễn phí",
     icon: "/images/iconwifi.png"
-  }]
+  }];
   return (
     <div>
       <TopNav />
@@ -48,22 +51,58 @@ const RoomDetail = () => {
           <div style={{ backgroundColor: "#fff", padding: '50px', color: '#905700' }}>
             <div className='form'>
               <form className='row'>
-                <div className="col-2 mb-3">
-                  <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700' }} type='date' placeholder='Ngày check in' />
+                <div className="col-md-3 mb-3">
+                  <input
+                    className='form-control'
+                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    type='date'
+                    placeholder='Ngày check in'
+                    value={searchCriteria.ngayBatDau}
+                    onChange={handleSearchChange}
+                  />
                 </div>
-                <div className="col-2 mb-3">
-                  <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700' }} type='date' placeholder='Ngày check out' />
+                <div className="col-md-3 mb-3">
+                  <input
+                    className='form-control'
+                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    type='date'
+                    placeholder='Ngày check out'
+                    value={searchCriteria.ngayKetThuc}
+                    onChange={handleSearchChange}
+                  />
                 </div>
-                <div className="col-2 mb-3">
-                  <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700' }} type='number' placeholder='Số lượng người lớn' />
+                <div className="col-md-3 mb-3">
+                  <input
+                    className='form-control'
+                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    type='number'
+                    placeholder='Số lượng người lớn'
+                    value={searchCriteria.soLuongNguoi}
+                    onChange={handleSearchChange}
+                  />
                 </div>
-                <div className="col-2 mb-3">
-                  <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700' }} type='number' placeholder='Số lượng trẻ em' />
+                <div className="col-md-3 mb-3">
+                  <select
+                    className="form-select"
+                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    id="chiNhanh"
+                    value={searchCriteria.chiNhanh}
+                    onChange={handleSearchChange}
+                  >
+                    <option value="">Chọn chi nhánh</option>
+                    {branches.map((item, index) => (
+                      <option key={index} value={item.tenChiNhanh}>
+                        {item.tenChiNhanh}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div className="col-3 mb-3 ">
-                  <NavLink to="/thanhtoan" className='btn d-flex align-items-center justify-content-center' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#905700', fontWeight: 'bold', align: 'middle' }}>
-                    Đặt phòng
-                  </NavLink>
+
+                <div className="col-3 mb-3">
+                  <button className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }} type='button'
+                  >
+                    Tìm kiếm
+                  </button>
                 </div>
               </form>
             </div>
@@ -110,11 +149,18 @@ const RoomDetail = () => {
           </div>
           <div>
             <div>
+              <input
+                className="form-control pb-2 pt-2 mb-2"
+                name="soLuong"
+                onChange={(e) => setSoLuong(e.target.value)}
+                type="number"
+                value={soLuong}
+              />
+            </div>
+            <div>
               Đơn giá: {room.donGia}/đêm
             </div>
-            <NavLink to="/xacNhanDatPhong">
-              Đặt phòng
-            </NavLink>
+
           </div>
         </div>
       </section>

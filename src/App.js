@@ -20,10 +20,8 @@ import { ThemeContextProvider } from "./context/ThemeContext";
 import ThemeProvider from "./hook/ThemeProvider";
 import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 import { AuthProvider } from './hook/AuthProvider.js';
-import RoomManage from './views/RoomManage.js';
 import HoSoCaNhan from './views/HoSoCaNhan.js';
 import BookingOnline from './views/BookingOnline.js'
-import RoomConfirmed from './views/RoomConfirmed.js';
 
 function App() {
   return (
@@ -42,10 +40,6 @@ function App() {
               </Route>
               <Route path="/thanhtoan">
                 <ThanhToan />
-              </Route>
-
-              <Route path="/xacNhanDatPhong">
-                <RoomConfirmed />
               </Route>
 
               <Route path="/services">
