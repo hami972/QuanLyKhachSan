@@ -70,6 +70,7 @@ const nav2_3 = [
 const nav2_4 = [
     { path: '/lichsudatphong', name: 'Lịch sử đặt phòng' },
     { path: '/dichvugiatsay', name: 'Dich vụ giặt sấy' },
+    { path: '/lichSuThanhToan', name: 'Lịch sử thanh toán' },
 ]
 
 

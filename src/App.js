@@ -22,6 +22,7 @@ import ButtonScrollToTop from './components/ButtonScrollToTop.js';
 import { AuthProvider } from './hook/AuthProvider.js';
 import HoSoCaNhan from './views/HoSoCaNhan.js';
 import BookingOnline from './views/BookingOnline.js'
+import AddReview from './views/AddReview.js';
 
 function App() {
   return (
@@ -60,6 +61,11 @@ function App() {
               <Route path="/forgetpassword">
                 <ForgetPassword />
               </Route>
+
+              <Route path="/danhGiaLoaiPhong">
+                <AddReview />
+              </Route>
+
               <Route path="/hosocanhan">
                 <HoSoCaNhan />
               </Route>

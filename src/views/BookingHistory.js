@@ -1,127 +1,94 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../hook/AuthProvider';
 import api from "../api/Api";
-import TopNav from "../components/TopNav";
-import Footer from "../components/Footer";
-import ReviewModal from '../components/ReviewModal';
 
 const BookingHistory = () => {
   const { user } = useContext(AuthContext);
+  const [kindOfRoom, setKindOfRoom] = useState([]);
   const [bookedRooms, setBookedRooms] = useState([]);
-  const [tang, setFloors] = useState([]);
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [isAdd, setIsAdd] = useState(true);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [review, setReview] = useState([]);
-  const [currentReview, setCurrentReview] = useState(null);
-
-  const handleSubmit = async (newReview) => {
-    if (isAdd) {
-      const id = await api.addReview(newReview);
-      newReview.id = id;
-      setReview([...review, newReview]);
-    } else {
-      await api.updateReview(newReview, currentReview.id);
-      const updatedReviews = review.map((currReview) => {
-        if (currReview.id !== currentReview.id) return currReview;
-        return newReview;
-      });
-      setReview(updatedReviews);
-    }
-    setShowReviewModal(false);
-    setCurrentReview(null);
-    setSelectedBooking(null);
-  };
-
-  const getAllReview = async () => {
-    const review = await api.getAllReview();
-    setReview(review);
-  };
-
-  const getAllFloors = async () => {
-    const tang = await api.getAllFloors();
-    setFloors(tang);
-  };
+  const [dailyRoomInfo, setDailyRoomInfo] = useState([]);
 
   useEffect(() => {
-    const fetchBookedRooms = async () => {
-      if (user?.Loai === "KhachHang") {
-        const bills = await api.getAllBills();
-        const filteredRooms = bills.filter(bill => bill.email === user.email);
-        setBookedRooms(filteredRooms);
-      }
-    };
-    fetchBookedRooms();
-    getAllReview();
-    getAllFloors();
-  }, [user]);
+    getAllKindOfRoom();
+    getBookedRooms()
+  }, []);
 
-  const handleReviewClick = (booking) => {
-    setSelectedBooking(booking);
-    const floor = tang.find(floor => floor.maTang === booking.maTang);
-    const existingReview = review.find(r => r.Id === booking.Id);
-    const maLoaiPhong = floor ? floor.maLoaiPhong : "";
-    const Id = booking.Id;
-    if (existingReview) {
-      setCurrentReview({ ...existingReview, maLoaiPhong, Id: Id });
-      setIsAdd(false);
-    } else {
-      setCurrentReview({ soSao: "", danhGia: "", maLoaiPhong, Id: Id });
-    }
-    setShowReviewModal(true);
+
+  const getAllKindOfRoom = async () => {
+    const kindOfRoom = await api.getAllKindOfRoom();
+    setKindOfRoom(kindOfRoom);
+  }
+
+  const getBookedRooms = async () => {
+    const bookedRooms = await api.getAllBookedRoom();
+    const filteredBookedRooms = bookedRooms.filter(b => {
+      return b.CCCD === user?.CCCD && (b.tinhTrang === 'Đặt phòng' || b.tinhTrang === 'Check-in');
+    });
+    setBookedRooms(filteredBookedRooms);
+    processDailyRoomInfo(filteredBookedRooms);
   };
 
+  const processDailyRoomInfo = (bookedRooms) => {
+    // Lọc ra các phòng có tình trạng là 'booked' hoặc 'check-in'
+    const filteredRooms = bookedRooms
+
+    // Nhóm các phòng theo ngày bắt đầu và ngày kết thúc
+    const groupedByDateRange = filteredRooms.reduce((acc, room) => {
+      const dateRange = `${room.ngayBatDau}-${room.ngayKetThuc}`;
+      if (!acc[dateRange]) {
+        acc[dateRange] = [];
+      }
+      acc[dateRange].push(room);
+      return acc;
+    }, {});
+
+    // Xử lý từng khoảng thời gian
+    const result = Object.keys(groupedByDateRange).map(dateRange => {
+      const rooms = groupedByDateRange[dateRange];
+
+      // Nhóm các phòng theo loại phòng và chi nhánh
+      const groupedByRoomTypeAndBranch = rooms.reduce((acc, room) => {
+        const key = `${room.tenLoaiPhong}-${room.chiNhanh}`;
+        if (!acc[key]) {
+          acc[key] = { roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: [] };
+        }
+        acc[key].count++;
+        acc[key].rooms.push(room.maPhong);
+        return acc;
+      }, {});
+
+      // Chuyển đổi dữ liệu đã nhóm thành mảng
+      const roomTypesArray = Object.values(groupedByRoomTypeAndBranch);
+
+      return {
+        dateRange,
+        roomTypes: roomTypesArray
+      };
+    });
+
+    setDailyRoomInfo(result);
+    console.log("result", result)
+  };
   return (
     <div>
-      <div className="container mt-5 pb-5">
-        <h2 className="mt-3 mb-3" align="center" style={{ color: "#905700" }}>Lịch sử đặt phòng</h2>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Tên phòng</th>
-              <th>Ngày check-in</th>
-              <th>Ngày check-out</th>
-              <th>Mã tầng</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookedRooms.map((booking, index) => (
-              <tr key={index}>
-                <td>{booking.tenPhong}</td>
-                <td>{booking.ngayCheckIn}</td>
-                <td>{booking.ngayCheckOut}</td>
-                <td>{booking.maTang}</td>
-                <td>
-                  <button
-                    className="btn btn-primary"
-                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
-                    onClick={() => handleReviewClick(booking)}
-                  >
-                    Đánh giá
-                  </button>
-                </td>
-              </tr>
+      <div>
+        <h1>Lịch sử đặt phòng</h1>
+        {/* Render dailyRoomInfo */}
+        {dailyRoomInfo.map(dayInfo => (
+          <div key={dayInfo.date}>
+            <h2>{dayInfo.date}</h2>
+            {dayInfo.roomTypes.map(roomTypeInfo => (
+              <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`}>
+                <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
+                <p>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
+                <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        ))}
       </div>
-      {showReviewModal && (
-        <ReviewModal
-          show={showReviewModal}
-          handleClose={() => {
-            setShowReviewModal(false);
-            setSelectedBooking(null);
-            setCurrentReview(null);
-          }}
-          handleSubmit={handleSubmit}
-          defaultValue={currentReview}
-          maLoaiPhong={currentReview ? currentReview.maLoaiPhong : ""}
-          Id={currentReview ? currentReview.id : ""}
-        />
-      )}
     </div>
-  );
+  )
 };
 
 export default BookingHistory;

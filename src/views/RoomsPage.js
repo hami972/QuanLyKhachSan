@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import './style.css'
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
-import { NavLink } from 'react-router-dom/cjs/react-router-dom.min';
+import { useParams, useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import api from '../api/Api';
 
 const RoomsPage = () => {
+
+    const location = useLocation();
 
     const [kindOfRoom, setKindOfRoom] = useState([]);
     const [branches, setBranches] = useState([]);
@@ -16,7 +18,7 @@ const RoomsPage = () => {
     const [filteredRooms, setFilteredRooms] = useState([])// có thể bỏ
     const [filteredKindOfRooms, setFilteredKindOfRooms] = useState([])
 
-    const [searchCriteria, setSearchCriteria] = useState({
+    const [searchCriteria, setSearchCriteria] = useState(location.state?.searchCriteria || {
         ngayBatDau: '',
         ngayKetThuc: '',
         soLuongNguoi: 1,
@@ -36,6 +38,9 @@ const RoomsPage = () => {
         getAllKindOfRoom();
         getBranchs();
         getBlocks();
+        if (location.state?.searchCriteria) {
+            handleSearch()
+        }
     }, []);
 
     const getAllKindOfRoom = async () => {
@@ -59,7 +64,12 @@ const RoomsPage = () => {
         setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
     }
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
+
+        const kindOfRoom = await api.getAllKindOfRoom();
+        const blocks = await api.getAllBlocks();
+        const bookedRooms = await api.getAllBookedRoom();
+
         const filteredRooms = [];
         const filteredByCriteria = [];
 
@@ -104,7 +114,7 @@ const RoomsPage = () => {
         uniqueMaLoaiPhong.forEach(maLoaiPhong => {
             const roomsForType = filteredByCriteria.filter(room => room.maLoaiPhong === maLoaiPhong);
             if (roomsForType.length > 0) {
-                const dsPhong = roomsForType.map(room => room.maPhong).join('-'); // Tạo danh sách mã phòng từ các phòng trong loại phòng
+                const dsPhong = roomsForType.map(room => room.maPhong).join('-'); 
                 filteredKindOfRooms.push({
                     ...roomsForType[0],
                     maLoaiPhong: maLoaiPhong,
@@ -247,6 +257,9 @@ const RoomsPage = () => {
                                     backgroundColor: '#905700',
                                 }}
                                     className='bluecolor block m-2 py-2 px-4 rounded'> Đặt phòng </button>
+                            </div>
+                            <div>
+                                {room.dsPhong ? room.dsPhong.split('-').length : 0}
                             </div>
                         </div>
                     )

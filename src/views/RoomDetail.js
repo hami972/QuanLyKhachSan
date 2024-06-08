@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './style.css';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useHistory } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import Footer from '../components/Footer';
 import ImageGallery from 'react-image-gallery';
@@ -9,6 +9,7 @@ import api from '../api/Api';
 
 const RoomDetail = () => {
   const { roomId } = useParams();
+  const history = useHistory();
   const location = useLocation();
   const { room, searchCriteria } = location.state || {};
   const [branches, setBranches] = useState([]);
@@ -27,6 +28,13 @@ const RoomDetail = () => {
     // Do something when search criteria changes
   };
 
+  const handleSearch = () => {
+    history.push({
+      pathname: '/rooms',
+      state: { searchCriteria: searchCriteria }
+    });
+  };
+
   if (!room) return <div>Phòng không tồn tại.</div>;
 
   const images = room.images.map((img) => ({
@@ -40,6 +48,37 @@ const RoomDetail = () => {
     soLuong: "Miễn phí",
     icon: "/images/iconwifi.png"
   }];
+
+  const handleSubmit = async () => {
+    if (!soLuong || soLuong <= 0) {
+      alert("Vui lòng nhập số lượng phòng cần đặt.");
+      return;
+    }
+
+    // Lặp để thêm số lượng phòng đã nhập
+    for (let i = 0; i < soLuong; i++) {
+      // Lấy mã phòng từ danh sách mã phòng của phòng hiện tại
+      const maPhong = room.dsPhong.split('-')[0]; // Lấy mã phòng đầu tiên
+
+      // Gọi API để thêm phòng đã đặt
+      try {
+        await api.addBookedRoom({
+          maPhong: maPhong,
+          // Thêm các thông tin khác bạn muốn lưu
+        });
+      } catch (error) {
+        console.error("Lỗi khi thêm phòng đã đặt:", error);
+        alert("Đã xảy ra lỗi khi đặt phòng, vui lòng thử lại sau.");
+        return;
+      }
+    }
+
+    // Hiển thị thông báo khi đặt phòng thành công
+    alert(`Đã đặt ${soLuong} phòng thành công!`);
+
+    history.push('/thanhtoan');
+  }
+
   return (
     <div>
       <TopNav />
@@ -99,7 +138,9 @@ const RoomDetail = () => {
                 </div>
 
                 <div className="col-3 mb-3">
-                  <button className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }} type='button'
+                  <button className='form-control'
+                    onClick={handleSearch}
+                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }} type='button'
                   >
                     Tìm kiếm
                   </button>
@@ -159,6 +200,14 @@ const RoomDetail = () => {
             </div>
             <div>
               Đơn giá: {room.donGia}/đêm
+            </div>
+
+            <div>
+              <button onClick={handleSubmit}
+                className="form-control" style={{
+                  fontSize: '24px', height: '60px',
+                  borderRadius: '9px', borderColor: '#905700'
+                }}>Đặt phòng</button>
             </div>
 
           </div>

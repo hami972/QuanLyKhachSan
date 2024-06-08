@@ -17,6 +17,8 @@ import QuanLyPhong from './QuanLyPhong';
 import QuanLyDatPhong from './QuanLyDatPhong';
 import BookingOnline from './BookingOnline';
 import QuanLyDichVu from './QuanLyDichVu';
+import PaymentHistory from './PaymentHistory';
+
 const Manager = (props) => {
     const { pathname } = useLocation();
     return (
@@ -49,7 +51,7 @@ const Manager = (props) => {
                                     <QuanLyLoaiPhong />
                                 </Route>
                                 <Route path="/manager/quanlydichvu">
-                                <QuanLyDichVu/>
+                                    <QuanLyDichVu />
                                 </Route>
                                 <Route path="/manager/quanlychinhanh">
                                     <QuanLyChiNhanh />
@@ -65,6 +67,9 @@ const Manager = (props) => {
                                 </Route>
                                 <Route path="/manager/dichvugiatsay">
                                     <BookingOnline />
+                                </Route>
+                                <Route path="/manager/lichSuThanhToan">
+                                    <PaymentHistory />
                                 </Route>
                             </Switch>
                         </Route>
