@@ -7,7 +7,7 @@ import {
 } from "firebase/storage";
 import { app } from "../hook/FirebaseConfig.js";
 
-const ResponsiveImageGrid = ({ updateImages, uploadedImages }) => {
+const ResponsiveMansonryGrid = ({ updateImages, uploadedImages }) => {
 
     // change image
     const storage = getStorage(app);
@@ -111,4 +111,4 @@ const ResponsiveImageGrid = ({ updateImages, uploadedImages }) => {
     );
 };
 
-export default ResponsiveImageGrid;
+export default ResponsiveMansonryGrid;

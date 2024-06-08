@@ -48,7 +48,7 @@ const BookingHistory = () => {
 
       // Nhóm các phòng theo loại phòng và chi nhánh
       const groupedByRoomTypeAndBranch = rooms.reduce((acc, room) => {
-        const key = `${room.tenLoaiPhong}-${room.chiNhanh}`;
+        const key = `${room.tenLoaiPhong}/${room.chiNhanh}`;
         if (!acc[key]) {
           acc[key] = { roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: [] };
         }

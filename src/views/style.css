@@ -1307,6 +1307,48 @@ input[type="date"]:not(.has-value):before {
     }
 }
 
+/*Gallery video and images*/
+.gallery-flex-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gallery-flex-item {
+    flex: 0 0 calc(20% - 10px);
+    /* Số 25% tượng trưng cho 4 cột */
+    aspect-ratio: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.gallery-flex-item img,
+.gallery-flex-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-add-image-container {
+    flex: 0 0 calc(20% - 10px);
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #ccc;
+    cursor: pointer;
+}
+
+.gallery-flex-item:hover .delete-btn-images {
+    opacity: 1;
+    /* Hiển thị khi di chuột vào phần tử cha */
+}
+
+.gallery-flex-item:hover .delete-btn {
+    opacity: 1;
+}
+
+
 .image-modal {
     position: fixed;
     top: 0;

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import ResponsiveImageGrid from "./ResponsiveImageGrid";
+import ResponsiveMansonryGrid from "./ResponsiveMasonryGrid";
 import api from '../api/Api';
 import { AuthContext } from '../hook/AuthProvider'
 import Select from "react-select";
@@ -318,7 +318,7 @@ export const FormLoaiPhong = ({
           </div>
 
           <div className="mb-2"><b>Ảnh phòng</b></div>
-          <ResponsiveImageGrid updateImages={updateImages} uploadedImages={formState.images} />
+          <ResponsiveMansonryGrid updateImages={updateImages} uploadedImages={formState.images} />
 
 
 

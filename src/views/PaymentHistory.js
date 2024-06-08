@@ -34,7 +34,7 @@ const PaymentHistory = () => {
         const filteredRooms = bookedRooms
 
         const groupedByDateRange = filteredRooms.reduce((acc, room) => {
-            const dateRange = `${room.ngayCheckIn}-${room.ngayCheckOut}`;
+            const dateRange = `${room.ngayCheckIn}/${room.ngayCheckOut}`;
             if (!acc[dateRange]) {
                 acc[dateRange] = [];
             }
@@ -49,7 +49,10 @@ const PaymentHistory = () => {
             const groupedByRoomTypeAndBranch = rooms.reduce((acc, room) => {
                 const key = `${room.tenLoaiPhong}-${room.chiNhanh}`;
                 if (!acc[key]) {
-                    acc[key] = { roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: [], daDanhGia: room.daDanhGia };
+                    acc[key] = {
+                        Id: room.Id, // Id là docId của loại phòng
+                        roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: [], daDanhGia: room.daDanhGia
+                    };
                 }
                 acc[key].count++;
                 acc[key].rooms.push({ maPhong: room.maPhong, Id: room.Id }); //Id là docId của hóa đơn 
