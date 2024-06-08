@@ -23,6 +23,7 @@ import { AuthProvider } from './hook/AuthProvider.js';
 import HoSoCaNhan from './views/HoSoCaNhan.js';
 import BookingOnline from './views/BookingOnline.js'
 import AddReview from './views/AddReview.js';
+import ReviewComment from './views/ReviewComment.js';
 
 function App() {
   return (
@@ -64,6 +65,10 @@ function App() {
 
               <Route path="/danhGiaLoaiPhong">
                 <AddReview />
+              </Route>
+
+              <Route path="/xemLaiDanhGia">
+                <ReviewComment />
               </Route>
 
               <Route path="/hosocanhan">

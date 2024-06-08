@@ -4,37 +4,29 @@ import api from "../api/Api";
 
 const BookingHistory = () => {
   const { user } = useContext(AuthContext);
-  const [kindOfRoom, setKindOfRoom] = useState([]);
   const [bookedRooms, setBookedRooms] = useState([]);
   const [dailyRoomInfo, setDailyRoomInfo] = useState([]);
 
   useEffect(() => {
-    getAllKindOfRoom();
     getBookedRooms()
   }, []);
 
 
-  const getAllKindOfRoom = async () => {
-    const kindOfRoom = await api.getAllKindOfRoom();
-    setKindOfRoom(kindOfRoom);
-  }
-
   const getBookedRooms = async () => {
     const bookedRooms = await api.getAllBookedRoom();
+    const kindOfRoom = await api.getAllKindOfRoom()
+
     const filteredBookedRooms = bookedRooms.filter(b => {
       return b.CCCD === user?.CCCD && (b.tinhTrang === 'Đặt phòng' || b.tinhTrang === 'Check-in');
     });
     setBookedRooms(filteredBookedRooms);
-    processDailyRoomInfo(filteredBookedRooms);
+    processDailyRoomInfo(filteredBookedRooms, kindOfRoom);
   };
 
-  const processDailyRoomInfo = (bookedRooms) => {
-    // Lọc ra các phòng có tình trạng là 'booked' hoặc 'check-in'
-    const filteredRooms = bookedRooms
+  const processDailyRoomInfo = (bookedRooms, kindOfRoom) => {
 
-    // Nhóm các phòng theo ngày bắt đầu và ngày kết thúc
-    const groupedByDateRange = filteredRooms.reduce((acc, room) => {
-      const dateRange = `${room.ngayBatDau}-${room.ngayKetThuc}`;
+    const groupedByDateRange = bookedRooms.reduce((acc, room) => {
+      const dateRange = `${room.ngayBatDau}/${room.ngayKetThuc}`;
       if (!acc[dateRange]) {
         acc[dateRange] = [];
       }
@@ -42,15 +34,20 @@ const BookingHistory = () => {
       return acc;
     }, {});
 
-    // Xử lý từng khoảng thời gian
+
     const result = Object.keys(groupedByDateRange).map(dateRange => {
+      const [startDate, endDate] = dateRange.split("/");
       const rooms = groupedByDateRange[dateRange];
 
       // Nhóm các phòng theo loại phòng và chi nhánh
       const groupedByRoomTypeAndBranch = rooms.reduce((acc, room) => {
+        const room_type = kindOfRoom.find(type => type.tenLoaiPhong === room.tenLoaiPhong && type.chiNhanh === room.chiNhanh);
         const key = `${room.tenLoaiPhong}/${room.chiNhanh}`;
         if (!acc[key]) {
-          acc[key] = { roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: [] };
+          acc[key] = {
+            ...room_type,
+            roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: []
+          };
         }
         acc[key].count++;
         acc[key].rooms.push(room.maPhong);
@@ -61,7 +58,8 @@ const BookingHistory = () => {
       const roomTypesArray = Object.values(groupedByRoomTypeAndBranch);
 
       return {
-        dateRange,
+        startDate,
+        endDate,
         roomTypes: roomTypesArray
       };
     });

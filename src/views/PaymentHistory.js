@@ -11,29 +11,23 @@ const PaymentHistory = () => {
     const history = useHistory();
 
     useEffect(() => {
-        getAllKindOfRoom();
         getBills()
     }, []);
 
 
-    const getAllKindOfRoom = async () => {
-        const kindOfRoom = await api.getAllKindOfRoom();
-        setKindOfRoom(kindOfRoom);
-    }
-
     const getBills = async () => {
         const bills = await api.getAllBills();
+        const kindOfRoom = await api.getAllKindOfRoom()
         const filteredBills = bills.filter(b => {
             return b.CCCD === user?.CCCD && b.tinhTrang === 'Đã thanh toán';
         });
-        setBills(filteredBills);
-        processDailyRoomInfo(filteredBills);
+        //setBills(filteredBills);
+        processDailyRoomInfo(filteredBills, kindOfRoom);
     };
 
-    const processDailyRoomInfo = (bookedRooms) => {
-        const filteredRooms = bookedRooms
+    const processDailyRoomInfo = (bills, kindOfRoom) => {
 
-        const groupedByDateRange = filteredRooms.reduce((acc, room) => {
+        const groupedByDateRange = bills.reduce((acc, room) => {
             const dateRange = `${room.ngayCheckIn}/${room.ngayCheckOut}`;
             if (!acc[dateRange]) {
                 acc[dateRange] = [];
@@ -43,14 +37,15 @@ const PaymentHistory = () => {
         }, {});
 
         const result = Object.keys(groupedByDateRange).map(dateRange => {
+            const [startDate, endDate] = dateRange.split("/");
             const rooms = groupedByDateRange[dateRange];
 
-            // Nhóm các phòng theo loại phòng và chi nhánh
             const groupedByRoomTypeAndBranch = rooms.reduce((acc, room) => {
+                const room_type = kindOfRoom.find(type => type.tenLoaiPhong === room.tenLoaiPhong && type.chiNhanh === room.chiNhanh);
                 const key = `${room.tenLoaiPhong}-${room.chiNhanh}`;
                 if (!acc[key]) {
                     acc[key] = {
-                        Id: room.Id, // Id là docId của loại phòng
+                        ...room_type,
                         roomType: room.tenLoaiPhong, branch: room.chiNhanh, count: 0, rooms: [], daDanhGia: room.daDanhGia
                     };
                 }
@@ -62,7 +57,8 @@ const PaymentHistory = () => {
             const roomTypesArray = Object.values(groupedByRoomTypeAndBranch);
 
             return {
-                dateRange,
+                startDate,
+                endDate,
                 roomTypes: roomTypesArray
             };
         });
@@ -71,10 +67,25 @@ const PaymentHistory = () => {
         console.log("result", result)
     };
 
-    const addReviewForRoomType = (roomTypeInfo) => {
+    const addReviewForRoomType = (roomTypeInfo, dayInfo) => {
         history.push({
             pathname: '/danhGiaLoaiPhong',
-            state: { typeRoom: roomTypeInfo }
+            state: {
+                typeRoom: roomTypeInfo,
+                startDate: dayInfo.startDate,
+                endDate: dayInfo.endDate
+            }
+        });
+    }
+
+    const reviewComment = (roomTypeInfo, dayInfo) => {
+        history.push({
+            pathname: '/xemLaiDanhGia',
+            state: {
+                typeRoom: roomTypeInfo,
+                startDate: dayInfo.startDate,
+                endDate: dayInfo.endDate
+            }
         });
     }
 
@@ -83,17 +94,17 @@ const PaymentHistory = () => {
             <div>
                 <h1>Lịch sử thanh toán</h1>
                 {/* Render dailyRoomInfo */}
-                {dailyRoomInfo.map(dayInfo => (
-                    <div key={dayInfo.date}>
-                        <h2>{dayInfo.date}</h2>
+                {dailyRoomInfo.map((dayInfo, index) => (
+                    <div key={index}>
+                        <h2>{dayInfo.startDate}</h2>
                         {dayInfo.roomTypes.map(roomTypeInfo => (
-                            <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`} onClick={() => addReviewForRoomType(roomTypeInfo)}>
+                            <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`} >
                                 <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
                                 <p>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
                                 <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
                                 {!roomTypeInfo.daDanhGia ?
-                                    <button>Đánh giá</button> :
-                                    <button>Xem đánh giá</button>
+                                    <button onClick={() => addReviewForRoomType(roomTypeInfo, dayInfo)}>Đánh giá</button> :
+                                    <button onClick={() => reviewComment(roomTypeInfo, dayInfo)}>Xem đánh giá</button>
                                 }
 
                             </div>

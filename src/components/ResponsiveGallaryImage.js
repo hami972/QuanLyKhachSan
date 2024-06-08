@@ -7,7 +7,7 @@ import {
 } from "firebase/storage";
 import { app } from "../hook/FirebaseConfig.js";
 
-const ResponsiveGalleryImage = ({ updateImages, uploadedImages }) => {
+const ResponsiveGalleryImage = ({ updateImages, uploadedImages, isRead }) => {
 
     // change image
     const storage = getStorage(app);
@@ -96,16 +96,16 @@ const ResponsiveGalleryImage = ({ updateImages, uploadedImages }) => {
                     ) : (
                         <img src={image.url} onClick={() => handleImageClick(image)} />
                     )}
-                    <button type="button" className="delete-btn-images" onClick={() => handleDeleteImage(index)}>
+                    {isRead && (<button type="button" className="delete-btn-images" onClick={() => handleDeleteImage(index)}>
                         <i className="fa-solid fa-xmark" style={{ color: "#ebe9e4" }}></i>
-                    </button>
+                    </button>)}
                 </div>
             ))}
-            <div className="gallery-flex-grid gallery-add-image-container">
+            {isRead && (<div className="gallery-flex-grid gallery-add-image-container">
                 <div className='add-image-form'>
                     <input id="imageIcon" type="file" multiple accept="image/*,video/mp4" onChange={(e) => addImage(e)} />
                 </div>
-            </div>
+            </div>)}
             {selectedImage && (
                 <div className="image-modal">
                     <div className="image-modal-content">
