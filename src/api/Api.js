@@ -679,7 +679,7 @@ const getMaterialsBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(
-      `Material/Materials?${queryParams}`
+      `Material/search?${queryParams}`
     );
 
     if (response.data.success) {

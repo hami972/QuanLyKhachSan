@@ -16,8 +16,10 @@ const QuanLyCSVC = (props) => {
   const [searchCriteria, setSearchCriteria] = useState({
     maCSVC: '',
     tenCSVC: '',
-    slNhap: '',
-    slTonKho: '',
+    slnDau: '',
+    slnCuoi: '',
+    sltkDau: '',
+    sltkCuoi: '',
     chiNhanh: '',
   })
 
@@ -83,19 +85,38 @@ const QuanLyCSVC = (props) => {
 
   const handleChange = (e) => {
     setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
+
   };
 
-  const onSearch = async () => {
-    console.log(searchCriteria)
-
-    const searchResults = await api.getMaterialsBySearch(searchCriteria);
-    console.log(searchResults);
-    if (user?.Loai !== 'ChuHeThong') {
-      const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-      setMaterials(fil);
+  const checkError = () => {
+    if (parseInt(searchCriteria.slnDau) >= parseInt(searchCriteria.slnCuoi)) {
+      alert("Số lượng nhập 'Từ' phải nhỏ hơn 'Đến'");
+      return false;
     }
-    else {
-      setMaterials(searchResults)
+    if (parseInt(searchCriteria.sltkDau) >= parseInt(searchCriteria.sltkCuoi)) {
+      alert("Số lượng tồn kho 'Từ' phải nhỏ hơn 'Đến'");
+      return false;
+    }
+    if (parseInt(searchCriteria.slnCuoi) < parseInt(searchCriteria.sltkDau)) {
+      alert("Số lượng tồn kho phải nhỏ hơn hoặc bằng số lượng nhập");
+      return false;
+    }
+    return true;
+  }
+
+  const onSearch = async () => {
+
+    if (checkError()) {
+      console.log(searchCriteria);
+      const searchResults = await api.getMaterialsBySearch(searchCriteria);
+      console.log(searchResults);
+      if (user?.Loai !== 'ChuHeThong') {
+        const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh);
+        setMaterials(fil);
+      }
+      else {
+        setMaterials(searchResults);
+      }
     }
   }
   return (
@@ -137,6 +158,7 @@ const QuanLyCSVC = (props) => {
                     type="number"
                     placeholder="0"
                     name="slnDau"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -147,6 +169,7 @@ const QuanLyCSVC = (props) => {
                     type="number"
                     placeholder="1000000000"
                     name="slnCuoi"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -166,6 +189,7 @@ const QuanLyCSVC = (props) => {
                     type="number"
                     placeholder="0"
                     name="sltkDau"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -176,6 +200,7 @@ const QuanLyCSVC = (props) => {
                     type="number"
                     placeholder="1000000000"
                     name="sltkCuoi"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -210,25 +235,24 @@ const QuanLyCSVC = (props) => {
           </tr>
         </table>
       </div>
-      <button
-        type="submit"
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-        onClick={onSearch}
-      >
-        Tìm kiếm
-      </button>
-      <button
-        onClick={() => setModalOpen(true)}
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-      >
-        Thêm
-      </button>
-
       <div className="text-end">
-        <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
+        <button
+          type="submit"
+          className="btn pb-2 pt-2 me-2 mt-3 "
+          style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+          onClick={onSearch}
+        >
+          Tìm kiếm
+        </button>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="btn pb-2 pt-2 mt-3"
+          style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+        >
+          Thêm
+        </button>
       </div>
+
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
           <tr className="table-secondary">
