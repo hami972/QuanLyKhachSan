@@ -14,15 +14,27 @@ const RoomDetail = () => {
   const { room, searchCriteria } = location.state || {};
   const [branches, setBranches] = useState([]);
   const [soLuong, setSoLuong] = useState();
+  const [comments, setComments] = useState();
 
   useEffect(() => {
     getBranchs();
+    getComments();
   }, []);
 
   const getBranchs = async () => {
     const branches = await api.getAllBranchs();
     setBranches(branches);
   };
+
+  const getComments = async () => {
+    const comments = await api.getAllReview();
+    const filteredComments = comments.filter(review =>
+      review?.chiNhanh === room.chiNhanh &&
+      review.maLoaiPhong === room.maLoaiPhong
+    );
+    filteredComments.sort((a, b) => new Date(b.ngayDanhGia) - new Date(a.ngayDanhGia));
+    setComments(filteredComments);
+  }
 
   const handleSearchChange = (e) => {
     // Do something when search criteria changes
@@ -218,6 +230,21 @@ const RoomDetail = () => {
           <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF", fontSize: '24px' }}>
             <h3 align="center">Các đánh giá về phòng</h3>
           </header>
+          <div>
+            {comments?.map((comment, index) => (
+              <div key={index} className=''>
+                <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>
+                  {comment.soSao}
+                </div>
+                <div className='col-auto' style={{ color: "gray" }}>
+                  {new Date(comment.ngayDanhGia).toLocaleDateString()} {/* Hiển thị ngày đánh giá */}
+                </div>
+                <div className='col-12'>
+                  {comment.danhGia}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
       <Footer style={{ marginTop: "80px" }} />

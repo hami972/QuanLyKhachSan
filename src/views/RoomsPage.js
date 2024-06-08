@@ -114,7 +114,7 @@ const RoomsPage = () => {
         uniqueMaLoaiPhong.forEach(maLoaiPhong => {
             const roomsForType = filteredByCriteria.filter(room => room.maLoaiPhong === maLoaiPhong);
             if (roomsForType.length > 0) {
-                const dsPhong = roomsForType.map(room => room.maPhong).join('-'); 
+                const dsPhong = roomsForType.map(room => room.maPhong).join('-');
                 filteredKindOfRooms.push({
                     ...roomsForType[0],
                     maLoaiPhong: maLoaiPhong,
@@ -129,6 +129,16 @@ const RoomsPage = () => {
 
     const handleSearchChange = (e) => {
         setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
+    };
+
+    const getRatingDescription = (rating) => {
+        rating = parseFloat(rating);
+        if (rating >= 1 && rating < 2) return "Cực tệ";
+        if (rating >= 2 && rating < 3) return "Tệ";
+        if (rating >= 3 && rating < 4) return "Bình thường";
+        if (rating >= 4 && rating < 5) return "Tốt";
+        if (rating === 5) return "Cực tốt";
+        return "";
     };
 
     return (
@@ -243,9 +253,9 @@ const RoomsPage = () => {
                                     <h3 className='row' >Giá ưu đãi cho 1 đêm: {room.donGia}</h3>
                                 </p>
                                 <div className='row g-2 pb-3'>
-                                    <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>4.3</div>
-                                    <div className='col-auto' >Cực tốt</div>
-                                    <div className='col-auto spaceText' style={{ color: "gray" }}>220 đánh giá</div>
+                                    <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>{room.soSao}</div>
+                                    <div className='col-auto' >{getRatingDescription(room.soSao)}</div>
+                                    <div className='col-auto spaceText' style={{ color: "gray" }}>{room.slDanhGia} đánh giá</div>
                                 </div>
                             </div>
                             <div className="col-2 ">
