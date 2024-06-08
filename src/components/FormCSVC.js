@@ -21,7 +21,7 @@ export const FormCSVC = ({
       maCSVC: "",
       tenCSVC: "",
       icon: "",
-      chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chiNhanh,
+      chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chinhanh,
       slNhap: "0",
       slTon: "0",
     }

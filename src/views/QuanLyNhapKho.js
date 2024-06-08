@@ -60,11 +60,24 @@ const QuanLyNhapKho = (props) => {
     }
   }
 
-  const handleDeleteRow = (targetIndex) => {
-    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
+  const handleDeleteRow = async (targetIndex) => {
+    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa ghi chú nhập kho này không?');
     if (shouldDelete) {
-      setMaterials(materials.filter((_, idx) => idx !== targetIndex));
-      api.deleteMaterial(materials[targetIndex].Id);
+      await api.deleteReceivingStock(receivingStock[targetIndex].Id);
+
+      setReceivingStock(receivingStock.filter((_, idx) => idx !== targetIndex));
+
+      const result = materials.filter((item1, idx) => item1.maCSVC === receivingStock[targetIndex].maCSVC);
+      if (result.length > 0) {
+        const nhap = parseInt(result[0].slNhap) - parseInt(receivingStock[targetIndex].slNhap);
+        const ton = parseInt(result[0].slTon) - parseInt(receivingStock[targetIndex].slNhap);
+        const updatedMaterials = materials.map((item, idx) => {
+          if (item.maCSVC !== receivingStock[targetIndex].maCSVC) return item;
+          return { ...item, slNhap: nhap.toString(), slTon: ton.toString() };
+        });
+        setMaterials(updatedMaterials);
+        await api.updateMaterial({ slNhap: nhap.toString(), slTon: ton.toString() }, result[0].Id);
+      }
     }
   };
 
@@ -96,21 +109,24 @@ const QuanLyNhapKho = (props) => {
       await api.updateMaterial({ slNhap: nhap.toString(), slTon: ton.toString() }, result[0].Id)
     }
     else {
-      //await api.updateMaterialUsed(newRow, newRow.Id);
-      //let updated = materialsUsed.map((currRow, idx) => {
-      //if (idx !== rowToEdit) return currRow;
-      //return newRow;
-      //})
-      //const result = materials.filter((item1, idx) => item1.maVatTu === newRow.maVatTu)
-      //let x = parseInt(khoiphucSL) - parseInt(newRow.SL)
-      //console.log('x' + x)
-      //let updated2 = materials.map((item, idx) => {
-      //if (item.maVatTu !== newRow.maVatTu) return item;
-      //return { ...item, soLuongTonKho: x };
-      //})
-      //setMaterials(updated2)
-      //await api.updateMaterial({ soLuongTonKho: x.toString() }, result[0].Id)
-      //setMaterialUsed(updated)
+      await api.updateReceivingStock(newRow, newRow.Id);
+      const updatedReceivingStock = [...receivingStock];
+      updatedReceivingStock[rowToEdit] = newRow;
+      setReceivingStock(updatedReceivingStock);
+
+      const result = materials.filter((item1, idx) => item1.maCSVC === newRow.maCSVC);
+      if (result.length > 0) {
+        const previousSlNhap = parseInt(receivingStock[rowToEdit].slNhap);
+        const nhapDifference = parseInt(newRow.slNhap) - previousSlNhap;
+        const updatedMaterials = materials.map((item, idx) => {
+          if (item.maCSVC !== newRow.maCSVC) return item;
+          const newSlNhap = parseInt(item.slNhap) + nhapDifference;
+          const newSlTon = parseInt(item.slTon) + nhapDifference;
+          return { ...item, slNhap: newSlNhap.toString(), slTon: newSlTon.toString() };
+        });
+        setMaterials(updatedMaterials);
+        await api.updateMaterial(updatedMaterials.find(material => material.maCSVC === newRow.maCSVC), result[0].Id);
+      }
     }
   };
 
@@ -119,18 +135,37 @@ const QuanLyNhapKho = (props) => {
   };
 
   const onSearch = async () => {
-    console.log(searchCriteria)
+    if (checkError()) {
+      console.log(searchCriteria)
 
-    const searchResults = await api.getMaterialsBySearch(searchCriteria);
-    console.log(searchResults);
-    if (user?.Loai !== 'ChuHeThong') {
-      const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-      setMaterials(fil);
-    }
-    else {
-      setMaterials(searchResults)
+      const searchResults = await api.getReceivingStockBySearch(searchCriteria);
+      console.log(searchResults);
+      if (user?.Loai !== 'ChuHeThong') {
+        const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+        setReceivingStock(fil);
+      }
+      else {
+        setReceivingStock(searchResults)
+      }
     }
   }
+
+  const checkError = () => {
+    if (parseInt(searchCriteria.slnDau) >= parseInt(searchCriteria.slnCuoi)) {
+      alert("Số lượng nhập 'Từ' phải nhỏ hơn 'Đến'");
+      return false;
+    }
+    if (parseInt(searchCriteria.giaNhapDau) >= parseInt(searchCriteria.giaNhapCuoi)) {
+      alert("Giá nhập 'Từ' phải nhỏ hơn 'Đến'");
+      return false;
+    }
+    if (searchCriteria.ngayDau && searchCriteria.ngayCuoi && searchCriteria.ngayCuoi <= searchCriteria.ngayDau) {
+      alert("Ngày nhập 'Từ' phải nhỏ hơn ngày nhập 'Đến'");
+      return false;
+    }
+    return true;
+  }
+
   return (
     <div >
       <div>
@@ -170,6 +205,7 @@ const QuanLyNhapKho = (props) => {
                     type="number"
                     placeholder="0"
                     name="slnDau"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -180,6 +216,7 @@ const QuanLyNhapKho = (props) => {
                     type="number"
                     placeholder="1000000000"
                     name="slnCuoi"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -198,8 +235,9 @@ const QuanLyNhapKho = (props) => {
                     className="form-control pb-2 pt-2 mb-2"
                     type="number"
                     placeholder="0"
-                    name="giaDau"
+                    name="giaNhapDau"
                     onChange={handleChange}
+                    min={1}
                   />
                 </div>
                 <div className='col-lg-4 col-md-6'>
@@ -208,8 +246,9 @@ const QuanLyNhapKho = (props) => {
                     className="form-control pb-2 pt-2 mb-2"
                     type="number"
                     placeholder="1000000000"
-                    name="giaCuoi"
+                    name="giaNhapCuoi"
                     onChange={handleChange}
+                    min={1}
                   />
                 </div>
               </div>
@@ -270,23 +309,25 @@ const QuanLyNhapKho = (props) => {
           </tr>
         </table>
       </div>
-      <button
-        type="submit"
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        onClick={onSearch}
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-      >
-        Tìm kiếm
-      </button>
-      <button
-        onClick={() => setModalOpen(true)}
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-      >
-        Thêm
-      </button>
-
       <div className="text-end">
+        <button
+          type="submit"
+          className="btn pb-2 pt-2 me-2 mt-3 "
+          style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+          onClick={onSearch}
+        >
+          Tìm kiếm
+        </button>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="btn pb-2 pt-2 mt-3"
+          style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+        >
+          Thêm
+        </button>
+      </div>
+
+      <div className="text-end mt-2">
         <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
       </div>
       <table className="table">

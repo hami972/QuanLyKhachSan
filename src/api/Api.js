@@ -624,7 +624,7 @@ const getMaterialUsedBySearch = async (searchCriteria) => {
     const response = await client.get(`/MaterialUsed/search?${queryParams}`);
 
     if (response.data.success) {
-      return response.data.VatTuDaSuDung;
+      return response.data.list;
     } else {
       console.log("not get VatTuDaSuDung");
     }
@@ -633,6 +633,7 @@ const getMaterialUsedBySearch = async (searchCriteria) => {
     return [];
   }
 };
+
 
 const getAllMaterials = async () => {
   try {
@@ -737,11 +738,11 @@ const getReceivingStockBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(
-      `ReceivingStock/Materials?${queryParams}`
+      `ReceivingStock/search?${queryParams}`
     );
 
     if (response.data.success) {
-      return response.data.materials;
+      return response.data.list;
     } else {
       console.log("not get materials");
     }

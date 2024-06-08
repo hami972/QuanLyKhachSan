@@ -17,7 +17,7 @@ export const FormNhapKho = ({
             slNhap: "",
             giaNhap: "",
             ngayNhap: moment().format("YYYY-MM-DD"),
-            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : "",
+            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chinhanh,
         }
     );
     const [errors, setErrors] = useState("");
