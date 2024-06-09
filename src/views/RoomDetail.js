@@ -88,7 +88,7 @@ const RoomDetail = () => {
     // Hiển thị thông báo khi đặt phòng thành công
     alert(`Đã đặt ${soLuong} phòng thành công!`);
 
-    history.push('/thanhtoan');
+    history.push('/manager/lichsudatphong');
   }
 
   return (

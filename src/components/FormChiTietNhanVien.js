@@ -27,6 +27,7 @@ export const FormChiTietNhanVien = ({
   const [positions, setPositions] = useState([
     "Quản lý",
     "Lễ tân",
+    "Buống phòng"
   ]);
   useEffect(() => {
     getBranches();

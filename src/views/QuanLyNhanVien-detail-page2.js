@@ -32,10 +32,9 @@ const XemThongTinNhanVien = (props) => {
   const [branches, setBranches] = useState(user?.chinhanh || []);
   const [positions, setPositions] = useState([
     "Tất cả",
-    "Nha sĩ",
-    "Phụ tá",
     "Quản lý",
-    "Tiếp tân",
+    "Lễ tân",
+    "Buồng phòng",
   ]);
 
   useEffect(() => {
