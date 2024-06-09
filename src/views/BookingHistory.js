@@ -70,29 +70,29 @@ const BookingHistory = () => {
   return (
     <div>
       <div>
-      <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}>
-                <h3 align="center">Lịch sử đặt phòng</h3>
-            </header>
+        <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}>
+          <h3 align="center">Lịch sử đặt phòng</h3>
+        </header>
         {/* Render dailyRoomInfo */}
-        {dailyRoomInfo.map(dayInfo => (
-            <div className="row" key={dayInfo.date}
+        {dailyRoomInfo.map((dayInfo, index) => (
+          <div className="row" key={index}
             style={{
-                backgroundColor: '#fff', alignItems: 'center', display: 'flex',
-                borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
+              backgroundColor: '#fff', alignItems: 'center', display: 'flex',
+              borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
             }}>
-            <h2 className='row' style={{ color: '#905700' }}>{dayInfo.date}</h2>
+            <h2 className='row' style={{ color: '#905700' }}>{dayInfo.startDate}/{dayInfo.endDate}</h2>
             <p className='row'>
-            {dayInfo.roomTypes.map(roomTypeInfo => (
-              <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`}>
-                <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
-                <p>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
-                <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
-              </div>
-            ))}
+              {dayInfo.roomTypes.map(roomTypeInfo => (
+                <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`}>
+                  <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
+                  <p>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
+                  <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
+                </div>
+              ))}
             </p>
-        </div>
+          </div>
 
-          
+
         ))}
       </div>
     </div>

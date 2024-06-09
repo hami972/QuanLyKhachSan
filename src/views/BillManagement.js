@@ -176,7 +176,7 @@ const BillManagement = () => {
             <div className="row">
               <div className="row ms-0 me-0" style={{ fontWeight: "500" }}>
                 <div className="col-md-6">
-                  <div className="mb-2 col-md-6">Mã hóa đơn</div>
+                  {/* <div className="mb-2 col-md-6">Mã hóa đơn</div>
                   <input
                     type="text"
                     className="form-control pb-2 pt-2 mb-2"
@@ -184,7 +184,7 @@ const BillManagement = () => {
                     name="maHoaDon"
                     onChange={handleChange}
                     value={searchCriteria.maHoaDon}
-                  />
+                  /> */}
                 </div>
                 <div className="col-md-6">
                   <div className="mb-2">Tên khách hàng</div>
@@ -232,7 +232,7 @@ const BillManagement = () => {
               <table className="table">
                 <thead>
                   <tr>
-                    <th scope="col">Mã hóa đơn</th>
+                    {/* <th scope="col">Mã hóa đơn</th> */}
                     <th scope="col">Tên khách hàng</th>
                     <th scope="col">Ngày lập</th>
                     <th scope="col">Tình trạng</th>
@@ -245,7 +245,7 @@ const BillManagement = () => {
                       onClick={() => setSelectedRowById(index)}
                       className={index === selectedRow ? "selected-row" : ""}
                     >
-                      <td>{bill.maHoaDon}</td>
+                      {/* <td>{bill.maHoaDon}</td> */}
                       <td>{bill.tenKhachHang}</td>
                       <td>{moment(bill.ngayLap).format("DD/MM/YYYY")}</td>
                       <td>{bill.tinhTrang}</td>

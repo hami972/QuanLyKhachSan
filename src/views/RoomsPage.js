@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import './style.css'
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
 import { useParams, useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
+import { AuthContext } from '../hook/AuthProvider';
 import api from '../api/Api';
 
 const RoomsPage = () => {
 
     const location = useLocation();
+
+    const { user } = useContext(AuthContext)
 
     const [kindOfRoom, setKindOfRoom] = useState([]);
     const [branches, setBranches] = useState([]);
@@ -64,67 +67,86 @@ const RoomsPage = () => {
         setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
     }
 
+    const checkError = () => {
+
+        if (!searchCriteria.ngayBatDau || !searchCriteria.ngayKetThuc || !searchCriteria.chiNhanh || !searchCriteria.soLuongNguoi) {
+            alert("Nhập đầy đủ thông tin");
+            return false;
+        }
+
+        if (searchCriteria.ngayBatDau && searchCriteria.ngayKetThuc && searchCriteria.ngayBatDau > searchCriteria.ngayKetThuc) {
+            alert("Ngày nhập 'Từ' phải nhỏ hơn hoặc bằng ngày nhập 'Đến'");
+            return false;
+        }
+        return true;
+    }
+
     const handleSearch = async () => {
 
-        const kindOfRoom = await api.getAllKindOfRoom();
-        const blocks = await api.getAllBlocks();
-        const bookedRooms = await api.getAllBookedRoom();
+        if (checkError()) {
 
-        const filteredRooms = [];
-        const filteredByCriteria = [];
+            const kindOfRoom = await api.getAllKindOfRoom();
+            const blocks = await api.getAllBlocks();
+            const bookedRooms = await api.getAllBookedRoom();
 
-        // Lọc ra danh sách các phòng thỏa mãn điều kiện từ blocks và kindOfRoom
-        kindOfRoom.forEach(room => {
-            blocks.forEach(block => {
-                if (block.chiNhanh === searchCriteria.chiNhanh) {
-                    block.tang.forEach(tang => {
-                        if (tang.tenLoaiPhong === room.tenLoaiPhong) {
-                            const maPhongs = tang.dsPhong.split('-');
-                            maPhongs.forEach(maPhong => {
-                                filteredRooms.push({
-                                    ...room,
-                                    maPhong: maPhong,
-                                    chiNhanh: block.chiNhanh
+            const filteredRooms = [];
+            const filteredByCriteria = [];
+
+            // Lọc ra danh sách các phòng thỏa mãn điều kiện từ blocks và kindOfRoom
+            kindOfRoom.forEach(room => {
+                blocks.forEach(block => {
+                    if (block.chiNhanh === searchCriteria.chiNhanh) {
+                        block.tang.forEach(tang => {
+                            if (tang.tenLoaiPhong === room.tenLoaiPhong) {
+                                const maPhongs = tang.dsPhong.split('-');
+                                maPhongs.forEach(maPhong => {
+                                    filteredRooms.push({
+                                        ...room,
+                                        maPhong: maPhong,
+                                        tang: tang.tenTang,
+                                        toa: block.tenToa,
+                                        chiNhanh: block.chiNhanh
+                                    });
                                 });
-                            });
-                        }
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Lọc ra các phòng thỏa mãn điều kiện từ filteredRooms
+            filteredRooms.forEach(room => {
+                if (parseInt(room.soLuongNguoiToiDa) >= parseInt(searchCriteria.soLuongNguoi)) {
+                    const isRoomBooked = bookedRooms.some(bookedRoom => {
+                        const isSameRoom = bookedRoom.maPhong === room.maPhong;
+                        const isStartDateValid = searchCriteria.ngayBatDau >= bookedRoom.ngayKetThuc;
+                        const isEndDateValid = searchCriteria.ngayKetThuc !== '' ? searchCriteria.ngayKetThuc <= bookedRoom.ngayBatDau : false;
+                        return isSameRoom && !(isStartDateValid || isEndDateValid);
+                    });
+                    if (!isRoomBooked) {
+                        filteredByCriteria.push(room);
+                    }
+                }
+            });
+
+            // Lọc ra danh sách loại phòng từ filteredByCriteria
+            const filteredKindOfRooms = [];
+            const uniqueMaLoaiPhong = [...new Set(filteredByCriteria.map(room => room.maLoaiPhong))];
+            uniqueMaLoaiPhong.forEach(maLoaiPhong => {
+                const roomsForType = filteredByCriteria.filter(room => room.maLoaiPhong === maLoaiPhong);
+                if (roomsForType.length > 0) {
+                    const dsPhong = roomsForType.map(room => room.maPhong).join('-');
+                    filteredKindOfRooms.push({
+                        ...roomsForType[0],
+                        maLoaiPhong: maLoaiPhong,
+                        dsPhong: dsPhong
                     });
                 }
             });
-        });
 
-        // Lọc ra các phòng thỏa mãn điều kiện từ filteredRooms
-        filteredRooms.forEach(room => {
-            if (room.soLuongNguoiToiDa >= searchCriteria.soLuongNguoi) {
-                const isRoomBooked = bookedRooms.some(bookedRoom => {
-                    const isSameRoom = bookedRoom.maPhong === room.maPhong;
-                    const isStartDateValid = searchCriteria.ngayBatDau >= bookedRoom.ngayKetThuc;
-                    const isEndDateValid = searchCriteria.ngayKetThuc !== '' ? searchCriteria.ngayKetThuc <= bookedRoom.ngayBatDau : false;
-                    return isSameRoom && !(isStartDateValid || isEndDateValid);
-                });
-                if (!isRoomBooked) {
-                    filteredByCriteria.push(room);
-                }
-            }
-        });
-
-        // Lọc ra danh sách loại phòng từ filteredByCriteria
-        const filteredKindOfRooms = [];
-        const uniqueMaLoaiPhong = [...new Set(filteredByCriteria.map(room => room.maLoaiPhong))];
-        uniqueMaLoaiPhong.forEach(maLoaiPhong => {
-            const roomsForType = filteredByCriteria.filter(room => room.maLoaiPhong === maLoaiPhong);
-            if (roomsForType.length > 0) {
-                const dsPhong = roomsForType.map(room => room.maPhong).join('-');
-                filteredKindOfRooms.push({
-                    ...roomsForType[0],
-                    maLoaiPhong: maLoaiPhong,
-                    dsPhong: dsPhong
-                });
-            }
-        });
-
-        setFilteredRooms(filteredByCriteria);
-        setFilteredKindOfRooms(filteredKindOfRooms);
+            setFilteredRooms(filteredByCriteria);
+            setFilteredKindOfRooms(filteredKindOfRooms);
+        }
     }
 
     const handleSearchChange = (e) => {
@@ -192,6 +214,7 @@ const RoomsPage = () => {
                                     style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }}
                                     type='number'
                                     name="soLuongNguoi"
+                                    min={1}
                                     value={searchCriteria.soLuongNguoi}
                                     onChange={handleSearchChange}
                                     placeholder='Số lượng người lớn'
@@ -260,8 +283,13 @@ const RoomsPage = () => {
                             </div>
                             <div className="col-2 ">
                                 <button type="button" onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleButtonClick(room);
+                                    if (user?.Loai === "KhachHang") {
+                                        e.stopPropagation();
+                                        handleButtonClick(room);
+                                    }
+                                    else {
+                                        alert("Vui lòng đăng nhập để lưu lại lịch sử đặt phòng")
+                                    }
                                 }} style={{
                                     color: '#fff', fontWeight: 'bold',
                                     backgroundColor: '#905700',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './style.css';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 import TopNav from '../components/TopNav';
@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import api from '../api/Api';
+import { AuthContext } from '../hook/AuthProvider';
 
 const RoomDetail = () => {
   const { roomId } = useParams();
@@ -15,6 +16,7 @@ const RoomDetail = () => {
   const [branches, setBranches] = useState([]);
   const [soLuong, setSoLuong] = useState();
   const [comments, setComments] = useState();
+  const { user } = useContext(AuthContext)
 
   useEffect(() => {
     getBranchs();
@@ -61,34 +63,70 @@ const RoomDetail = () => {
     icon: "/images/iconwifi.png"
   }];
 
-  const handleSubmit = async () => {
+  const checkError = () => {
+
+    if (user?.Loai !== "KhachHang") {
+      alert("Vui lòng đăng nhập để lưu lại lịch sử đặt phòng")
+      return false;
+    }
+
+    if (!searchCriteria.ngayBatDau || !searchCriteria.ngayKetThuc || !searchCriteria.chiNhanh || !searchCriteria.soLuongNguoi) {
+      alert("Nhập đầy đủ thông tin");
+      return false;
+    }
+
+    if (searchCriteria.ngayBatDau && searchCriteria.ngayKetThuc && searchCriteria.ngayBatDau > searchCriteria.ngayKetThuc) {
+      alert("Ngày nhập 'Từ' phải nhỏ hơn hoặc bằng ngày nhập 'Đến'");
+      return false;
+    }
+
     if (!soLuong || soLuong <= 0) {
       alert("Vui lòng nhập số lượng phòng cần đặt.");
       return;
     }
+    return true;
+  }
 
-    // Lặp để thêm số lượng phòng đã nhập
-    for (let i = 0; i < soLuong; i++) {
-      // Lấy mã phòng từ danh sách mã phòng của phòng hiện tại
-      const maPhong = room.dsPhong.split('-')[0]; // Lấy mã phòng đầu tiên
+  const handleSubmit = async () => {
+    if (checkError()) {
 
-      // Gọi API để thêm phòng đã đặt
-      try {
-        await api.addBookedRoom({
-          maPhong: maPhong,
-          // Thêm các thông tin khác bạn muốn lưu
-        });
-      } catch (error) {
-        console.error("Lỗi khi thêm phòng đã đặt:", error);
-        alert("Đã xảy ra lỗi khi đặt phòng, vui lòng thử lại sau.");
-        return;
+      // Lặp để thêm số lượng phòng đã nhập
+      for (let i = 0; i < soLuong; i++) {
+        // Lấy mã phòng từ danh sách mã phòng của phòng hiện tại
+        const maPhong = room.dsPhong.split('-')[0]; // Lấy mã phòng đầu tiên
+
+        console.log(room);
+        try {
+          await api.addBookedRoom({
+            maPhong: maPhong,
+            CCCD: user?.CCCD,
+            tenKhachHang: user?.ten,
+            donGia: room.donGia,
+            email: user?.email,
+            ngayBatDau: searchCriteria.ngayBatDau,
+            ngayKetThuc: searchCriteria.ngayKetThuc,
+            soDienThoai: user?.SDT,
+            tenLoaiPhong: room.roomType,
+            toa: room.toa,
+            Id: "",
+            maDatPhong: "",
+            tang: room.tang,
+            tinhTrang: "Đặt phòng",
+            chiNhanh: room.branch,
+
+          });
+        } catch (error) {
+          console.error("Lỗi khi thêm phòng đã đặt:", error);
+          alert("Đã xảy ra lỗi khi đặt phòng, vui lòng thử lại sau.");
+          return;
+        }
       }
+
+      // Hiển thị thông báo khi đặt phòng thành công
+      alert(`Đã đặt ${soLuong} phòng thành công!`);
+
+      history.push('/manager/lichsudatphong');
     }
-
-    // Hiển thị thông báo khi đặt phòng thành công
-    alert(`Đã đặt ${soLuong} phòng thành công!`);
-
-    history.push('/manager/lichsudatphong');
   }
 
   return (
