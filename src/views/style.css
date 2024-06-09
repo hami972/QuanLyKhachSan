@@ -1219,7 +1219,7 @@ input[type="date"]:not(.has-value):before {
 
 /* Mansory images*/
 .masonry-grid {
-    column-count: 6;
+    column-count: 3;
     column-gap: 10px;
     width: 100%;
     padding: 10px;
@@ -1291,21 +1291,16 @@ input[type="date"]:not(.has-value):before {
 /* Responsive Design */
 @media (max-width: 1200px) {
     .masonry-grid {
-        column-count: 4;
+        column-count: 2;
     }
 }
 
 @media (max-width: 768px) {
     .masonry-grid {
-        column-count: 2;
-    }
-}
-
-@media (max-width: 480px) {
-    .masonry-grid {
         column-count: 1;
     }
 }
+
 
 /*Gallery video and images*/
 .gallery-flex-grid {
@@ -1421,4 +1416,30 @@ input[type="date"]:not(.has-value):before {
 
 .ending-today .room-square {
     background-color: red;
+}
+
+/*delete btn*/
+.delete-btn-base {
+    background-color: rgba(255, 0, 0, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.add-btn-csvc {
+    background-color: rgba(255, 0, 0, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }

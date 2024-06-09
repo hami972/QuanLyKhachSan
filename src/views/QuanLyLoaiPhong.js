@@ -17,8 +17,10 @@ const QuanLyLoaiPhong = (props) => {
     const [searchCriteria, setSearchCriteria] = useState({
         maLoaiPhong: '',
         tenLoaiPhong: '',
-        soLuongNguoiToiDa: '',
-        viewPhong: '',
+        donGiaDau: '',
+        donGiaCuoi: '',
+        slnMaxDau: '',
+        slnMaxCuoi: '',
         chiNhanh: '',
     })
 
@@ -54,12 +56,19 @@ const QuanLyLoaiPhong = (props) => {
         console.log(newRow);
         if (rowToEdit == null) {
             if (user?.Loai === 'ChuHeThong') {
-                const id = await api.addKindOfRoom(newRow);
+                const id = await api.addKindOfRoom({
+                    ...newRow,
+                    soSao: "0",
+                    slDanhGia: "0",
+                });
                 newRow.Id = id;
-                setKindOfRoom([...kindOfRoom, newRow]);
+                onSearch()
             }
             else {
-                const id = await api.addKindOfRoom({ ...newRow, chiNhanh: user?.chinhanh });
+                const id = await api.addKindOfRoom({
+                    ...newRow, chiNhanh: user?.chinhanh, soSao: "0",
+                    slDanhGia: "0"
+                });
                 newRow.Id = id;
                 setKindOfRoom([...kindOfRoom, newRow]);
             }
@@ -84,50 +93,132 @@ const QuanLyLoaiPhong = (props) => {
     }
     return (
         <div>
-            <div className='row'>
-                <div className='col-lg-4 col-md-6'>
-                    <input className="form-control pb-2 pt-2 mb-2" type="text" id="maLoaiPhong" placeholder="Nhập mã loại phòng" name="maLoaiPhong"
-                        onChange={handleChange} />
+            <div>
+                <div className='row'>
+                    <div className='col-lg-4 col-md-6'>
+                        <input className="form-control pb-2 pt-2 mb-2" type="text" id="maLoaiPhong" placeholder="Nhập mã loại phòng"
+                            name="maLoaiPhong"
+                            onChange={handleChange} />
+                    </div>
+                    <div className='col-lg-4 col-md-6'>
+                        <input className="form-control pb-2 pt-2 mb-2" type="text" id="tenLoaiPhong" placeholder="Nhập tên loại phòng"
+                            name="tenLoaiPhong"
+                            onChange={handleChange} />
+                    </div>
                 </div>
-                <div className='col-lg-4 col-md-6'>
-                    <input className="form-control pb-2 pt-2 mb-2" type="text" id="tenLoaiPhong" placeholder="Nhập tên loại phòng" name="tenLoaiPhong"
-                        onChange={handleChange} />
-                </div>
-                <div className='col-lg-4 col-md-6'>
-                    <input className="form-control pb-2 pt-2" type="number" id="soLuongNguoiToiDa" placeholder="Nhập số lượng người tối đa" name="soLuongNguoiToiDa"
-                        onChange={handleChange} />
-                </div>
-                <div className='col-lg-4 col-md-6'>
-                    <select
-                        className="form-select pb-2 pt-2 mt-2"
-                        id="type"
-                        name="chiNhanh"
-                        onChange={handleChange}
-                    >
-                        {user?.Loai === 'ChuHeThong' ? branches.map((item, index) => (
-                            <option key={index} value={item.tenChiNhanh}>
-                                {item.tenChiNhanh}
-                            </option>
-                        )) :
-                            <option value={user?.chinhanh}>
-                                {user?.chinhanh}
-                            </option>
-                        }
-                    </select>
-                </div>
+                <table className='container-fluid'>
+                    <tr>
+                        <td>
+                            <b>Lượng người tối đa</b>
+                        </td>
+                        <td>
+                            <div div className='row'>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Từ</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="0"
+                                        name="slnMaxDau"
+                                        value={searchCriteria.slnMaxDau}
+                                        min={1}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Đến</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="20"
+                                        name="slnMaxCuoi"
+                                        value={searchCriteria.slnMaxCuoi}
+                                        min={1}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Đơn giá: </b>
+                        </td>
+                        <td>
+                            <div div className='row'>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Từ</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="0"
+                                        name="donGiaDau"
+                                        value={searchCriteria.donGiaDau}
+                                        min={1}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Đến</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="1000000000"
+                                        value={searchCriteria.donGiaCuoi}
+                                        name="donGiaCuoi"
+                                        min={1}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <b>Chi nhánh: </b>
+                        </td>
+                        <td>
+                            <div className='col-lg-5 col-md-8'>
+                                <select
+                                    className="form-select pb-2 pt-2 mt-2"
+                                    id="type"
+                                    name="chiNhanh"
+                                    onChange={handleChange}
+                                >
+                                    {user?.Loai === 'ChuHeThong' ? branches.map((item, index) => (
+                                        <option key={index} value={item.tenChiNhanh}>
+                                            {item.tenChiNhanh}
+                                        </option>
+                                    )) :
+                                        <option value={user?.chinhanh}>
+                                            {user?.chinhanh}
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <button type="submit"
-                className="btn pb-2 pt-2 me-3 mt-3 mb-3"
-                style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
-                onClick={onSearch}>
-                Tìm kiếm
-            </button>
-            <button onClick={() => setModalOpen(true)}
-                className="btn pb-2 pt-2 me-3 mt-3 mb-3"
-                style={{ backgroundColor: "#905700", color: "#FFFFFF" }}>
-                Thêm
-            </button>
             <div className="text-end">
+                <button
+                    type="submit"
+                    className="btn pb-2 pt-2 me-2 mt-3 "
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                    onClick={onSearch}
+                >
+                    Tìm kiếm
+                </button>
+                <button
+                    onClick={() => setModalOpen(true)}
+                    className="btn pb-2 pt-2 mt-3"
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                >
+                    Thêm
+                </button>
+            </div>
+            <div className="text-end mt-2">
                 <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
             </div>
             <table className="table" >

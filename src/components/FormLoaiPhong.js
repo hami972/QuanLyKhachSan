@@ -22,7 +22,7 @@ export const FormLoaiPhong = ({
       dienTich: '',
       images: [],
       coSoVatChat: [],
-      chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : "",
+      chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chinhanh,
     }
   );
   const [materials, setMaterials] = useState([]);
@@ -195,10 +195,10 @@ export const FormLoaiPhong = ({
         if (e.target.className === "modal-container") closeModal();
       }}
     >
-      <div className="col-11 modal1" style={{ height: '80%', overflowY: 'auto' }}>
+      <div className="col-lg-6 col-11 modal1" style={{ height: '80%', overflowY: 'auto' }}>
         <form>
           <div className="row">
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-6'>
               <div className="mb-2"><b>Mã loại phòng</b></div>
               <input
                 name="maLoaiPhong"
@@ -207,7 +207,7 @@ export const FormLoaiPhong = ({
                 value={formState.maLoaiPhong}
               />
             </div>
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-6'>
               <div className="mb-2"><b>Tên loại phòng</b></div>
               <input
                 name="tenLoaiPhong"
@@ -217,7 +217,7 @@ export const FormLoaiPhong = ({
                 value={formState.tenLoaiPhong}
               />
             </div>
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-6'>
               <div className="mb-2"><b>Diện tích (m2)</b></div>
               <input
                 name="dienTich"
@@ -227,7 +227,7 @@ export const FormLoaiPhong = ({
                 value={formState.dienTich}
               />
             </div>
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-6'>
               <div className="mb-2"><b>Đơn giá</b></div>
               <input
                 name="donGia"
@@ -239,7 +239,7 @@ export const FormLoaiPhong = ({
                 onPaste={isNumberCopy}
               />
             </div>
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-6'>
               <div className="mb-2"><b>Số lượng người tối đa</b></div>
               <input
                 name="soLuongNguoiToiDa"
@@ -251,7 +251,7 @@ export const FormLoaiPhong = ({
                 onPaste={isNumberCopy}
               />
             </div>
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-6'>
               <div className="mb-2"><b>View phòng</b></div>
               <input
                 name="viewPhong"
@@ -281,43 +281,53 @@ export const FormLoaiPhong = ({
               </select>
             </div>
             <div className="mb-2"><b>Cơ sở vật chất</b></div>
-
-            {formState.coSoVatChat.map((material, index) => (
-              <div key={index}>
-                <div className="mb-2" style={{ fontWeight: "500" }}>
-                  Tên CSVC
-                </div>
-                <Select
-                  className="mb-2"
-                  placeholder="Tên CSVC"
-                  value={
-                    materials
+            <div className="row">
+              {formState.coSoVatChat.map((material, index) => (
+                <div key={index} className="row">
+                  <Select
+                    className="mb-2 col-lg-7"
+                    placeholder="Nhập tên CSVC"
+                    value={
+                      materials
+                        .filter((item) => item.chiNhanh === formState.chiNhanh)
+                        .find((item) => `${item.maCSVC} - ${item.tenCSVC}` === `${material.maCSVC} - ${material.tenCSVC}`) || ""
+                    }
+                    onChange={(selectedOption) => handleChangeMaterial(index, selectedOption)
+                    }
+                    options={materials
                       .filter((item) => item.chiNhanh === formState.chiNhanh)
-                      .find((item) => `${item.maCSVC} - ${item.tenCSVC}` === `${material.maCSVC} - ${material.tenCSVC}`) || ""
-                  }
-                  onChange={(selectedOption) => handleChangeMaterial(index, selectedOption)
-                  }
-                  options={materials
-                    .filter((item) => item.chiNhanh === formState.chiNhanh)
-                    .filter((item) => !formState.coSoVatChat.some((cs) => cs.maCSVC === item.maCSVC))}
-                  isClearable
-                  getOptionLabel={(item) => `${item.maCSVC} - ${item.tenCSVC}`}
-                  getOptionValue={(item) => item}
-                />
-                <input
-                  type="number"
-                  placeholder="Số lượng"
-                  value={material.soLuong}
-                  onChange={(e) => handleChangeMaterialQuantity(index, 'soLuong', e.target.value)}
-                />
-                <button type="button" onClick={() => handleRemoveMaterial(index)}>Remove</button>
+                      .filter((item) => !formState.coSoVatChat.some((cs) => cs.maCSVC === item.maCSVC))}
+                    isClearable
+                    getOptionLabel={(item) => `${item.maCSVC} - ${item.tenCSVC}`}
+                    getOptionValue={(item) => item}
+                  />
+                  <div className="mb-2 col-lg-4">
+                    <input
+                      className="form-control"
+                      type="number"
+                      placeholder="Số lượng"
+                      value={material.soLuong}
+                      min={1}
+                      onChange={(e) => handleChangeMaterialQuantity(index, 'soLuong', e.target.value)}
+                    />
+                  </div>
+                  <div className="col-auto mb-2">
+                    <button type="button" className="delete-btn-base" onClick={() => handleRemoveMaterial(index)}>
+                      <i className="fa-solid fa-xmark" style={{ color: "#ebe9e4" }}></i>
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <div className="text-end">
+                <button type="button" className="btn pb-2 pt-2 ps-3 pe-3 mt-2" style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                  onClick={handleAddMaterial}>
+                  Thêm
+                </button>
               </div>
-            ))}
-            <button type="button" onClick={handleAddMaterial}>Add Material</button>
-
+            </div>
           </div>
 
-          <div className="mb-2"><b>Ảnh phòng</b></div>
+          <div className="mb-2 mt-2"><b>Ảnh phòng</b></div>
           <ResponsiveMansonryGrid updateImages={updateImages} uploadedImages={formState.images} />
 
 

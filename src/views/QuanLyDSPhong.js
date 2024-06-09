@@ -56,10 +56,31 @@ const QuanLyDSPhong = (props) => {
                 });
 
                 setBookedRooms(updatedBookedRooms);
-                updatedRooms = updateRoomDetails({ ...oldRoomDetails, tinhTrang: "Check-in" });
-                setRooms(updatedRooms);
 
-                await api.updateBookedRoom({ ...newRow, ngayBatDau: moment().format("YYYY-MM-DD"), tinhTrang: "Check-in" });
+                const resetRooms = rooms.map(room => {
+                    if (room.Id === newRow.Id) {
+                        return {
+                            ...room, tenKhachHang: '', email: '', soDienThoai: '',
+                            ngayBatDau: '', ngayKetThuc: '', CCCD: '', tinhTrang: "Trống", Id: ''
+                        };
+                    }
+                    return room;
+                });
+
+                const updatedNewRoom = resetRooms.map(room => {
+                    if (room.maPhong === newRow.maPhong) {
+                        return { ...room, ...oldRoomDetails, tinhTrang: "Check-in", Id: newRow.Id };
+                    }
+                    return room;
+                });
+
+                setRooms(updatedNewRoom);
+
+                await api.updateBookedRoom({
+                    ...oldRoomDetails, maPhong: newRow.maPhong
+                    , tenLoaiPhong: newRow.tenLoaiPhong, toa: newRow.toa, tang: newRow.tang,
+                    tinhTrang: "Check-in"
+                }, newRow.Id);
                 await api.addBill({
                     ...oldRoomDetails, ngayCheckIn: moment().format("YYYY-MM-DD"), ngayCheckOut: '',
                     tinhTrang: "Chưa thanh toán", maPhong: newRow.maPhong, toa: newRow.toa,

@@ -140,7 +140,7 @@ const QuanLyNhapKho = (props) => {
     if (checkError()) {
       console.log(searchCriteria)
 
-      const searchResults = await api.getDamagedMaterialBySearch(searchCriteria);
+      const searchResults = await api.getReceivingStockBySearch(searchCriteria);
       console.log(searchResults);
       if (user?.Loai !== 'ChuHeThong') {
         const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
