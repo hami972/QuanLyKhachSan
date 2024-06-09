@@ -19,7 +19,7 @@ export const FormCSVCHu = ({
             tenCSVC: "",
             slHu: "",
             ngayGhiNhan: moment().format("YYYY-MM-DD"),
-            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chinhanh
+            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chinhanh,
         }
     );
 

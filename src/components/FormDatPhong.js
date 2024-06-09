@@ -23,7 +23,8 @@ export const FormDatPhong = ({
             tenKhachHang: "",
             ngayBatDau: "",
             ngayKetThuc: "",
-            Id: ""
+            Id: "",
+            donGia: ""
         };
 
         // Set ngayBatDau và ngayKetThuc nếu có giá trị mới

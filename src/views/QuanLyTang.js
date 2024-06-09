@@ -3,20 +3,21 @@ import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import api from '../api/Api';
 import { FormTang } from '../components/FormTang';
 import { AuthContext } from '../hook/AuthProvider'
-import { BarController } from 'chart.js';
 
 const QuanLyTang = (props) => {
     const [blocks, setBlocks] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [rowToEdit, setRowToEdit] = useState(null);
+    const [materials, setMaterials] = useState([]);
     const { user } = useContext(AuthContext);
     const [searchCriteria, setSearchCriteria] = useState({
-        slDau: '',
-        slCuoi: '',
+        slPhongDau: "",
+        slPhongCuoi: "",
     });
 
     useEffect(() => {
         getBlocks();
+        getMaterials()
     }, []);
 
     const getBlocks = async () => {
@@ -39,6 +40,12 @@ const QuanLyTang = (props) => {
         }
     };
 
+    const getMaterials = async () => {
+        const materials = await api.getAllMaterials()
+        const fil = materials.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+        setMaterials(fil);
+    }
+
     const handleEditRow = (blockIndex, floorIndex) => {
         setRowToEdit({ blockIndex, floorIndex });
         setModalOpen(true);
@@ -46,7 +53,7 @@ const QuanLyTang = (props) => {
 
     const handleSubmit = async (newRow) => {
         if (rowToEdit === null) {
-            const result = blocks[0]; // Assuming you're adding to the first block, adjust as needed
+            const result = blocks[0];
             if (result) {
                 const updatedTangList = [
                     ...result.tang,
@@ -59,7 +66,7 @@ const QuanLyTang = (props) => {
                 ];
                 await api.updateBlock({ tang: updatedTangList }, result.Id);
                 const updatedBlocks = [...blocks];
-                updatedBlocks[0].tang = updatedTangList; // Assuming you're adding to the first block, adjust as needed
+                updatedBlocks[0].tang = updatedTangList;
                 setBlocks(updatedBlocks);
             }
         }
@@ -77,14 +84,28 @@ const QuanLyTang = (props) => {
                 setBlocks(updatedBlocks);
             }
         }
+
     };
 
     const handleChange = (e) => {
         setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
     };
 
-    const onSearch = () => {
-        // Perform search based on search criteria
+    const onSearch = async () => {
+        const searchResults = await api.getAllBlocks(searchCriteria);
+        if (user?.Loai !== 'ChuHeThong') {
+            const filteredBlocks = searchResults
+                .filter(toa => toa.chiNhanh === user?.chinhanh)
+                .map(toa => ({
+                    ...toa,
+                    tang: toa.tang.filter(tang => {
+                        const phongCount = tang.dsPhong ? tang.dsPhong.split('-').length : 0;
+                        return phongCount >= parseInt(searchCriteria.slPhongDau) && phongCount <= parseInt(searchCriteria.slPhongCuoi);
+                    })
+                })).filter(toa => toa.tang.length > 0);
+
+            setBlocks(filteredBlocks);
+        }
     };
 
     return (
@@ -98,7 +119,8 @@ const QuanLyTang = (props) => {
                             className="form-control pb-2 pt-2 mb-2"
                             type="number"
                             placeholder="0"
-                            name="slDau"
+                            name="slPhongDau"
+                            value={searchCriteria.slPhongDau}
                             onChange={handleChange}
                         />
                     </div>
@@ -108,28 +130,32 @@ const QuanLyTang = (props) => {
                             className="form-control pb-2 pt-2 mb-2"
                             type="number"
                             placeholder="200"
-                            name="slCuoi"
+                            name="slPhongCuoi"
+                            value={searchCriteria.slPhongCuoi}
                             onChange={handleChange}
                         />
                     </div>
                 </div>
             </div>
 
-            <button
-                type="submit"
-                className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-                onClick={onSearch}
-            >
-                Tìm kiếm
-            </button>
-            <button
-                onClick={() => setModalOpen(true)}
-                className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-            >
-                Thêm
-            </button>
+            <div className="text-end">
+                <button
+                    type="submit"
+                    className="btn pb-2 pt-2 me-2 mt-3 "
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                    onClick={onSearch}
+                >
+                    Tìm kiếm
+                </button>
+                <button
+                    onClick={() => setModalOpen(true)}
+                    className="btn pb-2 pt-2 mt-3"
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                >
+                    Thêm
+                </button>
+            </div>
+
 
             <table className="table">
                 <thead style={{ verticalAlign: "middle" }}>
