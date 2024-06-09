@@ -91,20 +91,30 @@ const PaymentHistory = () => {
 
     return (
         <div>
-            <div>
-                <h1>Lịch sử thanh toán</h1>
+            <div >
+                <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}>
+                    <h3 align="center">Lịch sử thanh toán</h3>
+                </header>
                 {/* Render dailyRoomInfo */}
                 {dailyRoomInfo.map((dayInfo, index) => (
-                    <div key={index}>
-                        <h2>{dayInfo.startDate}</h2>
+                    <div className="row" style={{
+                        backgroundColor: '#fff', alignItems: 'center', display: 'flex',
+                        borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
+                    }} key={index}>
+
+                        <h2>Ngày thanh toán: {dayInfo.startDate}</h2>
                         {dayInfo.roomTypes.map(roomTypeInfo => (
-                            <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`} >
-                                <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
+                            <div key={`${roomTypeInfo.roomType} - ${roomTypeInfo.branch}`} >
+                                <h5>{`Loại phòng: ${roomTypeInfo.roomType}  Chi nhánh: ${roomTypeInfo.branch}`}</h5>
                                 <p>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
                                 <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
                                 {!roomTypeInfo.daDanhGia ?
-                                    <button onClick={() => addReviewForRoomType(roomTypeInfo, dayInfo)}>Đánh giá</button> :
-                                    <button onClick={() => reviewComment(roomTypeInfo, dayInfo)}>Xem đánh giá</button>
+                                    <button className='form-control'
+                                    style={{ backgroundColor: '#905700', color: '#fff', fontSize: '24px', height: '50px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }}
+                                    type='button' onClick={() => addReviewForRoomType(roomTypeInfo, dayInfo)}>Đánh giá</button> :
+                                    <button className='form-control'
+                                    style={{ backgroundColor: '#905700', color: '#fff', fontSize: '24px', height: '50px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }}
+                                    type='button' onClick={() => reviewComment(roomTypeInfo, dayInfo)}>Xem đánh giá</button>
                                 }
 
                             </div>

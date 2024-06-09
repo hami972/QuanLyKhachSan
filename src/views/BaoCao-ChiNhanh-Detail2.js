@@ -153,14 +153,14 @@ const XemBaoCaoChiNhanhTheoNam = (props) => {
           <div className="text-end">
             <button onClick={handleExport}
               className="btn pb-2 pt-2 mb-3 me-3"
-              style={{ backgroundColor: "#0096FF", color: "#FFFFFF" }}>
+              style={{ backgroundColor: "#905700", color: "#FFFFFF" }}>
               Xuất Excel
               <i className="fa fa-download ms-2"></i>
             </button>
             <button
               type="submit"
               className="btn pb-2 pt-2 mb-3"
-              style={{ backgroundColor: "#0096FF", color: "#FFFFFF" }}
+              style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
               onClick={updateTable}
             >
               Xem

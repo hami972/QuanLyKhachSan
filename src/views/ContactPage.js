@@ -10,33 +10,32 @@ const ContactPage = (props) => {
             MaCN: "CN001",
             TenCN: "Chi nhánh 1",
             DiaChi: "Khu phố 6, Linh Trung, Thủ Đức, Hồ Chí Minh",
-            Email: "nhakhoathuduc@gmail.com",
+            Email: "chinhanhthuduc@gmail.com",
             SDT: "0835363598"
         },
         {
             MaCN: "CN002",
             TenCN: "Chi nhánh 2",
-            DiaChi: "Lâm Văn Bền, Quận 7, Hồ Chí Minh",
-            Email: "nhakhoaquan7@gmail.com",
+            DiaChi: "Phước long B, Quận 9, Hồ Chí Minh",
+            Email: "chinhanhquan9@gmail.com",
             SDT: "0835363597"
         },
         {
             MaCN: "CN003",
             TenCN: "Chi nhánh 3",
             DiaChi: "Huỳnh Tấn Phát, Quận 8, Hồ Chí Minh",
-            Email: "nhakhoathuducquan8@gmail.com",
+            Email: "chinhanhquan8@gmail.com",
             SDT: "0835363599"
         },
         {
             MaCN: "CN004",
             TenCN: "Chi nhánh 4",
             DiaChi: "Điện Biên Phủ, quận Bình Thạnh, Hồ Chí Minh",
-            Email: "nhakhoabinhthanh@gmail.com",
+            Email: "chinhanhbinhthanh@gmail.com",
             SDT: "0835363600"
         },
 
     ]
-
 
 
     return (

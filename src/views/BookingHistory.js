@@ -70,11 +70,18 @@ const BookingHistory = () => {
   return (
     <div>
       <div>
-        <h1>Lịch sử đặt phòng</h1>
+      <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}>
+                <h3 align="center">Lịch sử đặt phòng</h3>
+            </header>
         {/* Render dailyRoomInfo */}
         {dailyRoomInfo.map(dayInfo => (
-          <div key={dayInfo.date}>
-            <h2>{dayInfo.date}</h2>
+            <div className="row" key={dayInfo.date}
+            style={{
+                backgroundColor: '#fff', alignItems: 'center', display: 'flex',
+                borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
+            }}>
+            <h2 className='row' style={{ color: '#905700' }}>{dayInfo.date}</h2>
+            <p className='row'>
             {dayInfo.roomTypes.map(roomTypeInfo => (
               <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`}>
                 <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
@@ -82,7 +89,10 @@ const BookingHistory = () => {
                 <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
               </div>
             ))}
-          </div>
+            </p>
+        </div>
+
+          
         ))}
       </div>
     </div>

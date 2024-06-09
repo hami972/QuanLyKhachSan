@@ -349,13 +349,9 @@ const BillManagement = () => {
                                     : bills[selectedRow]?.ngayCheckOut}
                                 </td>
                                 <td className="text-right">
-                                  {bills[selectedRow]?.donGia?.toLocaleString(
-                                    "vi-VN",
-                                    {
-                                      style: "currency",
-                                      currency: "VND",
-                                    }
-                                  )}
+                                  {parseInt(bills[selectedRow]?.donGia)
+                                  .toLocaleString("vi-VN", 
+                                  { style: "currency", currency: "VND" })}
                                 </td>
                                 <td className="text-right">
                                   {bills[selectedRow]?.thanhTien?.toLocaleString("vi-VN", 

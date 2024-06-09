@@ -104,7 +104,7 @@ const SignUpPage = (props) => {
 
                             </div>
                             <div className="mb-3 mt-3 col-10">
-                                <input type="date" className="form-control pb-3 pt-3" id="birthday" name="birthday" placeholder="Ngày sinh: " max={moment().add(-1, "years").format('YYYY-MM-DD')} required onInvalid={e => e.target.setCustomValidity('Mời bạn nhập ngày sinh')} onInput={e => e.target.setCustomValidity('')} onChange={(e) => setBirthday(e.target.value)} value={birthday} />
+                                <input type="date" className="form-control pb-3 pt-3" id="birthday" name="birthday" placeholder="Ngày sinh: " max={moment().add(-18, "years").format('YYYY-MM-DD')} required onInvalid={e => e.target.setCustomValidity('Mời bạn nhập ngày sinh')} onInput={e => e.target.setCustomValidity('')} onChange={(e) => setBirthday(e.target.value)} value={birthday} />
                             </div>
                             <div className="mb-3 mt-3 col-10">
                                 <input type="tel" className="form-control pb-3 pt-3" id="phone" name="phone" placeholder="Số điện thoại" required onChange={(e) => setPhone(e.target.value)} value={phone} />

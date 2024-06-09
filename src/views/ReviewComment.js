@@ -35,23 +35,25 @@ const ReviewComment = () => {
     }
 
     return (
-        <div>
+        <div className='pt-10 mb-4 mt-4'>
             <div>
-                <h1>Đánh giá loại phòng: {typeRoom.roomType}</h1>
-                <p>Chi nhánh: {typeRoom.branch}</p>
-                <p>Danh sách phòng: {typeRoom.rooms.map(room => room.maPhong).join(', ')}</p>
+            <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF" }}>
+                    <h3 align="center">Đánh giá loại phòng: {typeRoom.roomType}</h3>
+                </header>
+                <h4 style={{ marginLeft: '50px' }} className='pt-10 mb-4 mt-4 '>Chi nhánh: {typeRoom.branch}</h4>
+                <h4 style={{ marginLeft: '50px' }}> Danh sách phòng: {typeRoom.rooms.map(room => room.maPhong).join(', ')}</h4>
                 <div>
-                    <label>Đánh giá:</label>
+                    <h4 style={{ marginLeft: '50px' }}>Đánh giá:</h4>
                 </div>
-                <div>
+                <div style={{ marginLeft: '70px' }}>
                     <label>Lời đánh giá:</label>
-                    <textarea readOnly value={comment[0].danhGia} />
+                    <textarea style={{ marginLeft: '50px' }} readOnly value={comment[0].danhGia} />
 
                 </div>
-                <Rating
+                <Rating style={{ marginLeft: '50px' }}
                     value={parseInt(comment[0].soSao)}
                 />
-                <ResponsiveGalleryImage uploadedImages={comment[0].images} isRead={false} />
+                <ResponsiveGalleryImage style={{ marginLeft: '50px' }} uploadedImages={comment[0].images} isRead={false} />
 
             </div>
         </div>
