@@ -357,16 +357,41 @@ const QuanLyDSPhong = (props) => {
                 </div>
             </div>
 
-            <button
-                type="submit"
-                className="btn pb-2 pt-2 mb-3 me-3"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-                onClick={onSearch}
-            >
-                Tìm kiếm
-            </button>
+            <div className='text-end'>
+                <button
+                    type="submit"
+                    className="btn pb-2 pt-2 mb-3 me-3"
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                    onClick={onSearch}
+                >
+                    Tìm kiếm
+                </button>
+            </div>
 
-            <div className="row g-2">
+            <div className='row'>
+                <div className='col-auto' style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: "#4e4e4e" }} className='room-dot'></div>
+                    <div style={{ fontWeight: 600 }}>Phòng đã đặt</div>
+                </div>
+                <div className='col-auto' style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: "purple" }} className='room-dot'></div>
+                    <div style={{ fontWeight: 600 }}>Phòng đang ở</div>
+                </div>
+                <div className='col-auto' style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: "green" }} className='room-dot'></div>
+                    <div style={{ fontWeight: 600 }}>Phòng đang dọn</div>
+                </div>
+                <div className='col-auto' style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: "red" }} className='room-dot'></div>
+                    <div style={{ fontWeight: 600 }}>Phòng sắp check-out</div>
+                </div>
+                <div className='col-auto' style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: "gold" }} className='room-dot'></div>
+                    <div style={{ fontWeight: 600 }}>Phòng mới check-out</div>
+                </div>
+            </div>
+
+            <div className="row g-2 mt-2">
                 {rooms.map((room, index) => (
                     <div key={index}
                         className={`col-auto 

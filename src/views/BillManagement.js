@@ -40,19 +40,20 @@ const BillManagement = () => {
     const checkInDate = moment(checkin.ngayCheckIn);
     const checkOutDate = moment();
     const days = checkOutDate.diff(checkInDate, 'days');
-    if (days===0) return 1;
+    if (days === 0) return 1;
     return days;
   }
-  const calculatorTotal= (checkin) => {
+  const calculatorTotal = (checkin) => {
     const checkInDate = moment(checkin.ngayCheckIn);
     const checkOutDate = moment();
     const days = checkOutDate.diff(checkInDate, 'days');
-    if (checkin.donGia!=null)
-      if (days===0)
+    if (checkin.donGia != null)
+      if (days === 0)
         return parseInt(checkin.donGia)
-      else
-        {const total = (days)*parseInt(checkin.donGia);
-        return total;}
+      else {
+        const total = (days) * parseInt(checkin.donGia);
+        return total;
+      }
     else return 0;
   }
   const [page, setPage] = useState(1);
@@ -107,37 +108,38 @@ const BillManagement = () => {
     const choice = window.confirm("Xác nhận thanh toán?");
     if (choice) {
       // if (validSubmitData()) {
-        bills[selectedRow].tinhTrang = "Đã thanh toán";
-        bills[selectedRow].ngayLap = moment().format("YYYY-MM-DD");
-        bills[selectedRow].ngayCheckOut = moment().format("YYYY-MM-DD");
-        bills[selectedRow].SoTienGiam = SoTienGiam;
-        bills[selectedRow].ThanhTienSauGiamGia = ThanhTienSauGiamGia;
-        api.updateBill(bills[selectedRow], bills[selectedRow].Id);
-        // const newBill = { ...bills[selectedRow] };
-        // const Id = newBill.Id;
+      bills[selectedRow].tinhTrang = "Đã thanh toán";
+      bills[selectedRow].ngayLap = moment().format("YYYY-MM-DD");
+      bills[selectedRow].ngayCheckOut = moment().format("YYYY-MM-DD");
+      bills[selectedRow].SoTienGiam = SoTienGiam;
+      bills[selectedRow].ThanhTienSauGiamGia = ThanhTienSauGiamGia;
+      api.updateBill(bills[selectedRow], bills[selectedRow].Id);
+      // const newBill = { ...bills[selectedRow] };
+      // const Id = newBill.Id;
 
-        // newBill.daThanhToan = ThanhTienSauGiamGia;
-        // const thanhtoan = {
-        //   ngayThanhToan: moment().format("YYYY-MM-DD"),
-        //   tienThanhToan: ThanhTienSauGiamGia,
-        // };
-        // let dsThanhToan = newBill.dsThanhToan || [];
-        // dsThanhToan.push(thanhtoan);
-        // newBill.dsThanhToan = dsThanhToan;
-        // newBill.ngayLap = thanhtoan.ngayThanhToan;
+      // newBill.daThanhToan = ThanhTienSauGiamGia;
+      // const thanhtoan = {
+      //   ngayThanhToan: moment().format("YYYY-MM-DD"),
+      //   tienThanhToan: ThanhTienSauGiamGia,
+      // };
+      // let dsThanhToan = newBill.dsThanhToan || [];
+      // dsThanhToan.push(thanhtoan);
+      // newBill.dsThanhToan = dsThanhToan;
+      // newBill.ngayLap = thanhtoan.ngayThanhToan;
 
-        // if (!disableDiscount) {
-        //   newBill.maGiamGia = recentDiscount?.maGiamGia || "";
-        //   newBill.phanTram = recentDiscount?.phanTram || 0;
-        //   newBill.maNhanVien = user?.maNV;
-        //   newBill.tenNhanVien = user?.ten;
-        // }
-        // newBill.tinhTrang = "Đã thanh toán";
+      // if (!disableDiscount) {
+      //   newBill.maGiamGia = recentDiscount?.maGiamGia || "";
+      //   newBill.phanTram = recentDiscount?.phanTram || 0;
+      //   newBill.maNhanVien = user?.maNV;
+      //   newBill.tenNhanVien = user?.ten;
+      // }
+      // newBill.tinhTrang = "Đã thanh toán";
+      await api.updateBookedRoom({ tinhTrang: "Check-out" }, bills[selectedRow].maDatPhong)
 
-        setDisableDiscount(true);
-        setRecentDiscount(null);
-        alert("Lưu thành công");
-      
+      setDisableDiscount(true);
+      setRecentDiscount(null);
+      alert("Lưu thành công");
+
     }
   };
 
@@ -150,7 +152,7 @@ const BillManagement = () => {
     getBills();
     getStaffs();
     getDiscounts();
-    
+
   }, []);
 
   useEffect(() => {
@@ -163,7 +165,7 @@ const BillManagement = () => {
       setSoTienGiam((tongTien * recentDiscount?.phanTram) / 100 || 0);
       setTTSGG(tongTien - ((tongTien * recentDiscount?.phanTram) / 100 || 0));
     }
-    
+
   }, [recentDiscount]);
 
   return (
@@ -261,68 +263,68 @@ const BillManagement = () => {
                   <div className="col-md-8">
                     <div className="p-3 bg-white rounded">
                       <div className="row">
-                      <div className="row">
-                        <div className="col mt-3">
-                          <div
-                            align=""
-                            style={{ fontSize: "25px", fontWeight: "bold" }}
-                          >
-                            HÓA ĐƠN
-                          </div>
-                          <div className=''>
-                            <span style={{ fontWeight: "600" }}>#</span>
+                        <div className="row">
+                          <div className="col mt-3">
+                            <div
+                              align=""
+                              style={{ fontSize: "25px", fontWeight: "bold" }}
+                            >
+                              HÓA ĐƠN
+                            </div>
+                            <div className=''>
+                              <span style={{ fontWeight: "600" }}>#</span>
                               {bills[selectedRow]?.maHoaDon}
+                            </div>
+                          </div>
+                          <div className="col-md-auto">
+                            <img alt="" src="/images/royalHotelLogo.png" />
                           </div>
                         </div>
-                        <div className="col-md-auto">
-                          <img alt="" src="/images/royalHotelLogo.png" />
+
+                        <div className="row">
+                          <table className='mt-3' style={{ borderTop: '1px solid #DDDDDD', borderBottom: '1px solid #DDDDDD', tableLayout: 'fixed' }}>
+                            <thead>
+                              <tr>
+                                <th style={{ borderRight: '1px solid #DDDDDD', width: '50%', padding: '25px' }}>
+                                  <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                                    Khách sạn Hoàng Gia
+                                  </div>
+                                  <div>
+                                    <span style={{ fontWeight: "600" }}>Địa chỉ:</span> 2 Lô E,
+                                    KD5, Dương Bá Trạc, Phường 1, quận 8, HCM
+                                  </div>
+                                  <div>
+                                    <span style={{ fontWeight: "600" }}>SĐT:</span> 0843593598
+                                  </div>
+                                  <div>
+                                    <span style={{ fontWeight: "600" }}>Email:</span>{" "}
+                                    khachsanhoanggia@gmail.com
+                                  </div>
+                                </th>
+
+                                <th style={{ width: '50%', padding: '25px' }}>
+                                  <div style={{ fontSize: "20px", fontWeight: "bold" }}>
+                                    Thông tin khách hàng
+                                  </div>
+                                  <div className=''>
+                                    <span style={{ fontWeight: "600" }}>Tên Khách hàng: </span>
+                                    {bills[selectedRow]?.tenKhachHang}
+                                  </div>
+                                  <div className=''>
+                                    <span style={{ fontWeight: "600" }}>Địa chỉ: </span>
+                                    {bills[selectedRow]?.DiaChi}
+                                  </div>
+                                  <div className=''>
+                                    <span style={{ fontWeight: "600" }}>Số điện thoại: </span>
+                                    {bills[selectedRow]?.soDienThoai}
+                                  </div>
+                                </th>
+                              </tr>
+                            </thead>
+
+                          </table>
                         </div>
-                      </div>
-                      
-                      <div className="row">
-                        <table className='mt-3' style={{borderTop: '1px solid #DDDDDD', borderBottom: '1px solid #DDDDDD', tableLayout: 'fixed'}}>
-                          <thead>
-                            <tr>
-                              <th style={{borderRight: '1px solid #DDDDDD', width: '50%', padding: '25px'}}>
-                                <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                                  Khách sạn Hoàng Gia
-                                </div>
-                                <div>
-                                  <span style={{ fontWeight: "600" }}>Địa chỉ:</span> 2 Lô E,
-                                  KD5, Dương Bá Trạc, Phường 1, quận 8, HCM
-                                </div>
-                                <div>
-                                  <span style={{ fontWeight: "600" }}>SĐT:</span> 0843593598
-                                </div>
-                                <div>
-                                  <span style={{ fontWeight: "600" }}>Email:</span>{" "}
-                                  khachsanhoanggia@gmail.com
-                                </div>
-                              </th>
 
-                              <th style={{ width: '50%', padding: '25px'}}>
-                                <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                                  Thông tin khách hàng
-                                </div>
-                                <div className=''>
-                                  <span style={{ fontWeight: "600" }}>Tên Khách hàng: </span>
-                                  {bills[selectedRow]?.tenKhachHang}
-                                </div>
-                                <div className=''>
-                                  <span style={{ fontWeight: "600" }}>Địa chỉ: </span>
-                                  {bills[selectedRow]?.DiaChi}
-                                </div>
-                                <div className=''>
-                                  <span style={{ fontWeight: "600" }}>Số điện thoại: </span>
-                                  {bills[selectedRow]?.soDienThoai}
-                                </div>
-                              </th>
-                            </tr>
-                          </thead>
-
-                        </table>
-                      </div>
-                       
                       </div>
                       <div className="mt-3">
                         <div className="table-responsive">
@@ -333,7 +335,7 @@ const BillManagement = () => {
                                 <th>Số lượng</th>
                                 <th>Ngày check in</th>
                                 <th>Ngày check out</th>
-                                
+
                                 <th className="text-right">Đơn giá</th>
                                 <th className="text-right">Thành tiền</th>
                               </tr>
@@ -350,15 +352,15 @@ const BillManagement = () => {
                                 </td>
                                 <td className="text-right">
                                   {parseInt(bills[selectedRow]?.donGia)
-                                  .toLocaleString("vi-VN", 
-                                  { style: "currency", currency: "VND" })}
+                                    .toLocaleString("vi-VN",
+                                      { style: "currency", currency: "VND" })}
                                 </td>
                                 <td className="text-right">
-                                  {bills[selectedRow]?.thanhTien?.toLocaleString("vi-VN", 
-                                  {
-                                    style: "currency",
-                                    currency: "VND",
-                                  })}
+                                  {bills[selectedRow]?.thanhTien?.toLocaleString("vi-VN",
+                                    {
+                                      style: "currency",
+                                      currency: "VND",
+                                    })}
                                 </td>
                               </tr>
                             </tbody>
@@ -383,35 +385,35 @@ const BillManagement = () => {
                             <div className="d-flex justify-content-between">
                               <span>Giảm giá</span>
                               <span>
-                              <Select
-                            className="dropdown"
-                            options={maGiamGia}
-                            onChange={(e) => {
-                              setRecentDiscount(e);
-                              setDisableDiscount(false);
-                            }}
-                            getOptionLabel={(option) => option.maGiamGia}
-                            getOptionValue={(option) => option.Id}
-                            placeholder="Chọn mã giảm giá"
-                            value={recentDiscount}
-                            isDisabled={bills[selectedRow]?.tinhTrang === "Đã thanh toán"}
-                          />
-                              {
-                              (() => {
-                                const amount =
-                                  bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
-                                    ? SoTienGiam
-                                    : bills[selectedRow]?.SoTienGiam;
+                                <Select
+                                  className="dropdown"
+                                  options={maGiamGia}
+                                  onChange={(e) => {
+                                    setRecentDiscount(e);
+                                    setDisableDiscount(false);
+                                  }}
+                                  getOptionLabel={(option) => option.maGiamGia}
+                                  getOptionValue={(option) => option.Id}
+                                  placeholder="Chọn mã giảm giá"
+                                  value={recentDiscount}
+                                  isDisabled={bills[selectedRow]?.tinhTrang === "Đã thanh toán"}
+                                />
+                                {
+                                  (() => {
+                                    const amount =
+                                      bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
+                                        ? SoTienGiam
+                                        : bills[selectedRow]?.SoTienGiam;
 
-                                return amount !== undefined
-                                  ? amount.toLocaleString("vi-VN", {
-                                      style: "currency",
-                                      currency: "VND",
-                                    })
-                                  : "N/A";
-                              })()
-                            }
-                                
+                                    return amount !== undefined
+                                      ? amount.toLocaleString("vi-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                      })
+                                      : "N/A";
+                                  })()
+                                }
+
                               </span>
                             </div>
                           </div>
@@ -420,21 +422,21 @@ const BillManagement = () => {
                               Thành tiền sau giảm giá
                             </span>
                             <span className="font-weight-bold text-success">
-                            {
-                              (() => {
-                                const amount =
-                                  bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
-                                    ? ThanhTienSauGiamGia
-                                    : bills[selectedRow]?.ThanhTienSauGiamGia;
+                              {
+                                (() => {
+                                  const amount =
+                                    bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
+                                      ? ThanhTienSauGiamGia
+                                      : bills[selectedRow]?.ThanhTienSauGiamGia;
 
-                                return amount !== undefined
-                                  ? amount.toLocaleString("vi-VN", {
+                                  return amount !== undefined
+                                    ? amount.toLocaleString("vi-VN", {
                                       style: "currency",
                                       currency: "VND",
                                     })
-                                  : "N/A";
-                              })()
-                            }
+                                    : "N/A";
+                                })()
+                              }
                             </span>
                           </div>
                         </div>
@@ -442,10 +444,10 @@ const BillManagement = () => {
                       <div className="row mt-3">
                         <div className="col-md-12">
                           <p>
-                            <b>Ngày lập:</b> 
+                            <b>Ngày lập:</b>
                             {bills[selectedRow]?.tinhTrang === "Chưa thanh toán"
-                                    ? moment().format("YYYY-MM-DD")
-                                    : bills[selectedRow]?.ngayLap}
+                              ? moment().format("YYYY-MM-DD")
+                              : bills[selectedRow]?.ngayLap}
                           </p>
                         </div>
                       </div>
