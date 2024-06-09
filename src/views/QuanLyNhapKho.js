@@ -46,6 +46,7 @@ const QuanLyNhapKho = (props) => {
     else {
       const fil = receivingStock.filter((item) => item.chiNhanh === branches[0].tenChiNhanh);
       setReceivingStock(fil);
+      setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
     }
   }
 
@@ -61,7 +62,7 @@ const QuanLyNhapKho = (props) => {
   }
 
   const handleDeleteRow = async (targetIndex) => {
-    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa ghi chú nhập kho này không?');
+    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa lịch sử nhập kho này không?');
     if (shouldDelete) {
       await api.deleteReceivingStock(receivingStock[targetIndex].Id);
 
@@ -77,6 +78,7 @@ const QuanLyNhapKho = (props) => {
         });
         setMaterials(updatedMaterials);
         await api.updateMaterial({ slNhap: nhap.toString(), slTon: ton.toString() }, result[0].Id);
+        //onSearch()
       }
     }
   };
@@ -91,7 +93,7 @@ const QuanLyNhapKho = (props) => {
       if (user?.Loai === 'ChuHeThong') {
         const id = await api.addReceivingStock(newRow);
         newRow.Id = id.docId;
-        getReceivingStocks();
+        onSearch()
       }
       else {
         const id = await api.addReceivingStock({ ...newRow, chiNhanh: user.chinhanh });
@@ -138,7 +140,7 @@ const QuanLyNhapKho = (props) => {
     if (checkError()) {
       console.log(searchCriteria)
 
-      const searchResults = await api.getReceivingStockBySearch(searchCriteria);
+      const searchResults = await api.getDamagedMaterialBySearch(searchCriteria);
       console.log(searchResults);
       if (user?.Loai !== 'ChuHeThong') {
         const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)

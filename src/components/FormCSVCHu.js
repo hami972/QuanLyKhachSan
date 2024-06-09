@@ -2,44 +2,51 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "../hook/AuthProvider";
 import moment from "moment";
 import Select from "react-select";
+
 export const FormCSVCHu = ({
     closeModal,
     onSubmit,
     defaultValue,
     branches,
-    materials
+    materials,
+    slTonKho
 }) => {
     const { user } = useContext(AuthContext);
+
     const [formState, setFormState] = useState(
         defaultValue || {
             maCSVC: "",
             tenCSVC: "",
             slHu: "",
             ngayGhiNhan: moment().format("YYYY-MM-DD"),
-            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : "",
+            chiNhanh: user?.Loai === 'ChuHeThong' && branches.length > 0 ? branches[0].tenChiNhanh : user?.chinhanh
         }
     );
+
+    const [slTon, setSLTon] = useState(slTonKho);
+
     const [errors, setErrors] = useState("");
 
     const validateForm = () => {
         if (
-            formState.maCSVC != "" &&
-            formState.tenCSVC != "" &&
-            formState.slHu != "" &&
-            formState.ngayGhiNhan != ""
+            formState.maCSVC !== "" &&
+            formState.tenCSVC !== "" &&
+            formState.slHu !== "" &&
+            formState.ngayGhiNhan !== ""
         ) {
+            if (parseInt(formState.slHu) > parseInt(slTon)) {
+                setErrors("Số lượng hư phải bé hơn số lượng tồn")
+                return false
+            }
             setErrors("");
             return true;
         } else {
-            let errorFields = [];
+            const errorFields = [];
             for (const [key, value] of Object.entries(formState)) {
-                if (value == "") {
+                if (value === "") {
                     switch (key) {
-                        case "maCSVC":
-                            errorFields.push("Mã CSVC");
-                            break;
-                        case "tenCSVC":
-                            errorFields.push("Tên CSVC");
+                        case "maCSVC" || "tenCSVC":
+                            errorFields.push("CSVC");
                             break;
                         case "slHu":
                             errorFields.push("Số lượng hư");
@@ -58,7 +65,34 @@ export const FormCSVCHu = ({
     };
 
     const handleChange = (e) => {
-        setFormState({ ...formState, [e.target.name]: e.target.value });
+        if (e.target.name === "chiNhanh") {
+            setFormState({
+                ...formState,
+                [e.target.name]: e.target.value,
+                maCSVC: "",
+                tenCSVC: ""
+            });
+        } else {
+            setFormState({ ...formState, [e.target.name]: e.target.value });
+        }
+    };
+
+    const handleSelectChange = (selectedOption) => {
+        if (selectedOption) {
+            setFormState({
+                ...formState,
+                maCSVC: selectedOption.maCSVC,
+                tenCSVC: selectedOption.tenCSVC,
+            });
+            setSLTon(selectedOption.slTon);
+        } else {
+            setFormState({
+                ...formState,
+                maCSVC: "",
+                tenCSVC: ""
+            });
+            setSLTon("");
+        }
     };
 
     const handleSubmit = (e) => {
@@ -80,8 +114,9 @@ export const FormCSVCHu = ({
             }
         }
     };
+
     const isNumberCopy = (e) => {
-        let data = e.clipboardData.getData("text");
+        const data = e.clipboardData.getData("text");
         if (data.match(/[^\d]/)) {
             e.preventDefault();
         }
@@ -94,9 +129,7 @@ export const FormCSVCHu = ({
                 if (e.target.className === "modal-container") closeModal();
             }}
         >
-            <div
-                className="col-sm-4 modal1"
-            >
+            <div className="col-sm-4 modal1">
                 <form>
                     <div className="mb-2" style={{ fontWeight: "500" }}>
                         Tên CSVC
@@ -104,20 +137,10 @@ export const FormCSVCHu = ({
                     <Select
                         className="mb-2"
                         value={
-                            materials
-                                .filter((item) => item.chiNhanh === formState.chiNhanh)
-                                .find((item) => `${item.maCSVC} - ${item.tenCSVC}` == `${formState.maCSVC} - ${formState.tenCSVC}`) || ""
+                            materials.find((item) => `${item.maCSVC} - ${item.tenCSVC}` === `${formState.maCSVC} - ${formState.tenCSVC}`) || ""
                         }
-                        onChange={(value) =>
-                            value !== null
-                                ? setFormState({
-                                    ...formState,
-                                    maCSVC: `${value.maCSVC}`,
-                                    tenCSVC: `${value.tenCSVC}`
-                                })
-                                : setFormState({ ...formState, maTenCSVC: "" })
-                        }
-                        options={materials.filter((item) => item.chiNhanh === formState.chiNhanh)}
+                        onChange={handleSelectChange}
+                        options={materials.filter((item) => item.chiNhanh === formState.chiNhanh && parseInt(item.slTon) > 0)}
                         isClearable
                         getOptionLabel={(item) => `${item.maCSVC} - ${item.tenCSVC}`}
                         getOptionValue={(item) => item}
@@ -132,6 +155,8 @@ export const FormCSVCHu = ({
                         onKeyDown={isNumberPress}
                         onPaste={isNumberCopy}
                         className="form-control pb-2 pt-2 mb-2"
+                        min={1}
+                        max={parseInt(slTon)}
                     />
                     <div>
                         <div className="mb-2"><b>Ngày ghi nhận</b></div>
@@ -173,7 +198,7 @@ export const FormCSVCHu = ({
                         </button>
                     </div>
                 </form>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };

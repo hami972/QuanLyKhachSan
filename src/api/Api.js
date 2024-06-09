@@ -796,11 +796,11 @@ const getDamagedMaterialBySearch = async (searchCriteria) => {
   try {
     const queryParams = new URLSearchParams(searchCriteria).toString();
     const response = await client.get(
-      `DamagedMaterial/Materials?${queryParams}`
+      `DamagedMaterial/search?${queryParams}`
     );
 
     if (response.data.success) {
-      return response.data.materials;
+      return response.data.list;
     } else {
       console.log("not get materials");
     }

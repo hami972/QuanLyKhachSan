@@ -42,6 +42,7 @@ const QuanLyCSVC = (props) => {
     else {
       const fil = materials.filter((item) => item.chiNhanh === branches[0].tenChiNhanh);
       setMaterials(fil);
+      setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
     }
   }
 
@@ -64,7 +65,7 @@ const QuanLyCSVC = (props) => {
       if (user?.Loai === 'ChuHeThong') {
         const id = await api.addMaterial(newRow);
         newRow.Id = id;
-        setMaterials([...materials, newRow]);
+        onSearch()
       }
       else {
         const id = await api.addMaterial({ ...newRow, chiNhanh: user?.chinhanh });
@@ -74,12 +75,8 @@ const QuanLyCSVC = (props) => {
 
     }
     else {
-      api.updateMaterial(newRow, newRow.Id);
-      let updatedMaterials = materials.map((currRow, idx) => {
-        if (idx !== rowToEdit) return currRow;
-        return newRow;
-      })
-      setMaterials(updatedMaterials);
+      await api.updateMaterial(newRow, newRow.Id);
+      onSearch()
     }
   };
 

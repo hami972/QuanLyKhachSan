@@ -14,6 +14,7 @@ const QuanLyCSVCHu = (props) => {
   const [damagedMaterial, setDamagedMaterial] = useState([]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const [branches, setBranches] = useState([]);
+  const [slTonKho, setSLTonKho] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
     maCSVC: '',
     tenCSVC: '',
@@ -58,25 +59,52 @@ const QuanLyCSVCHu = (props) => {
     }
   }
 
-  const handleDeleteRow = (targetIndex) => {
-    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa vật tư thiết bị này không?');
+  const handleDeleteRow = async (targetIndex) => {
+    const shouldDelete = window.confirm('Bạn có chắc chắn muốn xóa lịch sư hư này không?');
     if (shouldDelete) {
-      setMaterials(materials.filter((_, idx) => idx !== targetIndex));
-      api.deleteMaterial(materials[targetIndex].Id);
+      await api.deleteDamagedMaterial(damagedMaterial[targetIndex].Id);
+
+      setDamagedMaterial(damagedMaterial.filter((_, idx) => idx !== targetIndex));
+
+      const result = materials.filter((item1, idx) => item1.maCSVC === damagedMaterial[targetIndex].maCSVC);
+      if (result.length > 0) {
+        const ton = parseInt(result[0].slTon) + parseInt(damagedMaterial[targetIndex].slHu);
+        const updatedMaterials = materials.map((item, idx) => {
+          if (item.maCSVC !== damagedMaterial[targetIndex].maCSVC) return item;
+          return { ...item, slTon: ton.toString() };
+        });
+        setMaterials(updatedMaterials);
+        await api.updateMaterial({ slTon: ton.toString() }, result[0].Id);
+        //onSearch()
+      }
     }
   };
 
   const handleEditRow = (idx) => {
     setRowToEdit(idx);
     setModalOpen(true);
+    setSLTonKho(materials.find(item => item.maCSVC === damagedMaterial[idx].maCSVC)?.slTon)
   };
+
+  const checkError = () => {
+    if (parseInt(searchCriteria.slnDau) >= parseInt(searchCriteria.slnCuoi)) {
+      alert("Số lượng nhập 'Từ' phải nhỏ hơn 'Đến'");
+      return false;
+    }
+
+    if (searchCriteria.ngayDau && searchCriteria.ngayCuoi && searchCriteria.ngayCuoi <= searchCriteria.ngayDau) {
+      alert("Ngày nhập 'Từ' phải nhỏ hơn ngày nhập 'Đến'");
+      return false;
+    }
+    return true;
+  }
 
   const handleSubmit = async (newRow) => {
     if (rowToEdit == null) {
       if (user?.Loai === 'ChuHeThong') {
         const id = await api.addDamagedMaterial(newRow);
         newRow.Id = id.docId;
-        getDamagedMaterial();
+        onSearch()
       }
       else {
         const id = await api.addDamagedMaterial({ ...newRow, chiNhanh: user.chinhanh });
@@ -93,21 +121,23 @@ const QuanLyCSVCHu = (props) => {
       await api.updateMaterial({ slTon: ton.toString() }, result[0].Id)
     }
     else {
-      //await api.updateMaterialUsed(newRow, newRow.Id);
-      //let updated = materialsUsed.map((currRow, idx) => {
-      //if (idx !== rowToEdit) return currRow;
-      //return newRow;
-      //})
-      //const result = materials.filter((item1, idx) => item1.maVatTu === newRow.maVatTu)
-      //let x = parseInt(khoiphucSL) - parseInt(newRow.SL)
-      //console.log('x' + x)
-      //let updated2 = materials.map((item, idx) => {
-      //if (item.maVatTu !== newRow.maVatTu) return item;
-      //return { ...item, soLuongTonKho: x };
-      //})
-      //setMaterials(updated2)
-      //await api.updateMaterial({ soLuongTonKho: x.toString() }, result[0].Id)
-      //setMaterialUsed(updated)
+      await api.updateDamagedMaterial(newRow, newRow.Id);
+      const updateDamagedMaterial = [...damagedMaterial];
+      updateDamagedMaterial[rowToEdit] = newRow;
+      setDamagedMaterial(updateDamagedMaterial);
+
+      const result = materials.filter((item1, idx) => item1.maCSVC === newRow.maCSVC);
+      if (result.length > 0) {
+        const previousSlHu = parseInt(damagedMaterial[rowToEdit].slHu);
+        const nhapDifference = parseInt(newRow.slHu) - previousSlHu;
+        const updatedMaterials = materials.map((item, idx) => {
+          if (item.maCSVC !== newRow.maCSVC) return item;
+          const newSlTon = parseInt(item.slTon) - nhapDifference;
+          return { ...item, slTon: newSlTon.toString() };
+        });
+        setMaterials(updatedMaterials);
+        await api.updateMaterial(updatedMaterials.find(material => material.maCSVC === newRow.maCSVC), result[0].Id);
+      }
     }
   };
 
@@ -116,16 +146,18 @@ const QuanLyCSVCHu = (props) => {
   };
 
   const onSearch = async () => {
-    console.log(searchCriteria)
+    if (checkError()) {
+      console.log(searchCriteria)
 
-    const searchResults = await api.getMaterialsBySearch(searchCriteria);
-    console.log(searchResults);
-    if (user?.Loai !== 'ChuHeThong') {
-      const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-      setMaterials(fil);
-    }
-    else {
-      setMaterials(searchResults)
+      const searchResults = await api.getDamagedMaterialBySearch(searchCriteria);
+      console.log(searchResults);
+      if (user?.Loai !== 'ChuHeThong') {
+        const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+        setDamagedMaterial(fil);
+      }
+      else {
+        setDamagedMaterial(searchResults)
+      }
     }
   }
   return (
@@ -167,6 +199,7 @@ const QuanLyCSVCHu = (props) => {
                     type="number"
                     placeholder="0"
                     name="slnDau"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -177,6 +210,7 @@ const QuanLyCSVCHu = (props) => {
                     type="number"
                     placeholder="1000000000"
                     name="slnCuoi"
+                    min={1}
                     onChange={handleChange}
                   />
                 </div>
@@ -238,25 +272,24 @@ const QuanLyCSVCHu = (props) => {
           </tr>
         </table>
       </div>
-      <button
-        type="submit"
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        onClick={onSearch}
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-      >
-        Tìm kiếm
-      </button>
-      <button
-        onClick={() => setModalOpen(true)}
-        className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-        style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-      >
-        Thêm
-      </button>
-
       <div className="text-end">
-        <h1 class="noteVND">**Tính theo đơn vị VNĐ</h1>
+        <button
+          type="submit"
+          className="btn pb-2 pt-2 me-2 mt-3 "
+          style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+          onClick={onSearch}
+        >
+          Tìm kiếm
+        </button>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="btn pb-2 pt-2 mt-3"
+          style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+        >
+          Thêm
+        </button>
       </div>
+
       <table className="table">
         <thead style={{ verticalAlign: "middle" }}>
           <tr className="table-secondary">
@@ -303,6 +336,7 @@ const QuanLyCSVCHu = (props) => {
             defaultValue={rowToEdit !== null && damagedMaterial[rowToEdit]}
             branches={branches}
             materials={materials}
+            slTonKho={slTonKho}
           />
         )
       }

@@ -37,11 +37,8 @@ export const FormNhapKho = ({
             for (const [key, value] of Object.entries(formState)) {
                 if (value == "") {
                     switch (key) {
-                        case "maCSVC":
-                            errorFields.push("Mã CSVC");
-                            break;
-                        case "tenCSVC":
-                            errorFields.push("Tên CSVC");
+                        case "maCSVC" || "tenCSVC":
+                            errorFields.push("CSVC");
                             break;
                         case "slNhap":
                             errorFields.push("Số lượng nhập");
@@ -63,7 +60,16 @@ export const FormNhapKho = ({
     };
 
     const handleChange = (e) => {
-        setFormState({ ...formState, [e.target.name]: e.target.value });
+        if (e.target.name === "chiNhanh") {
+            setFormState({
+                ...formState,
+                [e.target.name]: e.target.value,
+                maCSVC: "",
+                tenCSVC: ""
+            });
+        } else {
+            setFormState({ ...formState, [e.target.name]: e.target.value });
+        }
     };
 
     const handleSubmit = (e) => {
@@ -110,7 +116,6 @@ export const FormNhapKho = ({
                         className="mb-2"
                         value={
                             materials
-                                .filter((item) => item.chiNhanh === formState.chiNhanh)
                                 .find((item) => `${item.maCSVC} - ${item.tenCSVC}` == `${formState.maCSVC} - ${formState.tenCSVC}`) || ""
                         }
                         onChange={(value) =>
@@ -120,7 +125,7 @@ export const FormNhapKho = ({
                                     maCSVC: `${value.maCSVC}`,
                                     tenCSVC: `${value.tenCSVC}`
                                 })
-                                : setFormState({ ...formState, maTenCSVC: "" })
+                                : setFormState({ ...formState, maCSVC: "", tenCSVC: "" })
                         }
                         options={materials.filter((item) => item.chiNhanh === formState.chiNhanh)}
                         isClearable
@@ -136,6 +141,7 @@ export const FormNhapKho = ({
                         value={formState.slNhap}
                         onKeyDown={isNumberPress}
                         onPaste={isNumberCopy}
+                        min={1}
                         className="form-control pb-2 pt-2 mb-2"
                     />
                     <div>
@@ -148,6 +154,7 @@ export const FormNhapKho = ({
                             value={formState.giaNhap}
                             onKeyDown={isNumberPress}
                             onPaste={isNumberCopy}
+                            min={1}
                         />
                     </div>
                     <div>
