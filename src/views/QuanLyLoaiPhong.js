@@ -17,7 +17,6 @@ const QuanLyLoaiPhong = (props) => {
     const [searchCriteria, setSearchCriteria] = useState({
         maLoaiPhong: '',
         tenLoaiPhong: '',
-        donGia: '',
         soLuongNguoiToiDa: '',
         viewPhong: '',
         chiNhanh: '',
@@ -80,8 +79,8 @@ const QuanLyLoaiPhong = (props) => {
     };
 
     const onSearch = async () => {
-        console.log(searchCriteria)
-
+        const searchResults = await api.getKindOfRoomBySearch(searchCriteria);
+        setKindOfRoom(searchResults);
     }
     return (
         <div>

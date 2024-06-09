@@ -450,6 +450,21 @@ const deleteKindOfRoom = async (id) => {
     console.log("error: ", error.message);
   }
 };
+const getKindOfRoomBySearch = async (searchCriteria) => {
+  try {
+    const queryParams = new URLSearchParams(searchCriteria).toString();
+    const response = await client.get(`/KindOfRoom/KindOfRoom?${queryParams}`);
+
+    if (response.data.success) {
+      return response.data.kindOfRoom;
+    } else {
+      console.log("not get kindOfRoom");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
 const getAllFloors = async () => {
   try {
     const response = await client.get("/Floor/getFloors");
@@ -1013,5 +1028,6 @@ export default {
   updateBlock,
   deleteBlock,
   getBlocksBySearch,
-  getBookedRoomBySearch
+  getBookedRoomBySearch,
+  getKindOfRoomBySearch
 };
