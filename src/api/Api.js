@@ -899,6 +899,22 @@ const getAllBlocks = async () => {
     return [];
   }
 };
+
+const getCPHD = async () => {
+  try {
+    const response = await client.get(
+      "/CPHD/getCPHD"
+    );
+    if (response.data.success) {
+      return response.data.cphd;
+    } else {
+      console.log("not get cphd");
+    }
+  } catch (error) {
+    console.log("error: ", error.message);
+    return [];
+  }
+};
 const addBlock = async (data) => {
   const endpoint = "/Block/add";
   try {
@@ -1029,5 +1045,6 @@ export default {
   deleteBlock,
   getBlocksBySearch,
   getBookedRoomBySearch,
-  getKindOfRoomBySearch
+  getKindOfRoomBySearch,
+  getCPHD,
 };
