@@ -128,22 +128,34 @@ const RoomDetail = () => {
       history.push('/manager/lichsudatphong');
     }
   }
-
+  
+  const styles = {
+    gridContainer: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gap: '16px',
+    },
+    gridItem: {
+      border: '1px solid #ddd',
+      padding: '16px',
+      borderRadius: '8px',
+    },
+  };
   return (
     <div>
       <TopNav />
       <section>
         <div className="row g-0" style={{ backgroundColor: "#905700", color: "#FFF" }}>
-          <div>
-            <h3 align="center">{room.tenLoaiPhong}</h3>
-          </div>
+        <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF", fontSize: '24px' }}>
+          <h3 align="center">{room.tenLoaiPhong}</h3>
+        </header>
           <div style={{ backgroundColor: "#fff", padding: '50px', color: '#905700' }}>
             <div className='form'>
               <form className='row'>
                 <div className="col-md-3 mb-3">
                   <input
                     className='form-control'
-                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
                     type='date'
                     placeholder='Ngày check in'
                     value={searchCriteria.ngayBatDau}
@@ -153,7 +165,7 @@ const RoomDetail = () => {
                 <div className="col-md-3 mb-3">
                   <input
                     className='form-control'
-                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
                     type='date'
                     placeholder='Ngày check out'
                     value={searchCriteria.ngayKetThuc}
@@ -163,7 +175,7 @@ const RoomDetail = () => {
                 <div className="col-md-3 mb-3">
                   <input
                     className='form-control'
-                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
                     type='number'
                     placeholder='Số lượng người lớn'
                     value={searchCriteria.soLuongNguoi}
@@ -173,7 +185,7 @@ const RoomDetail = () => {
                 <div className="col-md-3 mb-3">
                   <select
                     className="form-select"
-                    style={{ fontSize: '24px', height: '60px', borderRadius: '9px', borderColor: '#905700' }}
+                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
                     id="chiNhanh"
                     value={searchCriteria.chiNhanh}
                     onChange={handleSearchChange}
@@ -190,7 +202,7 @@ const RoomDetail = () => {
                 <div className="col-3 mb-3">
                   <button className='form-control'
                     onClick={handleSearch}
-                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontWeight: 'bold' }} type='button'
+                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', color: '#fff', fontWeight: 'bold', backgroundColor: '#905700' }} type='button'
                   >
                     Tìm kiếm
                   </button>
@@ -224,22 +236,23 @@ const RoomDetail = () => {
           <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF", fontSize: '24px' }}>
             <h3 align="center">Thông tin phòng</h3>
           </header>
-          <div>
-            {coSoVatChat.map((item, index) => (
-              <div key={index}>
-                <div>
-                  <img src={item.icon} alt={item.tenCSVC} style={{ width: '40px' }} />
-                </div>
-                <div>
-                  <p><strong>Mã CSVC:</strong> {item.maCSVC}</p>
-                  <p><strong>Tên CSVC:</strong> {item.tenCSVC}</p>
-                  <p><strong>Số lượng:</strong> {item.soLuong}</p>
-                </div>
+          <div className='mt-5' style={styles.gridContainer}>
+          {coSoVatChat.map((item, index) => (
+            <div key={index} style={styles.gridItem}>
+              <div>
+                <img src={item.icon} alt={item.tenCSVC} style={styles.image} />
               </div>
-            ))}
+              <div>
+                <p><strong>Mã CSVC:</strong> {item.maCSVC}</p>
+                <p><strong>Tên CSVC:</strong> {item.tenCSVC}</p>
+                <p><strong>Số lượng:</strong> {item.soLuong}</p>
+              </div>
+            </div>
+          ))}
           </div>
           <div>
-            <div>
+            <div className='container mt-3'>
+              <label style={{fontWeight: 'bold', fontSize: '24px'}} >Số lượng phòng muốn đặt</label>
               <input
                 className="form-control pb-2 pt-2 mb-2"
                 name="soLuong"
@@ -248,11 +261,11 @@ const RoomDetail = () => {
                 value={soLuong}
               />
             </div>
-            <div>
-              Đơn giá: {room.donGia}/đêm
+            <div style={{fontWeight: 'bold', fontSize: '24px'}} className='container mt-3' >
+              Đơn giá: {Intl.NumberFormat("en-DE").format(room.donGia)}/đêm
             </div>
 
-            <div>
+            <div className='container mt-3'>
               <button onClick={handleSubmit}
                 className="form-control" style={{
                   fontSize: '24px', height: '60px',
@@ -264,21 +277,26 @@ const RoomDetail = () => {
         </div>
       </section>
       <section>
-        <div className="slide-container" style={{ width: '100%', height: '100%' }}>
+        <div className="slide-container mt-5 " style={{ width: '100%', height: '100%' }}>
           <header className="pt-4 pb-4" style={{ backgroundColor: "#905700", color: "#FFF", fontSize: '24px' }}>
             <h3 align="center">Các đánh giá về phòng</h3>
           </header>
           <div>
             {comments?.map((comment, index) => (
-              <div key={index} className=''>
-                <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>
-                  {comment.soSao}
+              <div key={index} className='container collumn'
+              style={{
+                backgroundColor: '#fff', alignItems: 'center', display: 'flex',
+                borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
+              }}
+              >
+                <div className='col-2' style={{  borderRadius: "5px" }}>
+                  <p style={{fontWeight: 'bold', fontSize: '18px'}}>Điểm đánh giá: </p>{comment.soSao}
                 </div>
-                <div className='col-auto' style={{ color: "gray" }}>
+                <div className='col-1' style={{ color: "gray" }}>
                   {new Date(comment.ngayDanhGia).toLocaleDateString()} {/* Hiển thị ngày đánh giá */}
                 </div>
-                <div className='col-12'>
-                  {comment.danhGia}
+                <div className='col-9'>
+                <p style={{fontWeight: 'bold', fontSize: '18px'}}>Đánh giá: </p>{comment.danhGia}
                 </div>
               </div>
             ))}

@@ -75,18 +75,19 @@ const BookingHistory = () => {
         </header>
         {/* Render dailyRoomInfo */}
         {dailyRoomInfo.map((dayInfo, index) => (
-          <div className="row" key={index}
+          <div className="collumn" key={index}
             style={{
               backgroundColor: '#fff', alignItems: 'center', display: 'flex',
               borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
             }}>
-            <h2 className='row' style={{ color: '#905700' }}>{dayInfo.startDate}/{dayInfo.endDate}</h2>
-            <p className='row'>
+            <h2 className='col-3' style={{ color: '#905700', marginLeft: '20px' }}>{dayInfo.startDate}  <br/> <p style={{color: '#aaa', fontSize: '18px'}}> Nhận check in từ 14 giờ</p></h2>
+            <h2 className='col-3' style={{ color: '#905700' }}>{dayInfo.endDate} <br/> <p style={{color: '#aaa', fontSize: '18px'}}>Check out trước 12 giờ</p></h2>
+            <p className='col-6'>
               {dayInfo.roomTypes.map(roomTypeInfo => (
                 <div key={`${roomTypeInfo.roomType}-${roomTypeInfo.branch}`}>
-                  <h3>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
-                  <p>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
-                  <p>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
+                  <h3 style={{ color: '#905700' }}>{`Loại phòng: ${roomTypeInfo.roomType} - Chi nhánh: ${roomTypeInfo.branch}`}</h3>
+                  <p style={{ color: '#905700', fontSize: '18px' }}>{`Số lượng đặt: ${roomTypeInfo.count}`}</p>
+                  <p style={{ color: '#905700', fontSize: '18px'  }}>{`Danh sách phòng: ${roomTypeInfo.rooms.join(', ')}`}</p>
                 </div>
               ))}
             </p>
