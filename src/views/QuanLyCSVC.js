@@ -63,12 +63,12 @@ const QuanLyCSVC = (props) => {
     console.log(newRow);
     if (rowToEdit == null) {
       if (user?.Loai === 'ChuHeThong') {
-        const id = await api.addMaterial(newRow);
+        const id = await api.addMaterial({ ...newRow, slDaSuDung: "0" });
         newRow.Id = id;
         onSearch()
       }
       else {
-        const id = await api.addMaterial({ ...newRow, chiNhanh: user?.chinhanh });
+        const id = await api.addMaterial({ ...newRow, chiNhanh: user?.chinhanh, slDaSuDung: "0" });
         newRow.Id = id;
         setMaterials([...materials, newRow]);
       }

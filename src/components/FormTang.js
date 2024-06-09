@@ -19,6 +19,7 @@ export const FormTang = ({
       toa: blocks[0].tenToa || "",
       tenLoaiPhong: "",
       dsPhong: "",
+      donGia: ""
     }
   );
   const [errors, setErrors] = useState("");
@@ -181,9 +182,10 @@ export const FormTang = ({
                 ? setFormState({
                   ...formState,
                   maLoaiPhong: `${value.maLoaiPhong}`,
-                  tenLoaiPhong: `${value.tenLoaiPhong}`
+                  tenLoaiPhong: `${value.tenLoaiPhong}`,
+                  donGia: `${value.donGia}`
                 })
-                : setFormState({ ...formState, maLoaiPhong: "", tenLoaiPhong: "" })
+                : setFormState({ ...formState, maLoaiPhong: "", tenLoaiPhong: "", donGia: "" })
             }
             options={roomTypes}
             isClearable

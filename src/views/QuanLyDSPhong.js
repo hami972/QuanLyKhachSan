@@ -48,7 +48,8 @@ const QuanLyDSPhong = (props) => {
                             soDienThoai: room.soDienThoai,
                             ngayBatDau: moment().format("YYYY-MM-DD"),
                             ngayKetThuc: room.ngayKetThuc,
-                            CCCD: room.CCCD
+                            CCCD: room.CCCD,
+                            donGia: room.donGia
                         };
                         return { ...room, ...newRow, tinhTrang: "Check-in" };
                     }
@@ -84,8 +85,10 @@ const QuanLyDSPhong = (props) => {
                 await api.addBill({
                     ...oldRoomDetails, ngayCheckIn: moment().format("YYYY-MM-DD"), ngayCheckOut: '',
                     tinhTrang: "Chưa thanh toán", maPhong: newRow.maPhong, toa: newRow.toa,
-                    maDatPhong: newRow.Id, tang: newRow.tang, loaiPhong: newRow.tenLoaiPhong, donGia: '', ngayLap: '',
-                    maGiamGia: '', chiNhanh: user?.chinhanh
+                    maDatPhong: newRow.Id, tang: newRow.tang, tenLoaiPhong: newRow.tenLoaiPhong, ngayLap: '',
+                    maGiamGia: '', chiNhanh: user?.chinhanh,
+                    daDanhGia: false,
+                    donGia: newRow.donGia
                 });
             } else {
                 if (newRow.tinhTrang === "Dọn xong") {
@@ -196,7 +199,8 @@ const QuanLyDSPhong = (props) => {
                             tenLoaiPhong: floor.tenLoaiPhong,
                             tinhTrang: "Trống",
                             chiNhanh: user?.chinhanh,
-                            Id: ''
+                            Id: '',
+                            donGia: floor.donGia
                         };
                         accumulator.push(roomInfo);
                     });
