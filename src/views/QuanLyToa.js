@@ -12,8 +12,13 @@ const QuanLyToa = (props) => {
     const [rowToEdit, setRowToEdit] = useState(null);
     const { user } = useContext(AuthContext);
     const [searchCriteria, setSearchCriteria] = useState({
-        slDau: '',
-        slCuoi: '',
+        maToa: '',
+        tenToa: '',
+        slPhongDau: '',
+        slPhongCuoi: '',
+        slTangDau: '',
+        slTangCuoi: '',
+        chiNhanh: ''
     })
 
 
@@ -23,14 +28,17 @@ const QuanLyToa = (props) => {
 
     const getBlocks = async () => {
         const blocks = await api.getAllBlocks();
-        const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-        const _fil = fil.map(block => ({
-            ...block,
-            slTang: block.tang.length,
-            slPhong: block.tang.reduce((total, tang) => total + (tang.dsPhong ? tang.dsPhong.split('-').length : 0), 0)
-        }));
+        if (user?.Loai !== 'ChuHeThong') {
+            const fil = blocks.filter((item, idx) => item.chiNhanh === user?.chinhanh)
 
-        setBlocks(_fil);
+            const _fil = fil.map(block => ({
+                ...block,
+                slTang: block.tang.length,
+                slPhong: block.tang.reduce((total, tang) => total + (tang.dsPhong ? tang.dsPhong.split('-').length : 0), 0)
+            }));
+
+            setBlocks(_fil);
+        }
     };
 
     const handleDeleteRow = async (targetIndex) => {
@@ -51,9 +59,15 @@ const QuanLyToa = (props) => {
     const handleSubmit = async (newRow) => {
         console.log(newRow);
         if (rowToEdit == null) {
-            const id = await api.addBlock({ ...newRow, chiNhanh: user?.chinhanh });
-            newRow.Id = id;
-            setBlocks([...blocks, newRow]);
+            if (user?.Loai !== 'ChuHeThong') {
+                const id = await api.addBlock({ ...newRow, chiNhanh: user?.chinhanh });
+                newRow.Id = id;
+                setBlocks([...blocks, {
+                    ...newRow,
+                    slTang: 0,
+                    slPhong: 0
+                }]);
+            }
         }
         else {
             api.updateBlock(newRow, newRow.Id);
@@ -69,53 +83,171 @@ const QuanLyToa = (props) => {
         setSearchCriteria({ ...searchCriteria, [e.target.name]: e.target.value });
     };
 
-    const onSearch = () => {
+    const checkError = () => {
+        if (parseInt(searchCriteria.slPhongDau) >= parseInt(searchCriteria.slPhongCuoi)) {
+            alert("Số lượng phòng 'Từ' phải nhỏ hơn 'Đến'");
+            return false;
+        }
 
+        if (parseInt(searchCriteria.slTangDau) >= parseInt(searchCriteria.slTangCuoi)) {
+            alert("Số lượng tầng 'Từ' phải nhỏ hơn 'Đến'");
+            return false;
+        }
+        return true;
+    }
+
+    const onSearch = async () => {
+        if (checkError()) {
+            console.log(searchCriteria)
+
+            const searchResults = await api.getBlocksBySearch(searchCriteria);
+            console.log(searchResults);
+            if (user?.Loai !== 'ChuHeThong') {
+                const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+                const _fil = fil.map(block => ({
+                    ...block,
+                    slTang: block.tang.length,
+                    slPhong: block.tang.reduce((total, tang) => total + (tang.dsPhong ? tang.dsPhong.split('-').length : 0), 0)
+                }));
+                setBlocks(_fil);
+            }
+        }
     }
 
     return (
         <div>
-            <div div className='row'>
-                <div className='col-auto m-auto'><b>Số lượng</b></div>
-                <div className="row col">
+            <div>
+                <div div className='row'>
                     <div className='col-lg-4 col-md-6'>
-                        <text style={{ fontWeight: 600 }}>Từ</text>
                         <input
                             className="form-control pb-2 pt-2 mb-2"
-                            type="number"
-                            placeholder="0"
-                            name="slDau"
+                            type="text"
+                            id="maToa"
+                            placeholder="Mã Tòa"
+                            name="maToa"
                             onChange={handleChange}
                         />
                     </div>
                     <div className='col-lg-4 col-md-6'>
-                        <text style={{ fontWeight: 600 }}>Đến</text>
                         <input
                             className="form-control pb-2 pt-2 mb-2"
-                            type="number"
-                            placeholder="200"
-                            name="slCuoi"
+                            type="text"
+                            id="tenToa"
+                            placeholder="Tên tòa"
+                            name="tenToa"
                             onChange={handleChange}
                         />
                     </div>
                 </div>
+                <table className='container-fluid'>
+                    <tr>
+                        <td>
+                            <b>Số lượng tầng</b>
+                        </td>
+                        <td>
+                            <div div className='row'>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Từ</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="0"
+                                        name="slTangDau"
+                                        min={1}
+                                        onChange={handleChange}
+                                        value={searchCriteria.slTangDau}
+                                    />
+                                </div>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Đến</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="10"
+                                        name="slTangCuoi"
+                                        min={1}
+                                        value={searchCriteria.slTangCuoi}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Số lượng phòng</b>
+                        </td>
+                        <td>
+                            <div className='row'>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Từ</text>
+                                    <input
+                                        className="form-control pb-2 pt-2 mb-2"
+                                        type="number"
+                                        placeholder="0"
+                                        name="slPhongDau"
+                                        min={1}
+                                        value={searchCriteria.slPhongDau}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className='col-lg-4 col-md-6'>
+                                    <text style={{ fontWeight: 600 }}>Đến</text>
+                                    <input
+                                        className="form-control pb-2 pt-2"
+                                        type="number"
+                                        placeholder="200"
+                                        name="slPhongCuoi"
+                                        value={searchCriteria.slPhongCuoi}
+                                        min={1}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <b>Chi nhánh: </b>
+                        </td>
+                        <td>
+                            <div className='col-lg-5 col-md-8'>
+                                <select
+                                    className="form-select pb-2 pt-2 mt-2"
+                                    id="type"
+                                    name="chiNhanh"
+                                    onChange={handleChange}
+                                >
+
+                                    <option value={user?.chinhanh}>
+                                        {user?.chinhanh}
+                                    </option>
+
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
-            <button
-                type="submit"
-                className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-                onClick={onSearch}
-            >
-                Tìm kiếm
-            </button>
-            <button
-                onClick={() => setModalOpen(true)}
-                className="btn pb-2 pt-2 mb-3 me-3 mt-3"
-                style={{ backgroundColor: "#d3a55e", color: "#FFFFFF" }}
-            >
-                Thêm
-            </button>
+            <div className="text-end">
+                <button
+                    type="submit"
+                    className="btn pb-2 pt-2 me-2 mt-3 "
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                    onClick={onSearch}
+                >
+                    Tìm kiếm
+                </button>
+                <button
+                    onClick={() => setModalOpen(true)}
+                    className="btn pb-2 pt-2 mt-3"
+                    style={{ backgroundColor: "#905700", color: "#FFFFFF" }}
+                >
+                    Thêm
+                </button>
+            </div>
 
             <table className="table">
                 <thead style={{ verticalAlign: "middle" }}>

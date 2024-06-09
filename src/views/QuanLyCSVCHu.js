@@ -91,7 +91,7 @@ const QuanLyCSVCHu = (props) => {
       alert("Số lượng nhập 'Từ' phải nhỏ hơn 'Đến'");
       return false;
     }
-
+    
     if (searchCriteria.ngayDau && searchCriteria.ngayCuoi && searchCriteria.ngayCuoi <= searchCriteria.ngayDau) {
       alert("Ngày nhập 'Từ' phải nhỏ hơn ngày nhập 'Đến'");
       return false;
@@ -147,19 +147,19 @@ const QuanLyCSVCHu = (props) => {
 
   const onSearch = async () => {
     if (checkError()) {
-      console.log(searchCriteria)
+    console.log(searchCriteria)
 
-      const searchResults = await api.getDamagedMaterialBySearch(searchCriteria);
-      console.log(searchResults);
-      if (user?.Loai !== 'ChuHeThong') {
-        const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
-        setDamagedMaterial(fil);
-      }
-      else {
-        setDamagedMaterial(searchResults)
-      }
+    const searchResults = await api.getDamagedMaterialBySearch(searchCriteria);
+    console.log(searchResults);
+    if (user?.Loai !== 'ChuHeThong') {
+      const fil = searchResults.filter((item, idx) => item.chiNhanh === user?.chinhanh)
+      setDamagedMaterial(fil);
+    }
+    else {
+      setDamagedMaterial(searchResults)
     }
   }
+}
   return (
     <div >
       <div>

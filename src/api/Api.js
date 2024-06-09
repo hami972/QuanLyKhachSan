@@ -911,6 +911,25 @@ const deleteBlock = async (id) => {
   }
 };
 
+const getBlocksBySearch = async (searchCriteria) => {
+  try {
+    // Xây dựng query parameter từ searchCriteria object
+    const queryParams = new URLSearchParams(searchCriteria).toString();
+
+    const response = await client.get(`/Block/search?${queryParams}`);
+
+    if (response.data.success) {
+      return response.data.list;
+    } else {
+      console.log("not get washingMachine");
+      return [];
+    }
+  } catch (error) {
+    console.error("error: ", error.message);
+    return [];
+  }
+};
+
 export default {
   getAllDiscounts,
   addDiscount,
@@ -993,5 +1012,6 @@ export default {
   addBlock,
   updateBlock,
   deleteBlock,
+  getBlocksBySearch,
   getBookedRoomBySearch
 };
