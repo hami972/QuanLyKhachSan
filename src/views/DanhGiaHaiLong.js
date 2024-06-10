@@ -122,7 +122,7 @@ const XemDanhGiaHaiLong = (props) => {
     const roomData = {
         labels: ['Lượt đánh giá hài lòng'],
         datasets: roomReviewCounts.map(r => ({
-            label: r.ten,
+            label: r.tenLoaiPhong,
             data: [r.count],  // Dữ liệu được đặt trong một mảng chứa một giá trị duy nhất
             backgroundColor: '#905700',  // Có thể đặt màu khác nhau cho mỗi loại phòng nếu muốn
         }))

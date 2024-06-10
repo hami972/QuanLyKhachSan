@@ -10,6 +10,7 @@ import FloatInEffect from '../components/FloatInEffect';
 import { AuthContext } from '../hook/AuthProvider';
 import RecommendPage from './RecommendPage';
 import IntroductionRoomType from './IntroductionRoomType';
+import api from '../api/Api';
 
 const IntroductionPage = (props) => {
     //move to SignUp page
@@ -18,6 +19,15 @@ const IntroductionPage = (props) => {
         history.push("/booking")
     }
     const { user } = useContext(AuthContext)
+
+    const [branches, setBranches] = useState([])
+
+    const [searchCriteria, setSearchCriteria] = useState({
+        ngayBatDau: '',
+        ngayKetThuc: '',
+        soLuongNguoi: 1,
+        chiNhanh: ''
+    });
 
     //fake review list
     const reviewList = [
@@ -115,6 +125,15 @@ const IntroductionPage = (props) => {
         return () => clearInterval(interval); // Clear interval khi component unmount
     }, [currentIndex]);
 
+    useEffect(() => {
+        getBranchs();
+    }, []);
+
+    const getBranchs = async () => {
+        const branches = await api.getAllBranchs();
+        setBranches(branches);
+    };
+
     const clickNextImage = () => {
         if (nextImage === true) setCurrentIndex((prevIndex) => (prevIndex + 1) % 4);
         setNextImage(true);
@@ -124,6 +143,42 @@ const IntroductionPage = (props) => {
         setNextImage(false);
     }
 
+    const checkError = () => {
+
+        if (user?.Loai !== "KhachHang") {
+            alert("Vui lòng đăng nhập để lưu lại lịch sử đặt phòng")
+            return false;
+        }
+
+        if (!searchCriteria.ngayBatDau || !searchCriteria.ngayKetThuc || !searchCriteria.chiNhanh || !searchCriteria.soLuongNguoi) {
+            alert("Nhập đầy đủ thông tin");
+            return false;
+        }
+
+        if (searchCriteria.ngayBatDau && searchCriteria.ngayKetThuc && searchCriteria.ngayBatDau > searchCriteria.ngayKetThuc) {
+            alert("Ngày nhập 'Từ' phải nhỏ hơn hoặc bằng ngày nhập 'Đến'");
+            return false;
+        }
+
+        return true;
+    }
+
+    const handleSearchChange = (e) => {
+        setSearchCriteria(prevSearchCriteria => ({
+            ...prevSearchCriteria,
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handleSearch = () => {
+        if (checkError()) {
+            history.push({
+                pathname: '/rooms',
+                state: { searchCriteria: searchCriteria }
+            });
+
+        };
+    }
 
 
     return (
@@ -158,20 +213,64 @@ const IntroductionPage = (props) => {
                     </div>
                     <div className='form'>
                         <form className='row'>
-                            <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='date' placeholder='Ngày check in' />
-                            </div>
-                            <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='date' placeholder='Ngày check out' />
-                            </div>
-                            <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng người lớn' />
-                            </div>
-                            <div className="col-2 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng trẻ em' />
+                            <div className="col-3 mb-3">
+                                <input
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
+                                    type='date'
+                                    placeholder='Ngày check in'
+                                    value={searchCriteria.ngayBatDau}
+                                    onChange={handleSearchChange}
+                                    name="ngayBatDau"
+                                />
                             </div>
                             <div className="col-3 mb-3">
-                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold' }} type='submit' value='Xem phòng' />
+                                <input
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
+                                    type='date'
+                                    placeholder='Ngày check out'
+                                    value={searchCriteria.ngayKetThuc}
+                                    onChange={handleSearchChange}
+                                    name="ngayKetThuc"
+                                />
+                            </div>
+                            <div className="col-2 mb-3">
+                                <input
+                                    className='form-control'
+                                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
+                                    type='number'
+                                    placeholder='Số lượng người'
+                                    value={searchCriteria.soLuongNguoi}
+                                    name="soLuongNguoi"
+                                    onChange={handleSearchChange}
+                                />
+                            </div>
+                            <div className="col-2 mb-3">
+                                <select
+                                    className="form-select"
+                                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', borderColor: '#905700' }}
+                                    id="chiNhanh"
+                                    name='chiNhanh'
+                                    value={searchCriteria.chiNhanh}
+                                    onChange={handleSearchChange}
+                                >
+                                    <option value="">Chọn chi nhánh</option>
+                                    {branches.map((item, index) => (
+                                        <option key={index} value={item.tenChiNhanh}>
+                                            {item.tenChiNhanh}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-2 mb-3">
+                                <button className='form-control'
+                                    onClick={handleSearch}
+                                    style={{ fontSize: '24px', height: '80px', borderRadius: '9px', fontWeight: 'bold' }} type='button'
+                                >
+                                    Tìm kiếm
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -247,9 +346,9 @@ const IntroductionPage = (props) => {
                 </NavLink>
 
             </section>
-            <div style={{ position: 'fixed', bottom: '80px', right: '10px' }}>
+            <div style={{ position: 'fixed', bottom: '80px', right: '-5px' }}>
                 <a href="https://m.me/hotelroyal2" target="_blank" rel="noopener noreferrer">
-                    <img src="/images/message.png" alt="Messenger Icon" />
+                    <img src="/images/iconmess.png" alt="Messenger Icon" />
                 </a>
             </div>
             <Footer style={{ marginTop: 0 }} />

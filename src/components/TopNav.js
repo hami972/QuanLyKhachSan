@@ -50,7 +50,7 @@ const TopNav = () => {
                         <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div className="offcanvas-body p-0">
-                        <ul className="navbar-nav m-auto mb-lg-0 mb-2">
+                        <ul className="navbar-nav m-auto mb-lg-0 mb-2" style = {{fontSize: "20px",}}>
                             <li className="nav-item ps-2 pe-2">
                                 <NavLink className="nav-link" to="/" exact>Giới thiệu</NavLink>
                             </li>
@@ -71,7 +71,7 @@ const TopNav = () => {
                                         border: "none",
                                         backgroundColor: "transparent",
                                         fontWeight: "bold",
-                                        fontSize: "16px",
+                                        fontSize: "20px",
                                         color: matchPath(pathname, { path: "/manager", exact: false }) ? "#905700" : "black"
                                     }}
                                     id="dropdownUser1"
@@ -104,7 +104,7 @@ const TopNav = () => {
                                         border: "none",
                                         backgroundColor: "transparent",
                                         fontWeight: "bold",
-                                        fontSize: "16px",
+                                        fontSize: "20px",
                                         color: matchPath(pathname, { path: "/manager", exact: false }) ? "#905700" : "black"
                                     }}
                                     id="dropdownUser1"

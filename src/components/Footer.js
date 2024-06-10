@@ -8,7 +8,7 @@ const Footer = (props) => {
             <div className="container pt-4 pb-5">
                 <div className="row">
                     <div className="col-lg-5 col-md-4">
-                        <img loading="lazy" alt="" src="/images/royalHotelLogo.png" />
+                        <img loading="lazy" alt="" src="/images/royalHotelLogowhite.png" />
                         <p>Chào mừng quý khách đến với khách sạn của chúng tôi - nơi tinh tế hòa quyện giữa sự sang trọng và ấm cúng, tạo nên không gian lưu trú lý tưởng cho mọi hành trình.</p>
                         <div class="wrapper">
                             <NavLink class="hover-fx icon_color" to="/"><i class="fab fa-instagram"></i></NavLink>
@@ -20,14 +20,14 @@ const Footer = (props) => {
                     <div className="col-1"></div>
                     <div className="col-lg-3 col-md-4">
                         <p className="mt-3">
-                            <span style={{ fontSize: "19px" }}>Địa chỉ</span>
+                            <span style={{ fontSize: "20px" }}>Địa chỉ</span>
                             <ul>
                                 <li>Thủ Đức, thành phố Hồ Chí Minh</li>
                                 <li>Quận 7, thành phố Hồ Chí Minh</li>
                                 <li>Dĩ An, Bình Dương</li>
                             </ul>
                         </p>
-                        <p className="mt-3" style={{ fontSize: "19px" }}>
+                        <p className="mt-3" style={{ fontSize: "20px" }}>
                             Email: RoyalHotel@gmail.com
                             <br />
                             Phone: 0843593598
@@ -35,7 +35,7 @@ const Footer = (props) => {
                     </div>
                     <div className="col-1"></div>
                     <div className="col-md-2">
-                        <p className="mt-3" style={{ fontSize: "19px" }}>Tùy chỉnh</p>
+                        <p className="mt-3" style={{ fontSize: "20px" }}>Tùy chỉnh</p>
                         <ThemeToggle />
                     </div>
                 </div>

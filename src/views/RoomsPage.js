@@ -67,7 +67,12 @@ const RoomsPage = () => {
     const getBranchs = async () => {
         const branches = await api.getAllBranchs();
         setBranches(branches)
-        setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
+        if (location.state?.searchCriteria) {
+
+        }
+        else {
+            setSearchCriteria({ ...searchCriteria, chiNhanh: branches[0].tenChiNhanh })
+        }
     }
 
     const checkError = () => {
@@ -228,6 +233,7 @@ const RoomsPage = () => {
                             <div className="col-2 mb-3">
                                 <select
                                     className="form-select pb-2 pt-2 mb-2"
+                                    style={{ fontSize: '24px', height: '90px', borderRadius: '9px', }}
                                     id="type"
                                     name="chiNhanh"
                                     value={searchCriteria.chiNhanh}
