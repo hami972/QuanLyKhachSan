@@ -101,9 +101,9 @@ const XemBaoCaoTheoPhongTheoThang = (props) => {
     const sheet = workbook.addWorksheet("Báo cáo");
     sheet.columns = [
       { header: "STT", key: "stt", width: 10 },
-      { header: "Chi nhánh", key: "chiNhanh", width: 30 },
-      { header: "Số lượt thuê phòng", key: "soLuongCaThucHien", width: 20, },
-      { header: "Doanh thu", key: "doanhThu", width: 20 },
+      { header: "Loại phòng", key: "tenLoaiPhong", width: 30 },
+      { header: "Số lượt thuê phòng", key: "soLuotThuePhong", width: 20, },
+      { header: "Doanh thu", key: "tienTT", width: 20 },
       { header: "Tỉ lệ(%)", key: "tyLe", width: 20 },
     ];
     sheet.getRow(1).font = { bold: true }
