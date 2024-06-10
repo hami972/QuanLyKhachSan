@@ -192,7 +192,7 @@ export const FormCSVC = ({
           />
           <div className="mb-2"><b>Icon minh họa</b></div>
           <label htmlFor="imageIcon">
-            <img src={formState?.icon || "img_facility.png"} class="imageFacility" style={{ width: "100%" }} />
+            <img loading="lazy" src={formState?.icon || "img_facility.png"} class="imageFacility" style={{ width: "100%" }} />
           </label>
           <input id="imageIcon" type="file" accept="image/*" style={{ opacity: 0 }} onChange={(e) => addImage(e)} />
 

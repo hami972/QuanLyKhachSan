@@ -1,5 +1,5 @@
 import './style.css'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { NavLink, useHistory } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -7,12 +7,17 @@ import Slider from "react-slick";
 import TopNav from '../components/TopNav'
 import Footer from '../components/Footer';
 import FloatInEffect from '../components/FloatInEffect';
+import { AuthContext } from '../hook/AuthProvider';
+import RecommendPage from './RecommendPage';
+import IntroductionRoomType from './IntroductionRoomType';
+
 const IntroductionPage = (props) => {
     //move to SignUp page
     const history = useHistory();
     const moveToBookingPage = () => {
         history.push("/booking")
     }
+    const { user } = useContext(AuthContext)
 
     //fake review list
     const reviewList = [
@@ -119,29 +124,6 @@ const IntroductionPage = (props) => {
         setNextImage(false);
     }
 
-    // fake room list
-    const rooms = [
-        {
-            name: "Phòng Đơn Tiêu Chuẩn",
-            description: "Với không gian thoải mái và tiện nghi, phòng đơn tiêu chuẩn của chúng tôi là lựa chọn lý tưởng cho du khách cá nhân mong muốn tận hưởng không gian riêng tư và thuận tiện.",
-            image: "images/dontieuchuan.png"
-        },
-        {
-            name: "Phòng Đơn Cao Cấp",
-            description: "Sự sang trọng và tiện nghi được kết hợp hoàn hảo trong phòng đơn cao cấp của chúng tôi. Tận hưởng không gian rộng rãi và các tiện ích đẳng cấp, đảm bảo mang đến trải nghiệm đắm chìm trong sự xa hoa.",
-            image: "images/doncaocap1.png"
-        },
-        {
-            name: "Phòng Đôi Tiêu Chuẩn",
-            description: "Dành cho các cặp đôi hoặc nhóm nhỏ, phòng đôi tiêu chuẩn của chúng tôi là nơi lý tưởng để thư giãn và tận hưởng kỳ nghỉ bên nhau. Không gian thoải mái và tiện ích đầy đủ sẽ làm hài lòng mọi du khách.",
-            image: "images/doitieuchuan1.png"
-        },
-        {
-            name: "Phòng Đôi Cao Cấp",
-            description: "Với không gian rộng rãi và trang thiết bị hiện đại, phòng đôi cao cấp là biểu tượng của sự sang trọng và tiện nghi. Hòa mình vào không gian lịch lãm và đẳng cấp, quý vị sẽ tận hưởng một kỳ nghỉ đáng nhớ.",
-            image: "images/doicaocap2.png"
-        }
-    ];
 
 
     return (
@@ -170,56 +152,34 @@ const IntroductionPage = (props) => {
                 <button className="slick-next" onClick={clickNextImage}></button>
             </div>
             <section className="">
-                <div style={{ backgroundColor: "#905700", padding: '50px', color: '#fff'}}>
-                    <div style={{ backgroundColor: "#905700", padding: '20px'}}>
+                <div style={{ backgroundColor: "#905700", padding: '50px', color: '#fff' }}>
+                    <div style={{ backgroundColor: "#905700", padding: '20px' }}>
                         <h1> Đặt phòng ngay </h1>
                     </div>
                     <div className='form'>
                         <form className='row'>
                             <div className="col-2 mb-3">
-                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check in'/>
+                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='date' placeholder='Ngày check in' />
                             </div>
                             <div className="col-2 mb-3">
-                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='date' placeholder='Ngày check out'/>
+                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='date' placeholder='Ngày check out' />
                             </div>
                             <div className="col-2 mb-3">
-                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng người lớn'/>
+                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng người lớn' />
                             </div>
                             <div className="col-2 mb-3">
-                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff'}} type='number' placeholder='Số lượng trẻ em'/>
+                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff' }} type='number' placeholder='Số lượng trẻ em' />
                             </div>
                             <div className="col-3 mb-3">
-                                <input className='form-control' style={{fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold'}} type='submit' value='Xem phòng'/>
+                                <input className='form-control' style={{ fontSize: '24px', height: '90px', borderRadius: '9px', borderColor: '#fff', fontSize: '22px', fontWeight: 'bold' }} type='submit' value='Xem phòng' />
                             </div>
                         </form>
                     </div>
                 </div>
             </section>
-            <section className='container mt-4'>
-                <h3 align="center">Một số loại phòng trong khách sạn</h3>
-                <div className='mt-4'>
-                    {rooms.map((item, index) => {
-                        return (
-                            <FloatInEffect key={index}>
-                                <div className={`wrapperRoom mb-4 ${index % 2 === 0 ? '' : 'ms-auto'}`}>
-                                    <img alt="" src={item.image} style={{ width: "100%" }} />
-                                    <div className='p-3'>
-                                        <div>
-                                            <h5>{item.name}</h5>
-                                        </div>
-                                        <div className='row g-2 pb-3'>
-                                            <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>4.3</div>
-                                            <div className='col-auto' >Cực tốt</div>
-                                            <div className='col-auto spaceText' style={{ color: "gray" }}>220 đánh giá</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </FloatInEffect>
-                        )
-                    })}
-                </div>
-                <h4 align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
-            </section>
+            {user?.Loai === "KhachHang" ?
+                <RecommendPage /> : <IntroductionRoomType />
+            }
 
             <section className='pt-10 mb-4 mt-4'>
                 <h3 align="center">Một số dịch vụ trong khách sạn</h3>
@@ -285,9 +245,9 @@ const IntroductionPage = (props) => {
                         </div>
                     </div>
                 </NavLink>
-                
+
             </section>
-            <div style = {{ position: 'fixed', bottom: '80px', right: '10px'}}>
+            <div style={{ position: 'fixed', bottom: '80px', right: '10px' }}>
                 <a href="https://m.me/hotelroyal2" target="_blank" rel="noopener noreferrer">
                     <img src="/images/message.png" alt="Messenger Icon" />
                 </a>

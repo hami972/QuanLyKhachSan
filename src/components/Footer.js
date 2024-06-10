@@ -8,7 +8,7 @@ const Footer = (props) => {
             <div className="container pt-4 pb-5">
                 <div className="row">
                     <div className="col-lg-5 col-md-4">
-                        <img alt="" src="/images/royalHotelLogo.png" />
+                        <img loading="lazy" alt="" src="/images/royalHotelLogo.png" />
                         <p>Chào mừng quý khách đến với khách sạn của chúng tôi - nơi tinh tế hòa quyện giữa sự sang trọng và ấm cúng, tạo nên không gian lưu trú lý tưởng cho mọi hành trình.</p>
                         <div class="wrapper">
                             <NavLink class="hover-fx icon_color" to="/"><i class="fab fa-instagram"></i></NavLink>

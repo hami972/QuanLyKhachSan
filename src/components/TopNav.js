@@ -39,7 +39,7 @@ const TopNav = () => {
     return (
         <nav className={`navbar navbar-expand-lg ${theme === 'dark' ? 'bg-dark' : 'bg-light'} sticky-${visible ? 'top' : ''} `}>
             <div className="container-fluid" id="topNav">
-                <NavLink to="/"><img alt="" src="/images/royalHotelLogo.gif" style={{ height: "60px" }} /></NavLink>
+                <NavLink to="/"><img loading="lazy" alt="" src="/images/royalHotelLogo.gif" style={{ height: "60px" }} /></NavLink>
                 <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarExample-expand-lg" aria-controls="offcanvasNavbarExample-expand-lg" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon" data-bs-target="#offcanvasNavbarExample-expand-lg"></span>
                 </button>
@@ -141,7 +141,7 @@ const TopNav = () => {
                                         aria-expanded="false"
                                     >
                                         <text className="nav-link">{user.ten}</text>
-                                        <img
+                                        <img loading="lazy"
                                             src={user?.img || "/images/ava.png"}
                                             alt="hugenerd"
                                             width="40"

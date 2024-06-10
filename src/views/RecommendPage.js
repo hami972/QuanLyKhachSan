@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import api from '../api/Api';
+import { AuthContext } from '../hook/AuthProvider';
+import { NavLink } from "react-router-dom";
+import FloatInEffect from '../components/FloatInEffect';
 
 const RecommendPage = () => {
+
+    const { user } = useContext(AuthContext);
 
     const [recommendations, setRecommendations] = useState([]);
 
@@ -16,12 +21,17 @@ const RecommendPage = () => {
 
                 // Process data
                 const itemSimilarityMatrix = calculateItemSimilarityMatrix(roomTypes, bookedRooms);
-                const currentUser = '066303007350'; // replace with current user id
+                const currentUser = user?.CCCD // search by CCCD
                 const recs = getItemBasedRecommendations(roomTypes, itemSimilarityMatrix, currentUser);
 
-                // Set recommendations state
-                console.log("rec", recs)
-                setRecommendations(recs);
+                // Chỉnh sửa recs để chứa đầy đủ thông tin của mỗi loại phòng
+                const fullRecommendations = recs.map(roomTypeName => {
+                    // Tìm thông tin của loại phòng từ roomTypes
+                    const roomType = roomTypes.find(roomType => roomType.tenLoaiPhong === roomTypeName);
+                    return roomType; // Trả về đối tượng đầy đủ thông tin của loại phòng
+                });
+
+                setRecommendations(fullRecommendations);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -109,15 +119,42 @@ const RecommendPage = () => {
         return topRecommendations;
     };
 
+    const getRatingDescription = (rating) => {
+        rating = parseFloat(rating);
+        if (rating >= 1 && rating < 2) return "Cực tệ";
+        if (rating >= 2 && rating < 3) return "Tệ";
+        if (rating >= 3 && rating < 4) return "Bình thường";
+        if (rating >= 4 && rating < 5) return "Tốt";
+        if (rating === 5) return "Cực tốt";
+        return "";
+    };
+
     return (
-        <div>
-            <h1>Recommended Room Types</h1>
-            <ul>
-                {recommendations.map(roomTypeName => (
-                    <li key={roomTypeName}>{roomTypeName}</li>
-                ))}
-            </ul>
-        </div>
+        <section className='container mt-4'>
+            <h3 align="center">Một số loại phòng trong khách sạn</h3>
+            <div className='mt-4'>
+                {recommendations.map((item, index) => {
+                    return (
+                        <FloatInEffect key={index}>
+                            <div className={`wrapperRoom mb-4 ${index % 2 === 0 ? '' : 'ms-auto'}`}>
+                                <img alt="" src={item?.images && item.images[0]} style={{ width: "100%" }} />
+                                <div className='p-3'>
+                                    <div>
+                                        <h5>{item.tenLoaiPhong}</h5>
+                                    </div>
+                                    <div className='row g-2 pb-3'>
+                                        <div className='col-auto' style={{ backgroundColor: "yellow", borderRadius: "5px" }}>{item.soSao}</div>
+                                        <div className='col-auto' >{getRatingDescription(item.soSao)}</div>
+                                        <div className='col-auto spaceText' style={{ color: "gray" }}>{item.slDanhGia} đánh giá</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </FloatInEffect>
+                    )
+                })}
+            </div>
+            <h4 align="center"><NavLink to="/services" className="text-decoration-none customLink" style={{ color: "#000" }}>Xem thêm &rarr;</NavLink></h4>
+        </section>
     );
 };
 

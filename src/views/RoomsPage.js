@@ -260,9 +260,9 @@ const RoomsPage = () => {
             </section>
             <section class="container mt-5 mb-5">
                 <div class="row" >
-                    {filteredKindOfRooms.map(room => (
-                        <div className="row "
-                            key={room.maLoaiPhong}
+                    {filteredKindOfRooms.map((room, index) => (
+                        <div className="row"
+                            key={index}
                             style={{
                                 backgroundColor: '#fff', alignItems: 'center', display: 'flex',
                                 borderRadius: '5px', borderStyle: 'groove', marginTop: '50px'
