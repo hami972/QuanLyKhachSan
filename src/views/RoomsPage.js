@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { useParams, useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../hook/AuthProvider';
+import moment from 'moment';
 import api from '../api/Api';
 
 const RoomsPage = () => {
@@ -29,7 +30,9 @@ const RoomsPage = () => {
     });
 
     const history = useHistory();
-    const handleButtonClick = (room) => {
+    const handleButtonClick = async (room) => {
+        const data = { kindOfRoomId: room.Id, CCCD: user?.CCCD };
+        await api.updateRoomClick(data);
         history.push({
             pathname: `/rooms/${room.maLoaiPhong}`,
             state: { room, searchCriteria }
@@ -194,6 +197,7 @@ const RoomsPage = () => {
                                     name="ngayBatDau"
                                     value={searchCriteria.ngayBatDau}
                                     onChange={handleSearchChange}
+                                    min={moment().format("YYYY-MM-DD")}
                                     placeholder='Ngày check in'
                                 />
                             </div>
@@ -205,6 +209,7 @@ const RoomsPage = () => {
                                     name="ngayKetThuc"
                                     value={searchCriteria.ngayKetThuc}
                                     onChange={handleSearchChange}
+                                    min={moment().format("YYYY-MM-DD")}
                                     placeholder='Ngày check out'
                                 />
                             </div>

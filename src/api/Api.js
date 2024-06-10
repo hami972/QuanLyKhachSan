@@ -961,6 +961,16 @@ const getBlocksBySearch = async (searchCriteria) => {
   }
 };
 
+const updateRoomClick = async (data) => {
+  const endpoint = "/KindOfRoom/updateRoomClickCount";
+  try {
+    const response = await client.post(endpoint, data);
+    return response.data.docId;
+  } catch (error) {
+    console.log("error: ", error.message);
+  }
+};
+
 export default {
   getAllDiscounts,
   addDiscount,
@@ -1047,4 +1057,5 @@ export default {
   getBookedRoomBySearch,
   getKindOfRoomBySearch,
   getCPHD,
+  updateRoomClick
 };
