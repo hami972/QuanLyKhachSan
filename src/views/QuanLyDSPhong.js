@@ -340,6 +340,7 @@ const QuanLyDSPhong = (props) => {
                     <input
                         name="ngayBatDau"
                         onChange={handleChange}
+                        min={moment().format("YYYY-MM-DD")}
                         className="form-control pb-2 pt-2 mb-2"
                         type="date"
                         value={searchCriteria.ngayBatDau}
@@ -351,6 +352,7 @@ const QuanLyDSPhong = (props) => {
                         name="ngayKetThuc"
                         onChange={handleChange}
                         className="form-control pb-2 pt-2 mb-3"
+                        min={moment().format("YYYY-MM-DD")}
                         type="date"
                         value={searchCriteria.ngayKetThuc}
                     />

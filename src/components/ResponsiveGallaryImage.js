@@ -94,7 +94,7 @@ const ResponsiveGalleryImage = ({ updateImages, uploadedImages, isRead }) => {
                             Your browser does not support the video tag.
                         </video>
                     ) : (
-                        <img src={image.url} onClick={() => handleImageClick(image)} />
+                        <img loading="lazy" src={image.url} onClick={() => handleImageClick(image)} />
                     )}
                     {isRead && (<button type="button" className="delete-btn-images" onClick={() => handleDeleteImage(index)}>
                         <i className="fa-solid fa-xmark" style={{ color: "#ebe9e4" }}></i>
@@ -114,7 +114,7 @@ const ResponsiveGalleryImage = ({ updateImages, uploadedImages, isRead }) => {
                                 <source src={selectedImage.url} type="video/mp4" />
                             </video>
                         ) : (
-                            <img src={selectedImage.url} alt="Selected content" />
+                            <img loading="lazy" src={selectedImage.url} alt="Selected content" />
                         )}
                         <button className="close-modal" onClick={closeModalImage}>Close</button>
                     </div>

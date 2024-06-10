@@ -60,6 +60,7 @@ const QuanLyLoaiPhong = (props) => {
                     ...newRow,
                     soSao: "0",
                     slDanhGia: "0",
+                    clickArr: []
                 });
                 newRow.Id = id;
                 onSearch()
@@ -67,7 +68,8 @@ const QuanLyLoaiPhong = (props) => {
             else {
                 const id = await api.addKindOfRoom({
                     ...newRow, chiNhanh: user?.chinhanh, soSao: "0",
-                    slDanhGia: "0"
+                    slDanhGia: "0",
+                    clickArr: []
                 });
                 newRow.Id = id;
                 setKindOfRoom([...kindOfRoom, newRow]);

@@ -87,7 +87,7 @@ const ResponsiveMansonryGrid = ({ updateImages, uploadedImages }) => {
         <div className="masonry-grid">
             {images.map((image, index) => (
                 <div className="masonry-item" key={index}>
-                    <img src={image} onClick={() => handleImageClick(image)} />
+                    <img loading="lazy" src={image} onClick={() => handleImageClick(image)} />
                     <button type="button" className="delete-btn-images" onClick={() => handleDeleteImage(index)}>
                         <i className="fa-solid fa-xmark" style={{ color: "#ebe9e4" }}></i>
                     </button>
@@ -101,7 +101,7 @@ const ResponsiveMansonryGrid = ({ updateImages, uploadedImages }) => {
             {selectedImage && (
                 <div className="image-modal">
                     <div className="image-modal-content">
-                        <img src={selectedImage} />
+                        <img loading="lazy" src={selectedImage} />
                         <button className="close-modal" onClick={closeModalImage}>Close</button>
 
                     </div>
